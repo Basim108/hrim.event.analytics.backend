@@ -10,4 +10,8 @@
       <DocumentationFile>Hrim.Event.Analytics.Models.xml</DocumentationFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Enums" />
+    </ItemGroup>
+
 </Project>

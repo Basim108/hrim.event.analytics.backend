@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrim.Event.Analytics.Api", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrim.Event.Analytics.Models", "Hrim.Event.Analytics.Models\Hrim.Event.Analytics.Models.csproj", "{F97D9407-EBBD-4576-A8A2-FF05E9535752}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrim.Event.Analytics.Abstractions", "Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj", "{F114A1F9-CAD7-45CA-AB7B-E53B7E02E7BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrim.Event.Analytics.FakeHandlers", "Hrim.Event.Analytics.FakeHandlers\Hrim.Event.Analytics.FakeHandlers.csproj", "{792A1293-C76E-4E4B-8EC0-E274D18A3F6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{F97D9407-EBBD-4576-A8A2-FF05E9535752}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F97D9407-EBBD-4576-A8A2-FF05E9535752}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F97D9407-EBBD-4576-A8A2-FF05E9535752}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F114A1F9-CAD7-45CA-AB7B-E53B7E02E7BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F114A1F9-CAD7-45CA-AB7B-E53B7E02E7BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F114A1F9-CAD7-45CA-AB7B-E53B7E02E7BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F114A1F9-CAD7-45CA-AB7B-E53B7E02E7BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{792A1293-C76E-4E4B-8EC0-E274D18A3F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{792A1293-C76E-4E4B-8EC0-E274D18A3F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{792A1293-C76E-4E4B-8EC0-E274D18A3F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{792A1293-C76E-4E4B-8EC0-E274D18A3F6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

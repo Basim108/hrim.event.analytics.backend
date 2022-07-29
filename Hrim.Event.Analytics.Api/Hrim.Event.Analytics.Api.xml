@@ -4,5 +4,51 @@
         <name>Hrim.Event.Analytics.Api</name>
     </assembly>
     <members>
+        <member name="T:Hrim.Event.Analytics.Api.Extensions.MiddlewareExtensions">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.Extensions.MiddlewareExtensions.UseCorrelationId(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            Register <see cref="T:Hrim.Event.Analytics.Api.Middleware.CorrelationMiddleware"/> so correlation id header will be processed
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.Extensions.MvcBuilderExtensions">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.Extensions.MvcBuilderExtensions.AddHrimsoftJsonOptions(Microsoft.Extensions.DependencyInjection.IMvcBuilder)">
+            <summary> Set json serialization settings </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.Middleware.CorrelationMiddleware">
+            <summary>
+            Adds/takes correlation id to/from headers and create a logging scope with that id. 
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController">
+            <summary>
+            Manage user event types with this crud controller
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetAllAsync(System.Threading.CancellationToken)">
+            <summary> Get all user event types </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary> Delete a user event type by its id</summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Models.EventTypes.SystemEventType,System.Threading.CancellationToken)">
+            <summary>
+            Create a user event type based on ony specific system event type, depends on $type field in json
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Models.EventTypes.OccurrenceEventType,System.Threading.CancellationToken)">
+            <summary> Update a user event type based on ony specific system event type, depends on $type field in json </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.DeleteAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary> Delete a user event type by its id</summary>
+        </member>
     </members>
 </doc>

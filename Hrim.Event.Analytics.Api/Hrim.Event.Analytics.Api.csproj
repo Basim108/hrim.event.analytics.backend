@@ -8,22 +8,26 @@
     </PropertyGroup>
 
     <PropertyGroup>
-      <DocumentationFile>Hrim.Event.Analytics.Api.xml</DocumentationFile>
+        <DocumentationFile>Hrim.Event.Analytics.Api.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
-      <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
+        <PackageReference Include="Hrimsoft.Core" Version="0.0.8" />
+        <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Hrim.Event.Analytics.Models\Hrim.Event.Analytics.Models.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.FakeHandlers\Hrim.Event.Analytics.FakeHandlers.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.Models\Hrim.Event.Analytics.Models.csproj" />
     </ItemGroup>
 </Project>
