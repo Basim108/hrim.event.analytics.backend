@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "6efd382c-350a-4dee-9acd-214acfc1bdc8",
+		"name": "RESTFul Enttites",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7269972"
+	},
+	"item": [
+		{
+			"name": "EventTypes",
+			"item": [
+				{
+					"name": "All event types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{crud}}/v1/event-type",
+							"protocol": "https",
+							"host": [
+								"{{crud}}"
+							],
+							"path": [
+								"v1",
+								"event-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a user event type",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{crud}}/v1/event-type/be780a35-2d4e-48c5-b49e-aa60d47ba0b2",
+							"protocol": "https",
+							"host": [
+								"{{crud}}"
+							],
+							"path": [
+								"v1",
+								"event-type",
+								"be780a35-2d4e-48c5-b49e-aa60d47ba0b2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Occurence Event Type",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Models.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Models\",\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"description\": \"\",\n    \"color\": \"#ff00ff\",\n    \"tags\": [\n        \"health\",\n        \"yoga\",\n        \"positive\"\n    ],\n    \"is_public\": true,\n    \"concurrent_token\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{crud}}/v1/event-type",
+							"protocol": "https",
+							"host": [
+								"{{crud}}"
+							],
+							"path": [
+								"v1",
+								"event-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Occurence Event Type",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Models.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Models\",\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"description\": \"\",\n    \"color\": \"#ff00ff\",\n    \"tags\": [\n        \"health\",\n        \"yoga\",\n        \"positive\"\n    ],\n    \"is_public\": true,\n    \"id\": \"7008118d-8823-4a92-9518-1d99bfb06d34\",\n    \"created_at\": \"2022-07-28T17:51:10.4797983Z\",\n    \"concurrent_token\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{crud}}/v1/event-type",
+							"protocol": "https",
+							"host": [
+								"{{crud}}"
+							],
+							"path": [
+								"v1",
+								"event-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Occurence Event Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{crud}}/v1/event-type/be780a35-2d4e-48c5-b49e-aa60d47ba0b2",
+							"protocol": "https",
+							"host": [
+								"{{crud}}"
+							],
+							"path": [
+								"v1",
+								"event-type",
+								"be780a35-2d4e-48c5-b49e-aa60d47ba0b2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
