@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>93711994-8f9b-4dc9-b4b5-bce7ba5f0c28</UserSecretsId>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -12,22 +13,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
         <PackageReference Include="Hrimsoft.Core" Version="0.0.8" />
         <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj" />
-        <ProjectReference Include="..\Hrim.Event.Analytics.FakeHandlers\Hrim.Event.Analytics.FakeHandlers.csproj" />
-        <ProjectReference Include="..\Hrim.Event.Analytics.Models\Hrim.Event.Analytics.Models.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.EfCore\Hrim.Event.Analytics.EfCore.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.Infrastructure\Hrim.Event.Analytics.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations" />
     </ItemGroup>
 </Project>

@@ -5,11 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <DocumentationFile>Hrim.Event.Analytics.Abstractions.xml</DocumentationFile>
+    </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Hrim.Event.Analytics.Models\Hrim.Event.Analytics.Models.csproj" />
+        <PackageReference Include="MediatR" Version="10.0.1" />
     </ItemGroup>
-
+    
     <ItemGroup>
       <EmbeddedResource Update="CoreLogs.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -26,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="10.0.1" />
+      <None Remove="appsettings.json" />
     </ItemGroup>
 
 </Project>

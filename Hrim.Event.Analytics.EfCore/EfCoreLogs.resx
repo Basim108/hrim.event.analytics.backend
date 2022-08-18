@@ -18,25 +18,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="CorrelationId" xml:space="preserve">
-        <value>CorrelationId={CorrelationId}</value>
+    <data name="EntityNotFoundById" xml:space="preserve">
+        <value>Entity was not found by id EntityId={EntityId}, EntityType={EntityType}</value>
     </data>
-    <data name="UserId" xml:space="preserve">
-        <value>UserId={UserId}</value>
+    <data name="CannotUpdateEntityIsDeleted" xml:space="preserve">
+        <value>Cannot update entity as it is deleted: EntityId={EntityId}, EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.</value>
     </data>
-    <data name="CqrsCommand" xml:space="preserve">
-        <value>CqrsCommand={CqrsCommand}</value>
+    <data name="CannotCreateIsAlreadyExisted" xml:space="preserve">
+        <value>Cannot create entity as it is already existed: EntityType={EntityType}, Entity=</value>
     </data>
-    <data name="StartHandling" xml:space="preserve">
-        <value>Start handling</value>
-    </data>
-    <data name="FinishHandling" xml:space="preserve">
-        <value>Finish handling</value>
-    </data>
-    <data name="UnsupportedEntity" xml:space="preserve">
-        <value>Unsupported entity of type: </value>
-    </data>
-    <data name="UnexpectedCqrsResult" xml:space="preserve">
-        <value>Unexpected CQRS result: CqrsResult={CqrsResult}</value>
+    <data name="CannotCreateIsDeleted" xml:space="preserve">
+        <value>Cannot create entity as it is existed and IsDeleted: EntityType={EntityType}</value>
     </data>
 </root>

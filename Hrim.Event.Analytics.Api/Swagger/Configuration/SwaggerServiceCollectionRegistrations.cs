@@ -1,6 +1,5 @@
 using System.Reflection;
-using Hrim.Event.Analytics.Models;
-using Hrim.Event.Analytics.Models.Entities;
+using Hrim.Event.Analytics.Abstractions.Entities;
 using Swashbuckle.AspNetCore.Filters;
 
 #pragma warning disable CS1591
@@ -14,7 +13,7 @@ public static class SwaggerServiceCollectionRegistrations {
             c.SwaggerDoc("v1", SwaggerConfig.MakeEventAnalytics());
             c.ExampleFilters();
             c.IncludeXmlComments(GetXmlCommentsPath());
-            c.IncludeXmlComments(GetModelXmlCommentsPath());
+            c.IncludeXmlComments(GetAbstractionsXmlCommentsPath());
             c.OperationFilter<AddResponseHeadersFilter>();
             c.UseAllOfForInheritance();
             c.UseOneOfForPolymorphism();
@@ -28,7 +27,7 @@ public static class SwaggerServiceCollectionRegistrations {
         return xmlPath;
     }
 
-    private static string GetModelXmlCommentsPath() {
+    private static string GetAbstractionsXmlCommentsPath() {
         var xmlFile = $"{Assembly.GetAssembly(typeof(Entity))?.GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         return xmlPath;

@@ -7,28 +7,28 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Hrim.Event.Analytics.Abstractions {
+namespace Hrim.Event.Analytics.EfCore {
     using System;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class CoreLogs {
+    public class EfCoreLogs {
         
         private static System.Resources.ResourceManager resourceMan;
         
         private static System.Globalization.CultureInfo resourceCulture;
         
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal CoreLogs() {
+        internal EfCoreLogs() {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("Hrim.Event.Analytics.Abstractions.CoreLogs", typeof(CoreLogs).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("Hrim.Event.Analytics.EfCore.EfCoreLogs", typeof(EfCoreLogs).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -45,45 +45,27 @@ namespace Hrim.Event.Analytics.Abstractions {
             }
         }
         
-        public static string CorrelationId {
+        public static string EntityNotFoundById {
             get {
-                return ResourceManager.GetString("CorrelationId", resourceCulture);
+                return ResourceManager.GetString("EntityNotFoundById", resourceCulture);
             }
         }
         
-        public static string UserId {
+        public static string CannotUpdateEntityIsDeleted {
             get {
-                return ResourceManager.GetString("UserId", resourceCulture);
+                return ResourceManager.GetString("CannotUpdateEntityIsDeleted", resourceCulture);
             }
         }
         
-        public static string CqrsCommand {
+        public static string CannotCreateIsAlreadyExisted {
             get {
-                return ResourceManager.GetString("CqrsCommand", resourceCulture);
+                return ResourceManager.GetString("CannotCreateIsAlreadyExisted", resourceCulture);
             }
         }
         
-        public static string StartHandling {
+        public static string CannotCreateIsDeleted {
             get {
-                return ResourceManager.GetString("StartHandling", resourceCulture);
-            }
-        }
-        
-        public static string FinishHandling {
-            get {
-                return ResourceManager.GetString("FinishHandling", resourceCulture);
-            }
-        }
-        
-        public static string UnsupportedEntity {
-            get {
-                return ResourceManager.GetString("UnsupportedEntity", resourceCulture);
-            }
-        }
-        
-        public static string UnexpectedCqrsResult {
-            get {
-                return ResourceManager.GetString("UnexpectedCqrsResult", resourceCulture);
+                return ResourceManager.GetString("CannotCreateIsDeleted", resourceCulture);
             }
         }
     }
