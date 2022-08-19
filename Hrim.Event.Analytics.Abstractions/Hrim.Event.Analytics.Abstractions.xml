@@ -144,6 +144,38 @@
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewOccurrenceEventTypes.#ctor(System.Guid,System.Boolean,System.Boolean,System.Nullable{System.Guid})">
             <summary> Returns occurrence event types </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand">
+            <summary> Updates an instance of the system event type </summary>
+            <param name="EventType">an instance with modified data that has to be stored</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns>
+            Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
+            Otherwise returns an updated instance with a new ConcurrentToken value (200).
+            </returns>
+            <remarks>In case you need to set IsDeleted flag to false, use <see cref="!:RestoreEntityByIdCommand"/> CQRS command</remarks>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType"/>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType"/>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Boolean,System.Guid)">
+            <summary> Updates an instance of the system event type </summary>
+            <param name="EventType">an instance with modified data that has to be stored</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns>
+            Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
+            Otherwise returns an updated instance with a new ConcurrentToken value (200).
+            </returns>
+            <remarks>In case you need to set IsDeleted flag to false, use <see cref="!:RestoreEntityByIdCommand"/> CQRS command</remarks>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType"/>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType"/>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.EventType">
+            <summary>an instance with modified data that has to be stored</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.SaveChanges">
+            <summary>If true, then changes will be flushed to the storages</summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1">
             <summary> Soft deletion an instance of any entity type </summary>
             <param name="Id">Occurrence event type id</param>

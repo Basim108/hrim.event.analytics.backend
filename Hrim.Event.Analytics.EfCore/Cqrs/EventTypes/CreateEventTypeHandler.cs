@@ -11,7 +11,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Hrim.Event.Analytics.EfCore.Cqrs;
+namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 public class CreateEventTypeHandler: IRequestHandler<CreateEventTypeCommand, CqrsResult<SystemEventType?>> {
     private readonly ILogger<CreateEventTypeHandler> _logger;
@@ -44,10 +44,10 @@ public class CreateEventTypeHandler: IRequestHandler<CreateEventTypeCommand, Cqr
         };
         if (existed != null) {
             if (existed.IsDeleted == true) {
-                _logger.LogDebug(EfCoreLogs.CannotCreateIsDeleted, existed.GetType().Name);
+                _logger.LogInformation(EfCoreLogs.CannotCreateIsDeleted, existed.GetType().Name);
                 return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.EntityIsDeleted);
             }
-            _logger.LogDebug(EfCoreLogs.CannotCreateIsAlreadyExisted + existed, existed.GetType().Name);
+            _logger.LogInformation(EfCoreLogs.CannotCreateIsAlreadyExisted + existed, existed.GetType().Name);
             return new CqrsResult<SystemEventType?>(null, CqrsResultCode.Conflict);
         }
         request.EventType.CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds();

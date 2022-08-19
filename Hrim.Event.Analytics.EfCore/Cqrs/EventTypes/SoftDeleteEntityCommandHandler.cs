@@ -5,14 +5,18 @@ using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace Hrim.Event.Analytics.EfCore.Cqrs;
+namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDeleteEntityCommand<TEntity>, CqrsResult<TEntity?>>
     where TEntity : Entity, new() {
-    private readonly EventAnalyticDbContext _context;
+    private readonly ILogger<SoftDeleteEntityCommandHandler<TEntity>> _logger;
+    private readonly EventAnalyticDbContext                           _context;
 
-    public SoftDeleteEntityCommandHandler(EventAnalyticDbContext context) {
+    public SoftDeleteEntityCommandHandler(ILogger<SoftDeleteEntityCommandHandler<TEntity>> logger,
+                                          EventAnalyticDbContext                           context) {
+        _logger  = logger;
         _context = context;
     }
 
@@ -30,9 +34,11 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
             _                   => null
         };
         if (existed == null) {
+            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, request.Id, nameof(OccurrenceEventType));
             return new CqrsResult<TEntity?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
+            _logger.LogDebug(EfCoreLogs.CannotUpdateEntityIsDeleted, request.Id, existed.ConcurrentToken, existed.GetType().Name);
             return new CqrsResult<TEntity?>(existed as TEntity, CqrsResultCode.EntityIsDeleted);
         }
         existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();

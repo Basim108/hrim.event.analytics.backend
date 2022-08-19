@@ -1,11 +1,10 @@
 ﻿using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hrim.Event.Analytics.EfCore.Cqrs;
+namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 public class GetViewDurationEventTypesHandler: IRequestHandler<GetViewDurationEventTypes, IList<ViewSystemEventType>> {
     private readonly EventAnalyticDbContext _context;

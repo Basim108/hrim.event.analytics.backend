@@ -2,7 +2,7 @@
 using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 using MediatR;
 
-namespace Hrim.Event.Analytics.EfCore.Cqrs;
+namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 public class GetViewEventTypesHandler: IRequestHandler<GetAllViewEventTypes, IList<ViewSystemEventType>> {
     private readonly IMediator _mediator;

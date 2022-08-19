@@ -3,6 +3,7 @@ using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.AutoMapper;
 using Hrim.Event.Analytics.EfCore.Cqrs;
+using Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 using Hrimsoft.Data.PostgreSql;
 using MediatR;
 using Microsoft.Extensions.Configuration;
