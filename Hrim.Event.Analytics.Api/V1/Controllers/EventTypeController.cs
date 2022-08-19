@@ -72,7 +72,7 @@ public class EventTypeController: ControllerBase {
     
     /// <summary> Update a user event type based on ony specific system event type, depends on $type field in json </summary>
     [HttpPut]
-    public async Task<ActionResult<SystemEventType>> UpdateAsync(OccurrenceEventType eventType, CancellationToken cancellation) {
+    public async Task<ActionResult<SystemEventType>> UpdateAsync(SystemEventType eventType, CancellationToken cancellation) {
         var cqrsResult = await _mediator.Send(new UpdateEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellation);
         switch (cqrsResult.StatusCode) {

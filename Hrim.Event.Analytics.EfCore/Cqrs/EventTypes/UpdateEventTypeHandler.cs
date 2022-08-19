@@ -44,11 +44,17 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
         }
         if (existed.IsDeleted == true) {
             _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, request.EventType.Id, existed.ConcurrentToken, existed.GetType().Name);
-            return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.EntityIsDeleted);
+            SystemEventType business = existed is DbDurationEventType
+                                           ? _mapper.Map<DurationEventType>(existed)
+                                           : _mapper.Map<OccurrenceEventType>(existed);
+            return new CqrsResult<SystemEventType?>(business, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventType.ConcurrentToken) {
             _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, request.EventType.Id, existed.ConcurrentToken, existed.GetType().Name);
-            return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.Conflict);
+            SystemEventType business = existed is DbDurationEventType
+                                           ? _mapper.Map<DurationEventType>(existed)
+                                           : _mapper.Map<OccurrenceEventType>(existed);
+            return new CqrsResult<SystemEventType?>(business, CqrsResultCode.Conflict);
         }
         existed.ConcurrentToken++;
         existed.Color    = request.EventType.Color;

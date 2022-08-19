@@ -47,7 +47,7 @@
             Create a user event type based on ony specific system event type, depends on $type field in json
             </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Threading.CancellationToken)">
             <summary> Update a user event type based on ony specific system event type, depends on $type field in json </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.DeleteOccurrenceAsync(System.Guid,System.Threading.CancellationToken)">

@@ -45,7 +45,10 @@ public class CreateEventTypeHandler: IRequestHandler<CreateEventTypeCommand, Cqr
         if (existed != null) {
             if (existed.IsDeleted == true) {
                 _logger.LogInformation(EfCoreLogs.CannotCreateIsDeleted, existed.GetType().Name);
-                return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.EntityIsDeleted);
+                SystemEventType business = existed is DbDurationEventType
+                                               ? _mapper.Map<DurationEventType>(existed)
+                                               : _mapper.Map<OccurrenceEventType>(existed);
+                return new CqrsResult<SystemEventType?>(business, CqrsResultCode.EntityIsDeleted);
             }
             _logger.LogInformation(EfCoreLogs.CannotCreateIsAlreadyExisted + existed, existed.GetType().Name);
             return new CqrsResult<SystemEventType?>(null, CqrsResultCode.Conflict);

@@ -1,7 +1,9 @@
+using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +14,14 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDeleteEntityCommand<TEntity>, CqrsResult<TEntity?>>
     where TEntity : Entity, new() {
     private readonly ILogger<SoftDeleteEntityCommandHandler<TEntity>> _logger;
+    private readonly IMapper                                          _mapper;
     private readonly EventAnalyticDbContext                           _context;
 
     public SoftDeleteEntityCommandHandler(ILogger<SoftDeleteEntityCommandHandler<TEntity>> logger,
+                                          IMapper                                          mapper,
                                           EventAnalyticDbContext                           context) {
         _logger  = logger;
+        _mapper  = mapper;
         _context = context;
     }
 
@@ -39,7 +44,12 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
         }
         if (existed.IsDeleted == true) {
             _logger.LogDebug(EfCoreLogs.CannotUpdateEntityIsDeleted, request.Id, existed.ConcurrentToken, existed.GetType().Name);
-            return new CqrsResult<TEntity?>(existed as TEntity, CqrsResultCode.EntityIsDeleted);
+            var business = existed switch {
+                DbDurationEventType   => _mapper.Map<TEntity>(existed),
+                DbOccurrenceEventType => _mapper.Map<TEntity>(existed),
+                _                     => existed
+            };
+            return new CqrsResult<TEntity?>(business as TEntity, CqrsResultCode.EntityIsDeleted);
         }
         existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
         existed.IsDeleted = true;

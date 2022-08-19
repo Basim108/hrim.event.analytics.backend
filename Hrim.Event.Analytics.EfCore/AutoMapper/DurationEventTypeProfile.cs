@@ -11,6 +11,7 @@ public class DurationEventTypeProfile: Profile {
            .ForMember(business => business.StartedAt,  x => x.MapFrom<StartedOnValueResolver>())
            .ForMember(business => business.FinishedAt, x => x.MapFrom<FinishedOnValueResolver>())
            .ReverseMap()
+           .ForMember(db => db.StartedOn,  x => x.MapFrom<StartedOnValueResolver>())
            .ForMember(db => db.FinishedOn, x => x.MapFrom<FinishedOnValueResolver>());
     }
 }

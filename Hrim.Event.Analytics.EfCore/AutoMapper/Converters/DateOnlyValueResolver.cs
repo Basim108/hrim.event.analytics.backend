@@ -4,12 +4,18 @@ using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 
 namespace Hrim.Event.Analytics.EfCore.AutoMapper.Converters;
 
-public class StartedOnValueResolver: IValueResolver<DbDurationEventType, DurationEventType, DateTimeOffset> {
+public class StartedOnValueResolver: IValueResolver<DbDurationEventType, DurationEventType, DateTimeOffset>,
+                                     IValueResolver<DurationEventType, DbDurationEventType, DateOnly> {
     public DateTimeOffset Resolve(DbDurationEventType source, DurationEventType destination, DateTimeOffset destMember, ResolutionContext context)
         => new DateTimeOffset(source.StartedOn.Year, source.StartedOn.Month, source.StartedOn.Day,
                               source.StartedAt.Hour, source.StartedAt.Minute, source.StartedAt.Second,
                               source.StartedAt.Millisecond,
                               source.StartedAt.Offset);
+
+    public DateOnly Resolve(DurationEventType source, DbDurationEventType destination, DateOnly destMember, ResolutionContext context)
+        => new DateOnly(source.StartedAt.Year,
+                        source.StartedAt.Month,
+                        source.StartedAt.Day);
 }
 
 public class FinishedOnValueResolver: IValueResolver<DbDurationEventType, DurationEventType, DateTimeOffset?>,
