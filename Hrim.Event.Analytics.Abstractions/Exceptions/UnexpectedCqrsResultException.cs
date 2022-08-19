@@ -10,7 +10,7 @@ public class UnexpectedCqrsResultException<TResult>: Exception {
 
     public UnexpectedCqrsResultException(CqrsResult<TResult> cqrsResult)
         : base(CoreLogs.UnexpectedCqrsResult) {
-        CqrsResult = cqrsResult ?? throw new ArgumentNullException(nameof(cqrsResult));
+        CqrsResult = cqrsResult;
     }
 
     protected UnexpectedCqrsResultException(SerializationInfo info, StreamingContext context)
