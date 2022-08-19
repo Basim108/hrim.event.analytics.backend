@@ -22,6 +22,7 @@ public static class ApiServiceCollectionRegistrations {
             ValidatorOptions.Global.PropertyNameResolver = (_, member, _)
                 => member?.Name.ToSnakeCase();
         });
+        services.AddLogging();
         services.AddApiSwagger();
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
         

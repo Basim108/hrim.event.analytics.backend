@@ -28,7 +28,7 @@ public abstract class SystemEventType: Entity {
     /// <summary>
     /// A user who created an instance of this event type
     /// </summary>
-    public HrimUser CreatedBy { get; set; } = null!;
+    public HrimUser? CreatedBy { get; set; }
 
     /// <summary>
     /// An owner who created this event_type could share it with other end-users

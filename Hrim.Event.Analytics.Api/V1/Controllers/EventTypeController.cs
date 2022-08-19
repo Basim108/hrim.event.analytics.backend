@@ -28,8 +28,8 @@ public class EventTypeController: ControllerBase {
 
     /// <summary> Get all user event types </summary>
     [HttpGet]
-    public Task<IEnumerable<ViewSystemEventType>> GetAllAsync(CancellationToken cancellation)
-        => _mediator.Send(new GetAllPublicViewEventTypes(_requestAccessor.GetCorrelationId()),
+    public Task<IList<ViewSystemEventType>> GetAllAsync(CancellationToken cancellation)
+        => _mediator.Send(new GetAllViewEventTypes(_requestAccessor.GetCorrelationId()),
                           cancellation);
 
     /// <summary> Get a duration event type by id</summary>
@@ -52,6 +52,24 @@ public class EventTypeController: ControllerBase {
         return Ok(result);
     }
     
+    /// <summary>
+    /// Create a user event type based on ony specific system event type, depends on $type field in json
+    /// </summary>
+    [HttpPost]
+    public async Task<ActionResult<SystemEventType>> CreateAsync(SystemEventType eventType, CancellationToken cancellation) {
+        var cqrsResult = await _mediator.Send(new CreateEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+                                              cancellation);
+        switch (cqrsResult.StatusCode) {
+            case CqrsResultCode.EntityIsDeleted:
+            case CqrsResultCode.Conflict:
+                return Conflict(cqrsResult.Result);
+            case CqrsResultCode.Ok:
+            case CqrsResultCode.Created:
+                return Ok(cqrsResult.Result);
+        }
+        throw new UnexpectedCqrsResultException<SystemEventType?>(cqrsResult);
+    }
+
     /// <summary> Delete an occurrence event type by its id</summary>
     [HttpDelete("occurrence/{id}")]
     public async Task<ActionResult<OccurrenceEventType>> DeleteOccurrenceAsync(Guid id, CancellationToken cancellation) {

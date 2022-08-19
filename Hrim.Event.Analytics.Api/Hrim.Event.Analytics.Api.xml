@@ -42,5 +42,16 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetOccurrenceByIdAsync(System.Guid,System.Threading.CancellationToken)">
             <summary> Get an occurrence event type by id</summary>
         </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Threading.CancellationToken)">
+            <summary>
+            Create a user event type based on ony specific system event type, depends on $type field in json
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.DeleteOccurrenceAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary> Delete an occurrence event type by its id</summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.DeleteDurationAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary> Delete an duration event type by its id</summary>
+        </member>
     </members>
 </doc>

@@ -13,7 +13,7 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 public record ViewOccurrenceEventType(Guid           Id,
                                       DateTimeOffset OccurredAt,
                                       string         Name,
-                                      string?         Description,
+                                      string?        Description,
                                       string         Color,
                                       bool           IsPublic)
     : ViewSystemEventType(Id, Name, Description, Color, IsPublic);

@@ -1,6 +1,6 @@
 ﻿using Hrim.Event.Analytics.Abstractions.Entities;
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.DbConfigurations;
+using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 using Microsoft.EntityFrameworkCore;
 
 #pragma warning disable CS8618
@@ -11,10 +11,10 @@ public class EventAnalyticDbContext: DbContext {
     public EventAnalyticDbContext(DbContextOptions<EventAnalyticDbContext> options)
         : base(options) { }
 
-    public DbSet<DurationEventType>   DurationEventTypes   { get; set; }
-    public DbSet<OccurrenceEventType> OccurrenceEventTypes { get; set; }
-    public DbSet<HrimTag>             HrimTags             { get; set; }
-    public DbSet<HrimUser>            HrimUsers            { get; set; }
+    public DbSet<DbDurationEventType>   DurationEventTypes   { get; set; }
+    public DbSet<DbOccurrenceEventType> OccurrenceEventTypes { get; set; }
+    public DbSet<HrimTag>               HrimTags             { get; set; }
+    public DbSet<HrimUser>              HrimUsers            { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.HasDefaultSchema("hrim_analytics");

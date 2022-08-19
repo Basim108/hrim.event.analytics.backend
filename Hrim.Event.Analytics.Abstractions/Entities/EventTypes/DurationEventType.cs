@@ -12,5 +12,5 @@ public class DurationEventType: SystemEventType {
     /// <summary>
     /// Date and time with end-user timezone when an event finishes
     /// </summary>
-    public DateTimeOffset FinishedAt { get; set; }
+    public DateTimeOffset? FinishedAt { get; set; }
 }

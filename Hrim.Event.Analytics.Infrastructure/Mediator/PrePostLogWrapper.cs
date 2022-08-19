@@ -6,9 +6,9 @@ namespace Hrim.Event.Analytics.Infrastructure.Mediator;
 
 public class PrePostLogWrapper<TRequest, TResponse>: IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull, IRequest<TResponse> {
-    private readonly ILogger _logger;
+    private readonly ILogger<PrePostLogWrapper<TRequest, TResponse>> _logger;
 
-    public PrePostLogWrapper(ILogger logger) {
+    public PrePostLogWrapper(ILogger<PrePostLogWrapper<TRequest, TResponse>> logger) {
         _logger = logger;
     }
 

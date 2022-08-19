@@ -11,11 +11,11 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 /// <param name="Color">A color that events will be drawing with in a calendar.</param>
 /// <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
 /// <param name="Id">Entity id</param>
-public record ViewDurationEventType(Guid           Id,
-                                    DateTimeOffset StartedAt,
-                                    DateTimeOffset FinishedAt,
-                                    string         Name,
+public record ViewDurationEventType(Guid            Id,
+                                    DateTimeOffset  StartedAt,
+                                    DateTimeOffset? FinishedAt,
+                                    string          Name,
                                     string?         Description,
-                                    string         Color,
-                                    bool           IsPublic)
+                                    string          Color,
+                                    bool            IsPublic)
     : ViewSystemEventType(Id, Name, Description, Color, IsPublic);

@@ -17,5 +17,5 @@ public abstract class Entity {
     /// <summary>
     /// Update is possible only when this token equals to the token in the storage
     /// </summary>
-    public uint ConcurrentToken { get; set; }
+    public long ConcurrentToken { get; set; }
 }

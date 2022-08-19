@@ -9,5 +9,5 @@ public class HrimTag: Entity {
     public Guid CreatedById { get; set; }
 
     /// <summary> A user who created a tag </summary>
-    public HrimUser CreatedBy { get; set; } = null!;
+    public HrimUser? CreatedBy { get; set; }
 }

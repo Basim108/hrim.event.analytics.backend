@@ -44,11 +44,35 @@
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.CqrsVoidResult.#ctor(Hrim.Event.Analytics.Abstractions.Enums.CqrsResultCode,System.String)">
             <summary> In order to avoid throwing an necessary exception, CQRS commands and queries could use this record to provide more information about execution result </summary>
         </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetAllPublicViewEventTypes">
-            <summary> Returns a union of all public and not deleted event types </summary>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand">
+            <summary> Creates an instance of a system event type </summary>
+            <param name="EventType">an instance that has to be created</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns>
+            Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
+            Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
+            </returns>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType"/>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType"/>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetAllPublicViewEventTypes.#ctor(System.Guid)">
-            <summary> Returns a union of all public and not deleted event types </summary>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Boolean,System.Guid)">
+            <summary> Creates an instance of a system event type </summary>
+            <param name="EventType">an instance that has to be created</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns>
+            Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
+            Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
+            </returns>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType"/>
+            <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType"/>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand.EventType">
+            <summary>an instance that has to be created</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand.SaveChanges">
+            <summary>If true, then changes will be flushed to the storages</summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetDurationEventTypeById">
             <summary>
@@ -101,6 +125,44 @@
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetOccurrenceEventTypeById.IsNotTrackable">
             <summary>If true then does not track changes of the entity properties</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetAllViewEventTypes">
+            <summary> Returns a union of event types </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetAllViewEventTypes.#ctor(System.Guid,System.Boolean,System.Boolean,System.Nullable{System.Guid})">
+            <summary> Returns a union of event types </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewDurationEventTypes">
+            <summary> Returns duration event types </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewDurationEventTypes.#ctor(System.Guid,System.Boolean,System.Boolean,System.Nullable{System.Guid})">
+            <summary> Returns duration event types </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewOccurrenceEventTypes">
+            <summary> Returns occurrence event types </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewOccurrenceEventTypes.#ctor(System.Guid,System.Boolean,System.Boolean,System.Nullable{System.Guid})">
+            <summary> Returns occurrence event types </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1">
+            <summary> Soft deletion an instance of any entity type </summary>
+            <param name="Id">Occurrence event type id</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
+            <summary> Soft deletion an instance of any entity type </summary>
+            <param name="Id">Occurrence event type id</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1.Id">
+            <summary>Occurrence event type id</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1.SaveChanges">
+            <summary>If true, then changes will be flushed to the storages</summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Entity">
             <summary> Each entity own these properties </summary>
@@ -208,6 +270,16 @@
             Enumeration of all types of entties 
             </summary>
         </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Extensions.DateOnlyExtensions.CombineWithTime(System.DateOnly,System.DateTimeOffset)">
+            <summary>
+            Combines date from DateOnly and time with timezone from DateTimeOffset
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Extensions.DateOnlyExtensions.CombineWithTime(System.Nullable{System.DateOnly},System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Combines date from DateOnly and time with timezone from DateTimeOffset
+            </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType">
             <summary>
             When it is important to register an event that has start time and end time this system_event_type can be used.
@@ -221,7 +293,7 @@
             <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
             <param name="Id">Entity id</param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.#ctor(System.Guid,System.DateTimeOffset,System.DateTimeOffset,System.String,System.String,System.String,System.Boolean)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.#ctor(System.Guid,System.DateTimeOffset,System.Nullable{System.DateTimeOffset},System.String,System.String,System.String,System.Boolean)">
             <summary>
             When it is important to register an event that has start time and end time this system_event_type can be used.
             <br/>This kind of events may occur several times a day.

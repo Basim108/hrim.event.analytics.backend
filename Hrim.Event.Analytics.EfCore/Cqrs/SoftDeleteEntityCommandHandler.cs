@@ -35,7 +35,7 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
         if (existed.IsDeleted == true) {
             return new CqrsResult<TEntity?>(existed as TEntity, CqrsResultCode.EntityIsDeleted);
         }
-        existed.UpdatedAt = DateTime.UtcNow.TruncateToMilliseconds();
+        existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
         existed.IsDeleted = true;
         if (request.SaveChanges)
             await _context.SaveChangesAsync(cancellation);

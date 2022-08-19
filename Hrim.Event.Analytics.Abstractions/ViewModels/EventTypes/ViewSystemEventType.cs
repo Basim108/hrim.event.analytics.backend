@@ -9,8 +9,8 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 /// <param name="Color">A color that events will be drawing with in a calendar.</param>
 /// <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
 /// <param name="Id">Entity id</param>
-public abstract record ViewSystemEventType(Guid   Id,
-                                           string Name,
+public abstract record ViewSystemEventType(Guid    Id,
+                                           string  Name,
                                            string? Description,
-                                           string Color,
-                                           bool   IsPublic);
+                                           string  Color,
+                                           bool    IsPublic);
