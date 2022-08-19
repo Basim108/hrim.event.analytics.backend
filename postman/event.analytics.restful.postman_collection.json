@@ -10,7 +10,255 @@
 			"name": "EventTypes",
 			"item": [
 				{
-					"name": "All event types",
+					"name": "Occurence",
+					"item": [
+						{
+							"name": "Get Occurence By Id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type/occurrence/f9ceb463-562f-4257-9ec7-8b1b1e453b39",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type",
+										"occurrence",
+										"f9ceb463-562f-4257-9ec7-8b1b1e453b39"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Occurence",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Abstractions\",\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"color\": \"#ff00ff\",\n    \"is_public\": true,\n    \"created_by_id\": \"2eeb4cc8-4053-4c98-b317-27e10065991e\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Occurence",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Abstractions\",\n    \"occurred_at\": \"2022-07-27T19:51:10.479+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"color\": \"#ff0011\",\n    \"created_by_id\": \"2eeb4cc8-4053-4c98-b317-27e10065991e\",\n    \"is_public\": true,\n    \"id\": \"f9ceb463-562f-4257-9ec7-8b1b1e453b39\",\n    \"created_at\": \"2022-08-19T14:52:03.506271Z\",\n    \"concurrent_token\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Soft Delete Occurence",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type/occurrence/63ad5807-d821-4b38-b122-b64df7170e49",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type",
+										"occurrence",
+										"63ad5807-d821-4b38-b122-b64df7170e49"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Duration",
+					"item": [
+						{
+							"name": "Get Duration By Id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type/duration/c814af86-7b25-4587-9ee2-3f0eb3eb020b",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type",
+										"duration",
+										"c814af86-7b25-4587-9ee2-3f0eb3eb020b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Duration",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType, Hrim.Event.Analytics.Abstractions\",\n    \"started_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Headache\",\n    \"color\": \"#ff0000\",\n    \"is_public\": true,\n    \"created_by_id\": \"2eeb4cc8-4053-4c98-b317-27e10065991e\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Duration",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType, Hrim.Event.Analytics.Abstractions\",\n    \"started_at\": \"2022-07-28T21:51:10.479+04:00\",\n    \"finished_at\": \"2022-07-28T23:00:00.000+04:00\",\n    \"name\": \"Headache (updated)\",\n    \"color\": \"#ff0000\",\n    \"created_by_id\": \"2eeb4cc8-4053-4c98-b317-27e10065991e\",\n    \"is_public\": true,\n    \"id\": \"c814af86-7b25-4587-9ee2-3f0eb3eb020b\",\n    \"created_at\": \"2022-08-19T15:53:36.010256Z\",\n    \"concurrent_token\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Soft Delete Duration",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{crud}}/v1/event-type/duration/c814af86-7b25-4587-9ee2-3f0eb3eb020b",
+									"protocol": "https",
+									"host": [
+										"{{crud}}"
+									],
+									"path": [
+										"v1",
+										"event-type",
+										"duration",
+										"c814af86-7b25-4587-9ee2-3f0eb3eb020b"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get All Event Types",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -23,123 +271,6 @@
 							"path": [
 								"v1",
 								"event-type"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get a user event type",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{crud}}/v1/event-type/be780a35-2d4e-48c5-b49e-aa60d47ba0b2",
-							"protocol": "https",
-							"host": [
-								"{{crud}}"
-							],
-							"path": [
-								"v1",
-								"event-type",
-								"be780a35-2d4e-48c5-b49e-aa60d47ba0b2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Occurence Event Type",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Models.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Models\",\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"description\": \"\",\n    \"color\": \"#ff00ff\",\n    \"tags\": [\n        \"health\",\n        \"yoga\",\n        \"positive\"\n    ],\n    \"is_public\": true,\n    \"concurrent_token\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{crud}}/v1/event-type",
-							"protocol": "https",
-							"host": [
-								"{{crud}}"
-							],
-							"path": [
-								"v1",
-								"event-type"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Occurence Event Type",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Models.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Models\",\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"description\": \"\",\n    \"color\": \"#ff00ff\",\n    \"tags\": [\n        \"health\",\n        \"yoga\",\n        \"positive\"\n    ],\n    \"is_public\": true,\n    \"id\": \"7008118d-8823-4a92-9518-1d99bfb06d34\",\n    \"created_at\": \"2022-07-28T17:51:10.4797983Z\",\n    \"concurrent_token\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{crud}}/v1/event-type",
-							"protocol": "https",
-							"host": [
-								"{{crud}}"
-							],
-							"path": [
-								"v1",
-								"event-type"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Occurence Event Type",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://{{crud}}/v1/event-type/be780a35-2d4e-48c5-b49e-aa60d47ba0b2",
-							"protocol": "https",
-							"host": [
-								"{{crud}}"
-							],
-							"path": [
-								"v1",
-								"event-type",
-								"be780a35-2d4e-48c5-b49e-aa60d47ba0b2"
 							]
 						}
 					},
