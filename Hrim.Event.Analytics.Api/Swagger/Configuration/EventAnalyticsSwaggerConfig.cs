@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Hrim.Event.Analytics.Api.Swagger.Configuration; 
 
-public class SwaggerConfig
+public static class SwaggerConfig
 {
     public static OpenApiInfo MakeEventAnalytics()
     {
@@ -19,11 +19,6 @@ public class SwaggerConfig
                 Email = "support@hrimsoft.com",
                 Url   = new Uri("https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/98426/Concept")
             }
-            // License = new OpenApiLicense
-            // {
-            //     Name = "Use under LICX",
-            //     Url  = new Uri("https://example.com/license"),
-            // }
         };
     }
 }

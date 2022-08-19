@@ -25,17 +25,21 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
         _context = context;
     }
 
-    public async Task<CqrsResult<TEntity?>> Handle(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellation) {
+    public Task<CqrsResult<TEntity?>> Handle(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
         if (request.Id == default)
             throw new ArgumentNullException(nameof(request.Id));
 
+        return HandleAsync(request, cancellationToken);
+    }
+    
+    private async Task<CqrsResult<TEntity?>> HandleAsync(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
         Entity? existed = new TEntity() switch {
-            DurationEventType   => await _context.DurationEventTypes.FirstOrDefaultAsync(x => x.Id   == request.Id, cancellation),
-            OccurrenceEventType => await _context.OccurrenceEventTypes.FirstOrDefaultAsync(x => x.Id == request.Id, cancellation),
-            HrimTag             => await _context.HrimTags.FirstOrDefaultAsync(x => x.Id             == request.Id, cancellation),
-            HrimUser            => await _context.HrimUsers.FirstOrDefaultAsync(x => x.Id            == request.Id, cancellation),
+            DurationEventType   => await _context.DurationEventTypes.FirstOrDefaultAsync(x => x.Id   == request.Id, cancellationToken),
+            OccurrenceEventType => await _context.OccurrenceEventTypes.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken),
+            HrimTag             => await _context.HrimTags.FirstOrDefaultAsync(x => x.Id             == request.Id, cancellationToken),
+            HrimUser            => await _context.HrimUsers.FirstOrDefaultAsync(x => x.Id            == request.Id, cancellationToken),
             _                   => null
         };
         if (existed == null) {
@@ -54,7 +58,7 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
         existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
         existed.IsDeleted = true;
         if (request.SaveChanges)
-            await _context.SaveChangesAsync(cancellation);
+            await _context.SaveChangesAsync(cancellationToken);
         return new CqrsResult<TEntity?>(existed as TEntity, CqrsResultCode.Ok);
     }
 }

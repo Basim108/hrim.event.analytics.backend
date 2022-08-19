@@ -29,7 +29,7 @@ public class CorrelationMiddleware
         var correlationHeader = context.Request.Headers[CORRELATION_ID_HEADER];
         var correlationId     = GetCorrelationId(correlationHeader);
 
-        using var correlationScope = _logger.BeginScope(CoreLogs.CorrelationId, correlationId);
+        using var correlationScope = _logger.BeginScope("CorrelationId={CorrelationId}", correlationId);
         if(context.Response.Headers.ContainsKey(CORRELATION_ID_HEADER))
             context.Response.Headers[CORRELATION_ID_HEADER] = correlationId.ToString();
         else
@@ -37,7 +37,7 @@ public class CorrelationMiddleware
         await _next(context);
     }
 
-    private Guid GetCorrelationId(string header) =>
+    private static Guid GetCorrelationId(string header) =>
         string.IsNullOrWhiteSpace(header)
             ? Guid.NewGuid()
             : Guid.Parse(header);

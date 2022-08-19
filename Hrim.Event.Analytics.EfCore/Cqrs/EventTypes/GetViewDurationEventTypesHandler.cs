@@ -13,7 +13,7 @@ public class GetViewDurationEventTypesHandler: IRequestHandler<GetViewDurationEv
         _context = context;
     }
 
-    public async Task<IList<ViewSystemEventType>> Handle(GetViewDurationEventTypes request, CancellationToken cancellation) {
+    public async Task<IList<ViewSystemEventType>> Handle(GetViewDurationEventTypes request, CancellationToken cancellationToken) {
         var query = _context.DurationEventTypes.AsQueryable();
         if(request.CreatedById.HasValue)
             query = query.Where(x => x.CreatedById == request.CreatedById);
@@ -34,7 +34,7 @@ public class GetViewDurationEventTypesHandler: IRequestHandler<GetViewDurationEv
                                             x.Color,
                                             x.IsPublic
                                         })
-                                       .ToListAsync(cancellation);
+                                       .ToListAsync(cancellationToken);
         var durationViews = durationTypes.Select(x => new ViewDurationEventType(x.Id,
                                                                                 x.StartedOn.CombineWithTime(x.StartedAt),
                                                                                 x.FinishedOn.CombineWithTime(x.FinishedAt),

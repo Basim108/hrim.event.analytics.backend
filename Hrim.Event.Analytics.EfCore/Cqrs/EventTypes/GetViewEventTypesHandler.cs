@@ -11,17 +11,17 @@ public class GetViewEventTypesHandler: IRequestHandler<GetAllViewEventTypes, ILi
         _mediator = mediator;
     }
 
-    public async Task<IList<ViewSystemEventType>> Handle(GetAllViewEventTypes request, CancellationToken cancellation) {
+    public async Task<IList<ViewSystemEventType>> Handle(GetAllViewEventTypes request, CancellationToken cancellationToken) {
         var durationTypes = await _mediator.Send(new GetViewDurationEventTypes(request.CorrelationId,
                                                                                request.IsPublic,
                                                                                request.IsDeleted,
                                                                                request.CreatedById),
-                                                 cancellation);
+                                                 cancellationToken);
         var occurrenceTypes = await _mediator.Send(new GetViewOccurrenceEventTypes(request.CorrelationId,
                                                                                    request.IsPublic,
                                                                                    request.IsDeleted,
                                                                                    request.CreatedById),
-                                                   cancellation);
+                                                   cancellationToken);
         var result = new List<ViewSystemEventType>(durationTypes.Count + occurrenceTypes.Count);
         result.AddRange(durationTypes);
         result.AddRange(occurrenceTypes);

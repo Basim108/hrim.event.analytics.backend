@@ -16,16 +16,19 @@ public class GetDurationEventTypeByIdHandler: IRequestHandler<GetDurationEventTy
         _mapper  = mapper;
     }
 
-    public async Task<DurationEventType?> Handle(GetDurationEventTypeById request, CancellationToken cancellation) {
+    public Task<DurationEventType?> Handle(GetDurationEventTypeById request, CancellationToken cancellationToken) {
         if (request.EventTypeId == default)
             throw new ArgumentNullException(nameof(request.EventTypeId));
+        return HandleAsync(request, cancellationToken);
+    }
 
+    private async Task<DurationEventType?> HandleAsync(GetDurationEventTypeById request, CancellationToken cancellationToken) {
         var query = _context.DurationEventTypes.AsQueryable();
         if (request.IsNotTrackable) {
             query.AsNoTracking();
         }
         var db = await query.FirstOrDefaultAsync(x => x.Id == request.EventTypeId,
-                                           cancellation);
+                                                 cancellationToken);
         if (db == null)
             return null;
         var result = _mapper.Map<DurationEventType>(db);

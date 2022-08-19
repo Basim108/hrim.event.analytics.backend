@@ -26,20 +26,25 @@ public class CreateEventTypeHandler: IRequestHandler<CreateEventTypeCommand, Cqr
         _context = context;
     }
 
-    public async Task<CqrsResult<SystemEventType?>> Handle(CreateEventTypeCommand request, CancellationToken cancellation) {
+    public Task<CqrsResult<SystemEventType?>> Handle(CreateEventTypeCommand request, CancellationToken cancellationToken) {
         if (request.EventType == null)
-            throw new ArgumentNullException(nameof(request.EventType));
-
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventType)}");
+        
+        return HandleAsync(request, cancellationToken);
+    }
+    
+    private async Task<CqrsResult<SystemEventType?>> HandleAsync(CreateEventTypeCommand request, CancellationToken cancellationToken) {
+        
         SystemEventType? existed = request.EventType switch {
             DurationEventType => await _context.DurationEventTypes
                                                .FirstOrDefaultAsync(x => x.CreatedById == request.EventType.CreatedById &&
                                                                          x.Name        == request.EventType.Name,
-                                                                    cancellation),
+                                                                    cancellationToken),
             OccurrenceEventType =>
                 await _context.OccurrenceEventTypes
                               .FirstOrDefaultAsync(x => x.CreatedById == request.EventType.CreatedById &&
                                                         x.Name        == request.EventType.Name,
-                                                   cancellation),
+                                                   cancellationToken),
             _ => throw new UnsupportedEntityException(request.EventType.GetType())
         };
         if (existed != null) {
@@ -75,7 +80,7 @@ public class CreateEventTypeHandler: IRequestHandler<CreateEventTypeCommand, Cqr
                 throw new UnsupportedEntityException(request.EventType.GetType());
         }
         if (request.SaveChanges) {
-            await _context.SaveChangesAsync(cancellation);
+            await _context.SaveChangesAsync(cancellationToken);
             request.EventType.Id = db.Id;
         }
 

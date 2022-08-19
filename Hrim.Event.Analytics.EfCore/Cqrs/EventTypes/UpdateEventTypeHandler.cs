@@ -25,17 +25,21 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
         _context = context;
     }
 
-    public async Task<CqrsResult<SystemEventType?>> Handle(UpdateEventTypeCommand request, CancellationToken cancellation) {
+    public Task<CqrsResult<SystemEventType?>> Handle(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
         if (request.EventType == null)
             throw new ArgumentNullException(nameof(request.EventType));
 
+        return HandleAsync(request, cancellationToken);
+    }
+    
+    private async Task<CqrsResult<SystemEventType?>> HandleAsync(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
         SystemEventType? existed = request.EventType switch {
             DurationEventType => await _context.DurationEventTypes
                                                .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
-                                                                    cancellation),
+                                                                    cancellationToken),
             OccurrenceEventType => await _context.OccurrenceEventTypes
                                                  .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
-                                                                      cancellation),
+                                                                      cancellationToken),
             _ => throw new UnsupportedEntityException(request.EventType.GetType())
         };
         if (existed == null) {
@@ -89,7 +93,7 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
                 throw new UnsupportedEntityException(request.EventType.GetType());
         }
         if (request.SaveChanges)
-            await _context.SaveChangesAsync(cancellation);
+            await _context.SaveChangesAsync(cancellationToken);
         return new CqrsResult<SystemEventType?>(result, CqrsResultCode.Ok);
     }
 }
