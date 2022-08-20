@@ -30,16 +30,16 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type/occurrence/f9ceb463-562f-4257-9ec7-8b1b1e453b39",
+									"raw": "https://{{event-analytics-api}}/v1/event-type/occurrence/{{occurrence_id}}",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
 										"event-type",
 										"occurrence",
-										"f9ceb463-562f-4257-9ec7-8b1b1e453b39"
+										"{{occurrence_id}}"
 									]
 								}
 							},
@@ -60,10 +60,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event-type",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
@@ -88,10 +88,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event-type",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
@@ -116,16 +116,56 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type/occurrence/63ad5807-d821-4b38-b122-b64df7170e49",
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_id}}?entityType=occurrence_event_type",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type",
-										"occurrence",
-										"63ad5807-d821-4b38-b122-b64df7170e49"
+										"entity",
+										"{{occurrence_id}}"
+									],
+									"query": [
+										{
+											"key": "entityType",
+											"value": "occurrence_event_type"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Restore Occurence",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_id}}?entityType=occurrence_event_type",
+									"protocol": "https",
+									"host": [
+										"{{event-analytics-api}}"
+									],
+									"path": [
+										"v1",
+										"entity",
+										"{{occurrence_id}}"
+									],
+									"query": [
+										{
+											"key": "entityType",
+											"value": "occurrence_event_type"
+										}
 									]
 								}
 							},
@@ -154,16 +194,16 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type/duration/c814af86-7b25-4587-9ee2-3f0eb3eb020b",
+									"raw": "https://{{event-analytics-api}}/v1/event-type/duration/{{duration_id}}",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
 										"event-type",
 										"duration",
-										"c814af86-7b25-4587-9ee2-3f0eb3eb020b"
+										"{{duration_id}}"
 									]
 								}
 							},
@@ -171,6 +211,25 @@
 						},
 						{
 							"name": "Create Duration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Your test name\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).not.to.be.undefined();",
+											"    pm.environment.set(\"duration_id\", jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -184,10 +243,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event-type",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
@@ -212,10 +271,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event-type",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
@@ -240,16 +299,56 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{crud}}/v1/event-type/duration/c814af86-7b25-4587-9ee2-3f0eb3eb020b",
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{duration_id}}?entityType=duration_event_type",
 									"protocol": "https",
 									"host": [
-										"{{crud}}"
+										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type",
-										"duration",
-										"c814af86-7b25-4587-9ee2-3f0eb3eb020b"
+										"entity",
+										"{{duration_id}}"
+									],
+									"query": [
+										{
+											"key": "entityType",
+											"value": "duration_event_type"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Restore Duration",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{duration_id}}?entityType=duration_event_type",
+									"protocol": "https",
+									"host": [
+										"{{event-analytics-api}}"
+									],
+									"path": [
+										"v1",
+										"entity",
+										"{{duration_id}}"
+									],
+									"query": [
+										{
+											"key": "entityType",
+											"value": "duration_event_type"
+										}
 									]
 								}
 							},
@@ -263,10 +362,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://{{crud}}/v1/event-type",
+							"raw": "https://{{event-analytics-api}}/v1/event-type",
 							"protocol": "https",
 							"host": [
-								"{{crud}}"
+								"{{event-analytics-api}}"
 							],
 							"path": [
 								"v1",

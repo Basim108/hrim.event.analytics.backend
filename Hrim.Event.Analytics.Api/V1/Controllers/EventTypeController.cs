@@ -1,5 +1,4 @@
 using System.Net;
-using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
@@ -98,37 +97,5 @@ public class EventTypeController: ControllerBase {
                 return Ok(cqrsResult.Result);
         }
         throw new UnexpectedCqrsResultException<SystemEventType?>(cqrsResult);
-    }
-
-    /// <summary> Delete an occurrence event type by its id</summary>
-    [HttpDelete("occurrence/{id}")]
-    public async Task<ActionResult<OccurrenceEventType>> DeleteOccurrenceAsync(Guid id, CancellationToken cancellationToken) {
-        var command    = new SoftDeleteEntityCommand<OccurrenceEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
-        var cqrsResult = await _mediator.Send(command, cancellationToken);
-        switch (cqrsResult.StatusCode) {
-            case CqrsResultCode.EntityIsDeleted:
-                return Conflict(cqrsResult.Result);
-            case CqrsResultCode.NotFound:
-                return NotFound();
-            case CqrsResultCode.Ok:
-                return Ok(cqrsResult.Result);
-        }
-        throw new UnexpectedCqrsResultException<OccurrenceEventType?>(cqrsResult);
-    }
-
-    /// <summary> Delete an duration event type by its id</summary>
-    [HttpDelete("duration/{id}")]
-    public async Task<ActionResult<DurationEventType>> DeleteDurationAsync(Guid id, CancellationToken cancellationToken) {
-        var command    = new SoftDeleteEntityCommand<DurationEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
-        var cqrsResult = await _mediator.Send(command, cancellationToken);
-        switch (cqrsResult.StatusCode) {
-            case CqrsResultCode.EntityIsDeleted:
-                return Conflict(cqrsResult.Result);
-            case CqrsResultCode.NotFound:
-                return NotFound();
-            case CqrsResultCode.Ok:
-                return Ok(cqrsResult.Result);
-        }
-        throw new UnexpectedCqrsResultException<DurationEventType?>(cqrsResult);
     }
 }

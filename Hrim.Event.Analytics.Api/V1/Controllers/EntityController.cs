@@ -1,3 +1,4 @@
+using System.Net;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -8,7 +9,7 @@ using Hrim.Event.Analytics.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hrim.Event.Analytics.Api.V1.Controllers; 
+namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Manage any entity type </summary>
 [ApiController]
@@ -23,26 +24,25 @@ public class EntityController: ControllerBase {
         _requestAccessor = requestAccessor;
         _mediator        = mediator;
     }
-    
-    /// <summary> Delete an occurrence event type by its id</summary>
+
+    /// <summary> Restore a soft deleted instance of any entity</summary>
     [HttpPatch("{id}")]
-    public async Task<ActionResult<Entity>> RestoreAsync(Guid id, 
-                                                         [FromQuery(Name="entityType")] 
-                                                         [ModelBinder(typeof(JsonModelBinder<EntityType>))]
-                                                         EntityType entityType, 
+    public async Task<ActionResult<Entity>> RestoreAsync(Guid id,
+                                                         [FromQuery(Name = "entityType")] [ModelBinder(typeof(JsonModelBinder<EntityType>))]
+                                                         EntityType entityType,
                                                          CancellationToken cancellationToken) {
         CqrsResultCode? resultCode;
-        Entity? result;
-        switch(entityType) {
+        Entity?         result;
+        switch (entityType) {
             case EntityType.OccurrenceEventType:
                 var restoreOccurrence = new RestoreEntityCommand<OccurrenceEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
-                var occurenceResult        = await _mediator.Send(restoreOccurrence, cancellationToken);
+                var occurenceResult   = await _mediator.Send(restoreOccurrence, cancellationToken);
                 resultCode = occurenceResult.StatusCode;
                 result     = occurenceResult.Result;
                 break;
             case EntityType.DurationEventType:
                 var restoreDuration = new RestoreEntityCommand<DurationEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
-                var durationResult      = await _mediator.Send(restoreDuration, cancellationToken);
+                var durationResult  = await _mediator.Send(restoreDuration, cancellationToken);
                 resultCode = durationResult.StatusCode;
                 result     = durationResult.Result;
                 break;
@@ -57,4 +57,39 @@ public class EntityController: ControllerBase {
         };
     }
 
+    /// <summary> Soft-delete an instance of any entity</summary>
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Entity>> SoftDeleteAsync(Guid id,
+                                                            [FromQuery(Name = "entityType")] [ModelBinder(typeof(JsonModelBinder<EntityType>))]
+                                                            EntityType entityType,
+                                                            CancellationToken cancellationToken) {
+        CqrsResultCode? resultCode;
+        Entity?         result;
+        switch (entityType) {
+            case EntityType.OccurrenceEventType:
+                var restoreOccurrence = new SoftDeleteEntityCommand<OccurrenceEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
+                var occurenceResult   = await _mediator.Send(restoreOccurrence, cancellationToken);
+                resultCode = occurenceResult.StatusCode;
+                result     = occurenceResult.Result;
+                break;
+            case EntityType.DurationEventType:
+                var restoreDuration = new SoftDeleteEntityCommand<DurationEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
+                var durationResult  = await _mediator.Send(restoreDuration, cancellationToken);
+                resultCode = durationResult.StatusCode;
+                result     = durationResult.Result;
+                break;
+            default:
+                return NotFound("Unsupported entity: " + entityType);
+        }
+        switch (resultCode) {
+            case CqrsResultCode.EntityIsDeleted:
+                Response.StatusCode = (int)HttpStatusCode.Gone;
+                return new EmptyResult();
+            case CqrsResultCode.NotFound:
+                return NotFound();
+            case CqrsResultCode.Ok:
+                return Ok(result);
+        }
+        throw new UnexpectedCqrsStatusCodeException(resultCode);
+    }
 }

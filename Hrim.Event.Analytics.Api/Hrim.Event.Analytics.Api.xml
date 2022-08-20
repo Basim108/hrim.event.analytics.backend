@@ -48,7 +48,10 @@
             <summary> </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.RestoreAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
-            <summary> Delete an occurrence event type by its id</summary>
+            <summary> Restore a soft deleted instance of any entity</summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.SoftDeleteAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
+            <summary> Soft-delete an instance of any entity</summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController">
             <summary>
@@ -74,12 +77,6 @@
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Threading.CancellationToken)">
             <summary> Update a user event type based on ony specific system event type, depends on $type field in json </summary>
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.DeleteOccurrenceAsync(System.Guid,System.Threading.CancellationToken)">
-            <summary> Delete an occurrence event type by its id</summary>
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.DeleteDurationAsync(System.Guid,System.Threading.CancellationToken)">
-            <summary> Delete an duration event type by its id</summary>
         </member>
     </members>
 </doc>
