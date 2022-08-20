@@ -18,6 +18,10 @@
         <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Serilog" Version="2.11.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
@@ -40,13 +44,8 @@
     </ItemGroup>
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
-            <Value>**/20220819145056_add_event_types_and_tags_and_users.cs, **/*.Designer.cs, **/EventAnalyticDbContextModelSnapshot.cs</Value>
+            <Value>**/20220820201803_add_events_their_types_tags_and_users.cs, **/*.Designer.cs, **/EventAnalyticDbContextModelSnapshot.cs</Value>
         </SonarQubeSetting>
-    </ItemGroup>
-    <ItemGroup>
-      <Reference Include="Serilog">
-        <HintPath>..\..\..\..\.nuget\packages\serilog\2.10.0\lib\netstandard2.1\Serilog.dll</HintPath>
-      </Reference>
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Update="ApiLogs.resx">

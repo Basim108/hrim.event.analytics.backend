@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Hrim.Event.Analytics.Api.Migrations
 {
-    public partial class add_event_types_and_tags_and_users : Migration
+    public partial class add_events_their_types_tags_and_users : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,25 +48,60 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: true),
                     concurrent_token = table.Column<long>(type: "bigint", nullable: false, comment: "Update is possible only when this token equals to the token in the storage"),
-                    name = table.Column<string>(type: "text", nullable: false, comment: "Event type name, e.g. 'nice mood', 'headache', etc"),
-                    description = table.Column<string>(type: "text", nullable: true, comment: "Description given by user, when user_event_type based on this one will be created."),
-                    color = table.Column<string>(type: "text", nullable: false, comment: "A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'"),
-                    created_by = table.Column<Guid>(type: "uuid", nullable: false, comment: "A user who created an instance of this event type"),
-                    is_public = table.Column<bool>(type: "boolean", nullable: false, comment: "A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'")
+                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false, comment: "An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_duration_event_types", x => x.id);
-                    table.CheckConstraint("CK_db_duration_event_types_concurrent_token", "concurrent_token > 0");
+                    table.CheckConstraint("CK_db_duration_events_concurrent_token", "concurrent_token > 0");
                     table.ForeignKey(
-                        name: "FK_duration_event_types_hrim_users_created_by",
+                        name: "FK_duration_event_types_hrim_users_CreatedById",
+                        column: x => x.CreatedById,
+                        principalSchema: "hrim_analytics",
+                        principalTable: "hrim_users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
+
+            migrationBuilder.CreateTable(
+                name: "event_types",
+                schema: "hrim_analytics",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    name = table.Column<string>(type: "text", nullable: false, comment: "Event type name, e.g. 'nice mood', 'headache', etc"),
+                    description = table.Column<string>(type: "text", nullable: true, comment: "Description given by user, when user_event_type based on this one will be created."),
+                    color = table.Column<string>(type: "text", nullable: false, comment: "A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'"),
+                    created_by = table.Column<Guid>(type: "uuid", nullable: false, comment: "A user who created an instance of this event type"),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false, comment: " An owner who created this event_type could share it with other end-users"),
+                    EventType = table.Column<int>(type: "integer", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    StartedOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    StartedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    FinishedOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    FinishedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    OccurredOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    OccurredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
+                    updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: true),
+                    concurrent_token = table.Column<long>(type: "bigint", nullable: false, comment: "Update is possible only when this token equals to the token in the storage")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_event_types", x => x.id);
+                    table.CheckConstraint("CK_system_event_types_concurrent_token", "concurrent_token > 0");
+                    table.ForeignKey(
+                        name: "FK_event_types_hrim_users_created_by",
                         column: x => x.created_by,
                         principalSchema: "hrim_analytics",
                         principalTable: "hrim_users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 },
-                comment: "When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day.");
+                comment: "User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
 
             migrationBuilder.CreateTable(
                 name: "hrim_tags",
@@ -96,7 +131,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 comment: "A tag that could be linked to an instance of any entity");
 
             migrationBuilder.CreateTable(
-                name: "occurrence_event_types",
+                name: "occurrence_events",
                 schema: "hrim_analytics",
                 columns: table => new
                 {
@@ -107,19 +142,16 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: true),
                     concurrent_token = table.Column<long>(type: "bigint", nullable: false, comment: "Update is possible only when this token equals to the token in the storage"),
-                    name = table.Column<string>(type: "text", nullable: false, comment: "Event type name, e.g. 'nice mood', 'headache', etc"),
-                    description = table.Column<string>(type: "text", nullable: true, comment: "Description given by user, when user_event_type based on this one will be created."),
-                    color = table.Column<string>(type: "text", nullable: false, comment: "A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'"),
-                    created_by = table.Column<Guid>(type: "uuid", nullable: false, comment: "A user who created an instance of this event type"),
-                    is_public = table.Column<bool>(type: "boolean", nullable: false, comment: "A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'")
+                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
+                    is_public = table.Column<bool>(type: "boolean", nullable: false, comment: "An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_occurrence_event_types", x => x.id);
-                    table.CheckConstraint("CK_db_occurrence_event_types_concurrent_token", "concurrent_token > 0");
+                    table.PrimaryKey("PK_occurrence_events", x => x.id);
+                    table.CheckConstraint("CK_db_occurrence_events_concurrent_token", "concurrent_token > 0");
                     table.ForeignKey(
-                        name: "FK_occurrence_event_types_hrim_users_created_by",
-                        column: x => x.created_by,
+                        name: "FK_occurrence_events_hrim_users_CreatedById",
+                        column: x => x.CreatedById,
                         principalSchema: "hrim_analytics",
                         principalTable: "hrim_users",
                         principalColumn: "id",
@@ -128,18 +160,18 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 comment: "When the main importance is the fact that an event occurred.\nThis kind of events may occur several times a day.");
 
             migrationBuilder.CreateIndex(
-                name: "IX_duration_event_types_created_by_name",
+                name: "IX_duration_event_types_CreatedById_started_on",
                 schema: "hrim_analytics",
                 table: "duration_event_types",
-                columns: new[] { "created_by", "name" },
-                unique: true);
+                columns: new[] { "CreatedById", "started_on" })
+                .Annotation("Npgsql:IndexInclude", new[] { "started_at", "finished_on", "finished_at", "is_public" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_duration_event_types_created_by_started_on",
+                name: "IX_event_types_created_by_name",
                 schema: "hrim_analytics",
-                table: "duration_event_types",
-                columns: new[] { "created_by", "started_on" })
-                .Annotation("Npgsql:IndexInclude", new[] { "started_at", "finished_on", "finished_at", "color", "name" });
+                table: "event_types",
+                columns: new[] { "created_by", "name" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_hrim_tags_created_by",
@@ -149,18 +181,11 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 .Annotation("Npgsql:IndexInclude", new[] { "tag" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_occurrence_event_types_created_by_name",
+                name: "IX_occurrence_events_CreatedById_occurred_at",
                 schema: "hrim_analytics",
-                table: "occurrence_event_types",
-                columns: new[] { "created_by", "name" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_occurrence_event_types_created_by_occurred_at",
-                schema: "hrim_analytics",
-                table: "occurrence_event_types",
-                columns: new[] { "created_by", "occurred_at" })
-                .Annotation("Npgsql:IndexInclude", new[] { "color", "name" });
+                table: "occurrence_events",
+                columns: new[] { "CreatedById", "occurred_at" })
+                .Annotation("Npgsql:IndexInclude", new[] { "is_public" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -170,11 +195,15 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "hrim_analytics");
 
             migrationBuilder.DropTable(
+                name: "event_types",
+                schema: "hrim_analytics");
+
+            migrationBuilder.DropTable(
                 name: "hrim_tags",
                 schema: "hrim_analytics");
 
             migrationBuilder.DropTable(
-                name: "occurrence_event_types",
+                name: "occurrence_events",
                 schema: "hrim_analytics");
 
             migrationBuilder.DropTable(

@@ -1,13 +1,12 @@
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Entities.Events;
 
-namespace Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
+namespace Hrim.Event.Analytics.EfCore.DbEntities.Events;
 
 /// <summary>
 /// When the main importance is the fact that an event occurred.
 /// <br/>This kind of events may occur several times a day.
 /// </summary>
-[Obsolete("It's wrong design - must be deleted.")]
-public class DbOccurrenceEventType: SystemEventType {
+public class DbOccurrenceEvent: EventBase {
     /// <summary>
     /// Date and time with end-user timezone when an event occurred
     /// </summary>

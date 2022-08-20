@@ -236,6 +236,54 @@
             Update is possible only when this token equals to the token in the storage
             </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent">
+            <summary>
+            When it is important to register an event that has start time and end time this system_event_type can be used.
+            <br/>This kind of events may occur several times a day and can cross each other.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent.StartedAt">
+            <summary>
+            Date and time with end-user timezone when an event starts
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent.FinishedAt">
+            <summary>
+            Date and time with end-user timezone when an event finishes
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Events.EventBase">
+            <summary>
+            Properties shared with all types of events
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Events.EventBase.CreatedById">
+            <summary>
+            A user id who created an instance of the event type
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Events.EventBase.CreatedBy">
+            <summary>
+            A user who created an instance of this event type
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Events.EventBase.IsPublic">
+            <summary>
+            An owner who created this event_type could share it with other end-users.
+            Will override IsPublic value of an event_type instance
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent">
+            <summary>
+            When the main importance is the fact that an event occurred.
+            <br/>This kind of events may occur several times a day.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent.OccurredAt">
+            <summary>
+            Date and time with end-user timezone when an event occurred
+            </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType">
             <summary>
             When it is important to register an event that has start time and end time this system_event_type can be used.
@@ -265,7 +313,7 @@
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType">
             <summary>
-            Base events is an abstraction that shares features and behaviour among all other event_types.
+            Event types created by user
             <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
             </summary>
         </member>
@@ -299,6 +347,11 @@
             An owner who created this event_type could share it with other end-users
             </summary>
         </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType.EventType">
+            <summary>
+            Specifies a type of events that will be registered: duration, occurrence, etc
+            </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.HrimTag">
             <summary> A tag that could be linked to an instance of any entity</summary>
         </member>
@@ -320,6 +373,21 @@
         <member name="T:Hrim.Event.Analytics.Abstractions.Enums.EntityType">
             <summary>
             Enumeration of all types of entties 
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Enums.EventType">
+            <summary> Supported event types </summary>
+        </member>
+        <member name="F:Hrim.Event.Analytics.Abstractions.Enums.EventType.Occurrence">
+            <summary>
+            When the main importance is the fact that an event occurred.
+            <br/>This kind of events may occur several times a day.
+            </summary>
+        </member>
+        <member name="F:Hrim.Event.Analytics.Abstractions.Enums.EventType.Duration">
+            <summary>
+            When it is important to register an event that has start time and end time this system_event_type can be used.
+            <br/>This kind of events may occur several times a day and can cross each other.
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Extensions.DateOnlyExtensions.CombineWithTime(System.DateOnly,System.DateTimeOffset)">

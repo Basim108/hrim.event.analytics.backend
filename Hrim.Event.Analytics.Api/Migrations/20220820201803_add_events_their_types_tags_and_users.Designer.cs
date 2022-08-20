@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20220819145056_add_event_types_and_tags_and_users")]
-    partial class add_event_types_and_tags_and_users
+    [Migration("20220820201803_add_events_their_types_tags_and_users")]
+    partial class add_events_their_types_tags_and_users
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,6 +25,82 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("color")
+                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
+
+                    b.Property<long>("ConcurrentToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("concurrent_token")
+                        .HasComment("Update is possible only when this token equals to the token in the storage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at")
+                        .HasComment("Date and UTC time of entity instance creation");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by")
+                        .HasComment("A user who created an instance of this event type");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description")
+                        .HasComment("Description given by user, when user_event_type based on this one will be created.");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("EventType")
+                        .HasColumnType("integer");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public")
+                        .HasComment(" An owner who created this event_type could share it with other end-users");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name")
+                        .HasComment("Event type name, e.g. 'nice mood', 'headache', etc");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at")
+                        .HasComment("Date and UTC time of entity instance last update ");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById", "Name")
+                        .IsUnique();
+
+                    b.ToTable("event_types", "hrim_analytics");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("SystemEventType");
+
+                    b.HasComment("User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
+
+                    b.HasCheckConstraint("CK_system_event_types_concurrent_token", "concurrent_token > 0");
+                });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.HrimTag", b =>
                 {
@@ -119,19 +195,13 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.HasCheckConstraint("CK_hrim_users_concurrent_token", "concurrent_token > 0");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbDurationEventType", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id")
                         .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("color")
-                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -145,14 +215,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasComment("Date and UTC time of entity instance creation");
 
                     b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by")
-                        .HasComment("A user who created an instance of this event type");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description")
-                        .HasComment("Description given by user, when user_event_type based on this one will be created.");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("FinishedAt")
                         .HasColumnType("timetz")
@@ -171,13 +234,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
                         .HasColumnName("is_public")
-                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name")
-                        .HasComment("Event type name, e.g. 'nice mood', 'headache', etc");
+                        .HasComment("An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance");
 
                     b.Property<DateTimeOffset>("StartedAt")
                         .HasColumnType("timetz")
@@ -196,33 +253,24 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById", "Name")
-                        .IsUnique();
-
                     b.HasIndex("CreatedById", "StartedOn");
 
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "StartedOn"), new[] { "StartedAt", "FinishedOn", "FinishedAt", "Color", "Name" });
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "StartedOn"), new[] { "StartedAt", "FinishedOn", "FinishedAt", "IsPublic" });
 
                     b.ToTable("duration_event_types", "hrim_analytics");
 
-                    b.HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day.");
+                    b.HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
 
-                    b.HasCheckConstraint("CK_db_duration_event_types_concurrent_token", "concurrent_token > 0");
+                    b.HasCheckConstraint("CK_db_duration_events_concurrent_token", "concurrent_token > 0");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbOccurrenceEventType", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id")
                         .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("color")
-                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -236,14 +284,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasComment("Date and UTC time of entity instance creation");
 
                     b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by")
-                        .HasComment("A user who created an instance of this event type");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description")
-                        .HasComment("Description given by user, when user_event_type based on this one will be created.");
+                        .HasColumnType("uuid");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean")
@@ -252,13 +293,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
                         .HasColumnName("is_public")
-                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name")
-                        .HasComment("Event type name, e.g. 'nice mood', 'headache', etc");
+                        .HasComment("An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance");
 
                     b.Property<DateTimeOffset>("OccurredAt")
                         .HasColumnType("timetz")
@@ -277,18 +312,62 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById", "Name")
-                        .IsUnique();
-
                     b.HasIndex("CreatedById", "OccurredAt");
 
-                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "OccurredAt"), new[] { "Color", "Name" });
+                    NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "OccurredAt"), new[] { "IsPublic" });
 
-                    b.ToTable("occurrence_event_types", "hrim_analytics");
+                    b.ToTable("occurrence_events", "hrim_analytics");
 
                     b.HasComment("When the main importance is the fact that an event occurred.\nThis kind of events may occur several times a day.");
 
-                    b.HasCheckConstraint("CK_db_occurrence_event_types_concurrent_token", "concurrent_token > 0");
+                    b.HasCheckConstraint("CK_db_occurrence_events_concurrent_token", "concurrent_token > 0");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbDurationEventType", b =>
+                {
+                    b.HasBaseType("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType");
+
+                    b.Property<DateTimeOffset?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly?>("FinishedOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("StartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("StartedOn")
+                        .HasColumnType("date");
+
+                    b.HasDiscriminator().HasValue("DbDurationEventType");
+
+                    b.HasCheckConstraint("CK_system_event_types_concurrent_token", "concurrent_token > 0");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbOccurrenceEventType", b =>
+                {
+                    b.HasBaseType("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("OccurredOn")
+                        .HasColumnType("date");
+
+                    b.HasDiscriminator().HasValue("DbOccurrenceEventType");
+
+                    b.HasCheckConstraint("CK_system_event_types_concurrent_token", "concurrent_token > 0");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType", b =>
+                {
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.HrimTag", b =>
@@ -302,7 +381,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbDurationEventType", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
                 {
                     b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
                         .WithMany()
@@ -313,7 +392,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbOccurrenceEventType", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
                 {
                     b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
                         .WithMany()

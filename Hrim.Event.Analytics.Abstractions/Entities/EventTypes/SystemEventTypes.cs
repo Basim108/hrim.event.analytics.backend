@@ -1,10 +1,13 @@
+using Hrim.Event.Analytics.Abstractions.Enums;
+
 namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 
 /// <summary>
-/// Base events is an abstraction that shares features and behaviour among all other event_types.
+/// Event types created by user
 /// <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
 /// </summary>
-public abstract class SystemEventType: Entity {
+// TODO: rename to UserEventType
+public class SystemEventType: Entity {
     /// <summary>
     /// Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>
@@ -34,4 +37,9 @@ public abstract class SystemEventType: Entity {
     /// An owner who created this event_type could share it with other end-users
     /// </summary>
     public bool IsPublic { get; set; }
+    
+    /// <summary>
+    /// Specifies a type of events that will be registered: duration, occurrence, etc
+    /// </summary>
+    public EventType EventType {get;set;}
 }

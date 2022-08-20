@@ -1,13 +1,13 @@
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Entities;
+using Hrim.Event.Analytics.Abstractions.Entities.Events;
 
-namespace Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
+namespace Hrim.Event.Analytics.EfCore.DbEntities.Events;
 
 /// <summary>
 /// When it is important to register an event that has start time and end time this system_event_type can be used.
-/// <br/>This kind of events may occur several times a day.
+/// <br/>This kind of events may occur several times a day and can cross each other.
 /// </summary>
-[Obsolete("It's wrong design - must be deleted.")]
-public class DbDurationEventType: SystemEventType {
+public class DbDurationEvent: EventBase {
     /// <summary>
     /// Date when an event started
     /// </summary>
