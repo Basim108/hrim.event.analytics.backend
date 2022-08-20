@@ -57,6 +57,12 @@ namespace Hrim.Event.Analytics.EfCore {
             }
         }
         
+        public static string CannotSoftDeleteEntityIsDeleted {
+            get {
+                return ResourceManager.GetString("CannotSoftDeleteEntityIsDeleted", resourceCulture);
+            }
+        }
+        
         public static string CannotCreateIsAlreadyExisted {
             get {
                 return ResourceManager.GetString("CannotCreateIsAlreadyExisted", resourceCulture);
@@ -66,6 +72,12 @@ namespace Hrim.Event.Analytics.EfCore {
         public static string CannotCreateIsDeleted {
             get {
                 return ResourceManager.GetString("CannotCreateIsDeleted", resourceCulture);
+            }
+        }
+        
+        public static string CannotRestoreEntityIsNotDeleted {
+            get {
+                return ResourceManager.GetString("CannotRestoreEntityIsNotDeleted", resourceCulture);
             }
         }
     }

@@ -1,15 +1,17 @@
 using AutoMapper;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
+using Hrim.Event.Analytics.EfCore.Extensions;
 using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
+namespace Hrim.Event.Analytics.EfCore.Cqrs;
 
 public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDeleteEntityCommand<TEntity>, CqrsResult<TEntity?>>
     where TEntity : Entity, new() {
@@ -33,8 +35,9 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
 
         return HandleAsync(request, cancellationToken);
     }
-    
+
     private async Task<CqrsResult<TEntity?>> HandleAsync(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
+        using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.Id);
         Entity? existed = new TEntity() switch {
             DurationEventType   => await _context.DurationEventTypes.FirstOrDefaultAsync(x => x.Id   == request.Id, cancellationToken),
             OccurrenceEventType => await _context.OccurrenceEventTypes.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken),
@@ -43,22 +46,21 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
             _                   => null
         };
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, request.Id, nameof(OccurrenceEventType));
+            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, nameof(OccurrenceEventType));
             return new CqrsResult<TEntity?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogDebug(EfCoreLogs.CannotUpdateEntityIsDeleted, request.Id, existed.ConcurrentToken, existed.GetType().Name);
-            var business = existed switch {
-                DbDurationEventType   => _mapper.Map<TEntity>(existed),
-                DbOccurrenceEventType => _mapper.Map<TEntity>(existed),
-                _                     => existed
-            };
-            return new CqrsResult<TEntity?>(business as TEntity, CqrsResultCode.EntityIsDeleted);
+            _logger.LogDebug(EfCoreLogs.CannotSoftDeleteEntityIsDeleted, existed.ConcurrentToken, existed.GetType().Name);
+            var conflictEntity = _mapper.ProjectFromDb<TEntity>(existed);
+            return new CqrsResult<TEntity?>(conflictEntity, CqrsResultCode.EntityIsDeleted);
         }
+        existed.ConcurrentToken++;
         existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
         existed.IsDeleted = true;
         if (request.SaveChanges)
             await _context.SaveChangesAsync(cancellationToken);
-        return new CqrsResult<TEntity?>(existed as TEntity, CqrsResultCode.Ok);
+
+        var business = _mapper.ProjectFromDb<TEntity>(existed);
+        return new CqrsResult<TEntity?>(business, CqrsResultCode.Ok);
     }
 }

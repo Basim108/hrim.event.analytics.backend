@@ -6,7 +6,6 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-#pragma warning disable CS1591
 
 namespace Hrim.Event.Analytics.Abstractions {
     using System;
@@ -85,6 +84,18 @@ namespace Hrim.Event.Analytics.Abstractions {
         public static string UnexpectedCqrsResult {
             get {
                 return ResourceManager.GetString("UnexpectedCqrsResult", resourceCulture);
+            }
+        }
+        
+        public static string UnexpectedCqrsResultCode {
+            get {
+                return ResourceManager.GetString("UnexpectedCqrsResultCode", resourceCulture);
+            }
+        }
+        
+        public static string HrimEntityId {
+            get {
+                return ResourceManager.GetString("HrimEntityId", resourceCulture);
             }
         }
     }

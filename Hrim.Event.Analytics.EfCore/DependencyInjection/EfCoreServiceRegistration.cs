@@ -19,6 +19,12 @@ public static class EfCoreServiceRegistration {
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<HrimTag>, CqrsResult<HrimTag?>>, SoftDeleteEntityCommandHandler<HrimTag>>();
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<HrimUser>, CqrsResult<HrimUser?>>, SoftDeleteEntityCommandHandler<HrimUser>>();
 
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<OccurrenceEventType>, CqrsResult<OccurrenceEventType?>>, RestoreEntityCommandHandler<OccurrenceEventType>>();
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<DurationEventType>, CqrsResult<DurationEventType?>>, RestoreEntityCommandHandler<DurationEventType>>();
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<HrimTag>, CqrsResult<HrimTag?>>, RestoreEntityCommandHandler<HrimTag>>();
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<HrimUser>, CqrsResult<HrimUser?>>, RestoreEntityCommandHandler<HrimUser>>();
+
+        
         services.AddAutoMapper(typeof(DurationEventTypeProfile),
                                typeof(OccurrenceEventTypeProfile));
         services.AddNpgsqlContext<EventAnalyticDbContext>(appConfig, migrationAssembly);

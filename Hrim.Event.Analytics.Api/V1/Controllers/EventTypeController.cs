@@ -1,3 +1,4 @@
+using System.Net;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -37,8 +38,12 @@ public class EventTypeController: ControllerBase {
     public async Task<ActionResult<DurationEventType>> GetDurationByIdAsync(Guid id, CancellationToken cancellationToken) {
         var result = await _mediator.Send(new GetDurationEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
                                           cancellationToken);
-        if (result == null || result.IsDeleted == true)
+        if (result == null)
             return NotFound();
+        if (result.IsDeleted == true) {
+            Response.StatusCode = (int)HttpStatusCode.Gone;
+            return new EmptyResult();
+        }
         return Ok(result);
     }
 
@@ -47,8 +52,12 @@ public class EventTypeController: ControllerBase {
     public async Task<ActionResult<OccurrenceEventType>> GetOccurrenceByIdAsync(Guid id, CancellationToken cancellationToken) {
         var result = await _mediator.Send(new GetOccurrenceEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
                                           cancellationToken);
-        if (result == null || result.IsDeleted == true)
+        if (result == null)
             return NotFound();
+        if (result.IsDeleted == true) {
+            Response.StatusCode = (int)HttpStatusCode.Gone;
+            return new EmptyResult();
+        }
         return Ok(result);
     }
 
@@ -61,6 +70,8 @@ public class EventTypeController: ControllerBase {
                                               cancellationToken);
         switch (cqrsResult.StatusCode) {
             case CqrsResultCode.EntityIsDeleted:
+                Response.StatusCode = (int)HttpStatusCode.Gone;
+                return new ObjectResult(cqrsResult.Result);
             case CqrsResultCode.Conflict:
                 return Conflict(cqrsResult.Result);
             case CqrsResultCode.Ok:
@@ -77,6 +88,8 @@ public class EventTypeController: ControllerBase {
                                               cancellationToken);
         switch (cqrsResult.StatusCode) {
             case CqrsResultCode.EntityIsDeleted:
+                Response.StatusCode = (int)HttpStatusCode.Gone;
+                return new EmptyResult();
             case CqrsResultCode.Conflict:
                 return Conflict(cqrsResult.Result);
             case CqrsResultCode.NotFound:

@@ -15,7 +15,7 @@ public class UnexpectedCqrsResultException<TResult>: Exception {
 
     protected UnexpectedCqrsResultException(SerializationInfo info, StreamingContext context)
         : base(info, context) {
-        CqrsResult = info.GetValue(nameof(CqrsResult), typeof(Type)) as CqrsResult<TResult>;
+        CqrsResult = info.GetValue(nameof(CqrsResult), typeof(CqrsResult<TResult>)) as CqrsResult<TResult>;
     }
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context) {

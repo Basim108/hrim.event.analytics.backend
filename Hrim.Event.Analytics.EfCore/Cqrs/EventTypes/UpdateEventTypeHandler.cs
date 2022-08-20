@@ -1,4 +1,5 @@
 using AutoMapper;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -33,6 +34,7 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
     }
     
     private async Task<CqrsResult<SystemEventType?>> HandleAsync(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
+        using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.EventType.Id);
         SystemEventType? existed = request.EventType switch {
             DurationEventType => await _context.DurationEventTypes
                                                .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
@@ -43,18 +45,18 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
             _ => throw new UnsupportedEntityException(request.EventType.GetType())
         };
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, request.EventType.Id, nameof(OccurrenceEventType));
+            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, nameof(OccurrenceEventType));
             return new CqrsResult<SystemEventType?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, request.EventType.Id, existed.ConcurrentToken, existed.GetType().Name);
+            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, existed.GetType().Name);
             SystemEventType business = existed is DbDurationEventType
                                            ? _mapper.Map<DurationEventType>(existed)
                                            : _mapper.Map<OccurrenceEventType>(existed);
             return new CqrsResult<SystemEventType?>(business, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventType.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, request.EventType.Id, existed.ConcurrentToken, existed.GetType().Name);
+            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, existed.GetType().Name);
             SystemEventType business = existed is DbDurationEventType
                                            ? _mapper.Map<DurationEventType>(existed)
                                            : _mapper.Map<OccurrenceEventType>(existed);

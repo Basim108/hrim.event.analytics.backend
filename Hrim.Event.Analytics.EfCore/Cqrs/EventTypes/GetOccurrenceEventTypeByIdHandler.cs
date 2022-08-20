@@ -22,7 +22,7 @@ public class GetOccurrenceEventTypeByIdHandler: IRequestHandler<GetOccurrenceEve
 
         return HandleAsync(request, cancellationToken);
     }
-    
+    // TODO: refactor this query to a one for all entities;
     private async Task<OccurrenceEventType?> HandleAsync(GetOccurrenceEventTypeById request, CancellationToken cancellationToken) {
         var query = _context.OccurrenceEventTypes.AsQueryable();
         if (request.IsNotTrackable) {

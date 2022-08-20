@@ -176,22 +176,42 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.SaveChanges">
             <summary>If true, then changes will be flushed to the storages</summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.RestoreEntityCommand`1">
+            <summary> Restore any type of entity from soft deletion </summary>
+            <param name="Id">Entity Id</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.RestoreEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
+            <summary> Restore any type of entity from soft deletion </summary>
+            <param name="Id">Entity Id</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.RestoreEntityCommand`1.Id">
+            <summary>Entity Id</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.RestoreEntityCommand`1.SaveChanges">
+            <summary>If true, then changes will be flushed to the storages</summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1">
             <summary> Soft deletion an instance of any entity type </summary>
-            <param name="Id">Occurrence event type id</param>
+            <param name="Id">Entity id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
             <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
             <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
             <summary> Soft deletion an instance of any entity type </summary>
-            <param name="Id">Occurrence event type id</param>
+            <param name="Id">Entity id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
             <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
             <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1.Id">
-            <summary>Occurrence event type id</summary>
+            <summary>Entity id</summary>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.SoftDeleteEntityCommand`1.SaveChanges">
             <summary>If true, then changes will be flushed to the storages</summary>

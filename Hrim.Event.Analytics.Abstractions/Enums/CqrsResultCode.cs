@@ -1,4 +1,5 @@
 using System.Net;
+
 #pragma warning disable CS1591
 
 namespace Hrim.Event.Analytics.Abstractions.Enums;
@@ -12,5 +13,6 @@ public enum CqrsResultCode {
     PreConditionFailed  = 412,
     UnprocessableEntity = 422,
     Locked              = 423,
-    EntityIsDeleted     = 460
+    EntityIsDeleted     = 460,
+    EntityIsNotDeleted  = 461
 }

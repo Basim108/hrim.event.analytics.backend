@@ -25,6 +25,31 @@
             Adds/takes correlation id to/from headers and create a logging scope with that id. 
             </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Api.ModelBinders.JsonModelBinder`1">
+            <summary>
+            As json deserialization is not used with a query string, this model binder enforce json deserialization. 
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.ModelBinders.JsonModelBinder`1.#ctor(Microsoft.Extensions.Logging.ILogger{Hrim.Event.Analytics.Api.ModelBinders.JsonModelBinder{`0}})">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.ModelBinders.JsonModelBinder`1.BindModelAsync(Microsoft.AspNetCore.Mvc.ModelBinding.ModelBindingContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.Services.JsonSettingsFactory">
+            <summary>
+            A single point to get a Json serializer settings
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EntityController">
+            <summary> Manage any entity type </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.RestoreAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
+            <summary> Delete an occurrence event type by its id</summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController">
             <summary>
             Manage user event types with this crud controller

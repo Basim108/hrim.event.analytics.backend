@@ -37,6 +37,12 @@
         <value>Unsupported entity of type: </value>
     </data>
     <data name="UnexpectedCqrsResult" xml:space="preserve">
-        <value>Unexpected CQRS result: CqrsResult={CqrsResult}</value>
+        <value>Unexpected CqrsResult={CqrsResult}</value>
+    </data>
+    <data name="UnexpectedCqrsResultCode" xml:space="preserve">
+        <value>Unexpected CqrsResultCode={CqrsResultCode}</value>
+    </data>
+    <data name="HrimEntityId" xml:space="preserve">
+        <value>HrimEntityId={HrimEntityId}</value>
     </data>
 </root>

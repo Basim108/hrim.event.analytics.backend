@@ -19,15 +19,21 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="EntityNotFoundById" xml:space="preserve">
-        <value>Entity was not found by id EntityId={EntityId}, EntityType={EntityType}</value>
+        <value>Entity was not found by id EntityType={EntityType}</value>
     </data>
     <data name="CannotUpdateEntityIsDeleted" xml:space="preserve">
-        <value>Cannot update entity as it is deleted: EntityId={EntityId}, EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.</value>
+        <value>Cannot update entity as it is deleted: EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.</value>
+    </data>
+    <data name="CannotSoftDeleteEntityIsDeleted" xml:space="preserve">
+        <value>Cannot soft delete entity as it is already deleted: EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.</value>
     </data>
     <data name="CannotCreateIsAlreadyExisted" xml:space="preserve">
         <value>Cannot create entity as it is already existed: EntityType={EntityType}, Entity=</value>
     </data>
     <data name="CannotCreateIsDeleted" xml:space="preserve">
         <value>Cannot create entity as it is existed and IsDeleted: EntityType={EntityType}</value>
+    </data>
+    <data name="CannotRestoreEntityIsNotDeleted" xml:space="preserve">
+        <value>Cannot restore entity as it is not deleted: EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.</value>
     </data>
 </root>
