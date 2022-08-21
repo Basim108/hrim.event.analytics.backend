@@ -17,5 +17,4 @@ public record ViewDurationEventType(Guid            Id,
                                     string          Name,
                                     string?         Description,
                                     string          Color,
-                                    bool            IsPublic)
-    : ViewSystemEventType(Id, Name, Description, Color, IsPublic);
+                                    bool            IsPublic);

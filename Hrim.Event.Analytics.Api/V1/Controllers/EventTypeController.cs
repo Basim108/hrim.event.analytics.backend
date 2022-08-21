@@ -29,8 +29,22 @@ public class EventTypeController: ControllerBase {
     /// <summary> Get all user event types </summary>
     [HttpGet]
     public Task<IList<ViewSystemEventType>> GetAllAsync(CancellationToken cancellationToken)
-        => _mediator.Send(new GetAllViewEventTypes(_requestAccessor.GetCorrelationId()),
+        => _mediator.Send(new GetViewEventTypes(_requestAccessor.GetCorrelationId()),
                           cancellationToken);
+
+    /// <summary> Get user event type by id </summary>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<SystemEventType>> GetByIdAsync(Guid id, CancellationToken cancellationToken) {
+        var result = await _mediator.Send(new GetEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
+                                    cancellationToken);
+        if (result == null)
+            return NotFound();
+        if (result.IsDeleted == true) {
+            Response.StatusCode = (int)HttpStatusCode.Gone;
+            return new EmptyResult();
+        }
+        return Ok(result);
+    }
 
     /// <summary> Get a duration event type by id</summary>
     [HttpGet("duration/{id}")]
@@ -65,7 +79,7 @@ public class EventTypeController: ControllerBase {
     /// </summary>
     [HttpPost]
     public async Task<ActionResult<SystemEventType>> CreateAsync(SystemEventType eventType, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new CreateEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+        var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
         switch (cqrsResult.StatusCode) {
             case CqrsResultCode.EntityIsDeleted:

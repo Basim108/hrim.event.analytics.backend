@@ -13,6 +13,6 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// </returns>
 /// <seealso cref="DurationEventType"/>
 /// <seealso cref="OccurrenceEventType"/>
-public record CreateEventTypeCommand(SystemEventType EventType, bool SaveChanges, Guid CorrelationId)
+public record CreateUserEventTypeCommand(SystemEventType EventType, bool SaveChanges, Guid CorrelationId)
     : BaseRequest(CorrelationId), IRequest<CqrsResult<SystemEventType?>>;
     

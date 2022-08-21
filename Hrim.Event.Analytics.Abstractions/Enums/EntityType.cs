@@ -7,6 +7,7 @@ namespace Hrim.Event.Analytics.Abstractions.Enums;
 public enum EntityType {
     HrimUser,
     HrimTag,
-    OccurrenceEventType,
-    DurationEventType
+    EventType,
+    OccurrenceEvent,
+    DurationEvent
 }
