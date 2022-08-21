@@ -7,7 +7,7 @@ namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
 public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent> {
     public void Configure(EntityTypeBuilder<DbDurationEvent> builder) {
-        builder.ToTable("duration_event_types")
+        builder.ToTable("duration_events")
                .HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
 
         builder.HasIndex(x => new {
@@ -22,7 +22,8 @@ public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent> {
                                   });
 
         builder.AddEntityProperties();
-
+        builder.AddEventBaseProperties();
+        
         builder.Property(p => p.StartedOn)
                .HasColumnName(nameof(DbDurationEvent.StartedOn).ToSnakeCase())
                .HasComment("Date when an event started")
@@ -39,8 +40,5 @@ public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent> {
                .HasColumnName(nameof(DbDurationEvent.FinishedAt).ToSnakeCase())
                .HasComment("Time with end-user timezone when an event finished")
                .HasColumnType("timetz");
-        builder.Property(p => p.IsPublic)
-               .HasColumnName(nameof(DbDurationEvent.IsPublic).ToSnakeCase())
-               .HasComment("An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance");
     }
 }

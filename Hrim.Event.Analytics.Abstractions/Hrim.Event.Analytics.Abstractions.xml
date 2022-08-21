@@ -44,7 +44,7 @@
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.CqrsVoidResult.#ctor(Hrim.Event.Analytics.Abstractions.Enums.CqrsResultCode,System.String)">
             <summary> In order to avoid throwing an necessary exception, CQRS commands and queries could use this record to provide more information about execution result </summary>
         </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand">
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateUserEventTypeCommand">
             <summary> Creates an instance of a system event type </summary>
             <param name="EventType">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
@@ -56,7 +56,7 @@
             <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType"/>
             <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType"/>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateUserEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType,System.Boolean,System.Guid)">
             <summary> Creates an instance of a system event type </summary>
             <param name="EventType">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
@@ -68,10 +68,10 @@
             <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType"/>
             <seealso cref="T:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType"/>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand.EventType">
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateUserEventTypeCommand.EventType">
             <summary>an instance that has to be created</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateEventTypeCommand.SaveChanges">
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateUserEventTypeCommand.SaveChanges">
             <summary>If true, then changes will be flushed to the storages</summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetDurationEventTypeById">

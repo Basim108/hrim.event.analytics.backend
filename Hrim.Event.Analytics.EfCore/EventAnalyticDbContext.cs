@@ -13,13 +13,11 @@ public class EventAnalyticDbContext: DbContext {
     public EventAnalyticDbContext(DbContextOptions<EventAnalyticDbContext> options)
         : base(options) { }
 
-    public DbSet<SystemEventType>       UserEventTypes       { get; set; }
-    public DbSet<DbDurationEvent>       DurationEvents       { get; set; }
-    public DbSet<DbOccurrenceEvent>     OccurrenceEvents     { get; set; }
-    public DbSet<DbDurationEventType>   DurationEventTypes   { get; set; }
-    public DbSet<DbOccurrenceEventType> OccurrenceEventTypes { get; set; }
-    public DbSet<HrimTag>               HrimTags             { get; set; }
-    public DbSet<HrimUser>              HrimUsers            { get; set; }
+    public DbSet<SystemEventType>   UserEventTypes   { get; set; }
+    public DbSet<DbDurationEvent>   DurationEvents   { get; set; }
+    public DbSet<DbOccurrenceEvent> OccurrenceEvents { get; set; }
+    public DbSet<HrimUser>          HrimUsers        { get; set; }
+    public DbSet<HrimTag>           HrimTags         { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.HasDefaultSchema("hrim_analytics");

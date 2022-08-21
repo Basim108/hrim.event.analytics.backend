@@ -1,7 +1,9 @@
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrimsoft.StringCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
@@ -37,5 +39,11 @@ public class SystemEventTypeDbConfig: IEntityTypeConfiguration<SystemEventType> 
                .HasComment("A user who created an instance of this event type")
                .IsRequired();
         builder.HasOne(x => x.CreatedBy);
+        
+        builder.Property(p => p.EventType)
+               .HasColumnName(nameof(SystemEventType.EventType).ToSnakeCase())
+               .HasComment("Specifies a type of events that will be registered: duration, occurrence, etc")
+               .HasConversion(new EnumToStringConverter<EventType>())
+               .IsRequired();
     }
 }

@@ -1,5 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Entities;
+using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.AutoMapper;
 using Hrim.Event.Analytics.EfCore.Cqrs;
@@ -13,14 +14,16 @@ namespace Hrim.Event.Analytics.EfCore.DependencyInjection;
 
 public static class EfCoreServiceRegistration {
     public static void AddEventAnalyticsStorage(this IServiceCollection services, IConfiguration appConfig, string migrationAssembly) {
-        services.AddMediatR(typeof(GetViewEventTypesHandler).Assembly);
-        services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<OccurrenceEventType>, CqrsResult<OccurrenceEventType?>>, SoftDeleteEntityCommandHandler<OccurrenceEventType>>();
-        services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<DurationEventType>, CqrsResult<DurationEventType?>>, SoftDeleteEntityCommandHandler<DurationEventType>>();
+        services.AddMediatR(typeof(CreateEventTypeHandler).Assembly);
+        services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<SystemEventType>, CqrsResult<SystemEventType?>>, SoftDeleteEntityCommandHandler<SystemEventType>>();
+        services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<OccurrenceEvent>, CqrsResult<OccurrenceEvent?>>, SoftDeleteEntityCommandHandler<OccurrenceEvent>>();
+        services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<DurationEvent>, CqrsResult<DurationEvent?>>, SoftDeleteEntityCommandHandler<DurationEvent>>();
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<HrimTag>, CqrsResult<HrimTag?>>, SoftDeleteEntityCommandHandler<HrimTag>>();
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<HrimUser>, CqrsResult<HrimUser?>>, SoftDeleteEntityCommandHandler<HrimUser>>();
 
-        services.AddTransient<IRequestHandler<RestoreEntityCommand<OccurrenceEventType>, CqrsResult<OccurrenceEventType?>>, RestoreEntityCommandHandler<OccurrenceEventType>>();
-        services.AddTransient<IRequestHandler<RestoreEntityCommand<DurationEventType>, CqrsResult<DurationEventType?>>, RestoreEntityCommandHandler<DurationEventType>>();
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<SystemEventType>, CqrsResult<SystemEventType?>>, RestoreEntityCommandHandler<SystemEventType>>();
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<OccurrenceEvent>, CqrsResult<OccurrenceEvent?>>, RestoreEntityCommandHandler<OccurrenceEvent>>();
+        services.AddTransient<IRequestHandler<RestoreEntityCommand<DurationEvent>, CqrsResult<DurationEvent?>>, RestoreEntityCommandHandler<DurationEvent>>();
         services.AddTransient<IRequestHandler<RestoreEntityCommand<HrimTag>, CqrsResult<HrimTag?>>, RestoreEntityCommandHandler<HrimTag>>();
         services.AddTransient<IRequestHandler<RestoreEntityCommand<HrimUser>, CqrsResult<HrimUser?>>, RestoreEntityCommandHandler<HrimUser>>();
 

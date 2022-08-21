@@ -17,7 +17,8 @@ public class OccurenceEventDbConfig: IEntityTypeConfiguration<DbOccurrenceEvent>
                .IncludeProperties(x => x.IsPublic);
 
         builder.AddEntityProperties();
-
+        builder.AddEventBaseProperties();
+        
         builder.Property(p => p.OccurredOn)
                .HasColumnName(nameof(DbOccurrenceEvent.OccurredOn).ToSnakeCase())
                .HasComment("Date when an event occurred")
@@ -28,9 +29,5 @@ public class OccurenceEventDbConfig: IEntityTypeConfiguration<DbOccurrenceEvent>
                .HasComment("Time with end-user timezone when an event occurred")
                .HasColumnType("timetz")
                .IsRequired();
-        
-        builder.Property(p => p.IsPublic)
-               .HasColumnName(nameof(DbOccurrenceEvent.IsPublic).ToSnakeCase())
-               .HasComment("An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance");
     }
 }

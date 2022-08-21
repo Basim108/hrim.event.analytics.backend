@@ -1,11 +1,8 @@
-using AutoMapper;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
-using Hrim.Event.Analytics.Abstractions.Exceptions;
-using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +12,11 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, CqrsResult<SystemEventType?>> {
     private readonly ILogger<UpdateEventTypeHandler> _logger;
-    private readonly IMapper                         _mapper;
     private readonly EventAnalyticDbContext          _context;
 
     public UpdateEventTypeHandler(ILogger<UpdateEventTypeHandler> logger,
-                                  IMapper                         mapper,
                                   EventAnalyticDbContext          context) {
         _logger  = logger;
-        _mapper  = mapper;
         _context = context;
     }
 
@@ -35,32 +29,20 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
     
     private async Task<CqrsResult<SystemEventType?>> HandleAsync(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
         using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.EventType.Id);
-        SystemEventType? existed = request.EventType switch {
-            DurationEventType => await _context.DurationEventTypes
-                                               .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
-                                                                    cancellationToken),
-            OccurrenceEventType => await _context.OccurrenceEventTypes
-                                                 .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
-                                                                      cancellationToken),
-            _ => throw new UnsupportedEntityException(request.EventType.GetType())
-        };
+        var existed = await _context.UserEventTypes
+                                    .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
+                                                         cancellationToken);
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, nameof(OccurrenceEventType));
+            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, nameof(SystemEventType));
             return new CqrsResult<SystemEventType?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, existed.GetType().Name);
-            SystemEventType business = existed is DbDurationEventType
-                                           ? _mapper.Map<DurationEventType>(existed)
-                                           : _mapper.Map<OccurrenceEventType>(existed);
-            return new CqrsResult<SystemEventType?>(business, CqrsResultCode.EntityIsDeleted);
+            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(SystemEventType));
+            return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventType.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, existed.GetType().Name);
-            SystemEventType business = existed is DbDurationEventType
-                                           ? _mapper.Map<DurationEventType>(existed)
-                                           : _mapper.Map<OccurrenceEventType>(existed);
-            return new CqrsResult<SystemEventType?>(business, CqrsResultCode.Conflict);
+            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(SystemEventType));
+            return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.Conflict);
         }
         existed.ConcurrentToken++;
         existed.Color    = request.EventType.Color;
@@ -70,32 +52,8 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
                                   ? null
                                   : request.EventType.Description;
         existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
-        SystemEventType? result;
-        switch (request.EventType) {
-            case DurationEventType duration: {
-                var dbDuration      = _mapper.Map<DbDurationEventType>(duration);
-                var existedDuration = existed as DbDurationEventType;
-                existedDuration!.StartedOn = dbDuration.StartedOn;
-                existedDuration.StartedAt  = dbDuration.StartedAt;
-                existedDuration.FinishedOn = dbDuration.FinishedOn;
-                existedDuration.FinishedAt = dbDuration.FinishedAt;
-
-                result = _mapper.Map<DurationEventType>(existedDuration);
-                break;
-            }
-            case OccurrenceEventType occurrence:
-                var dbOccurrence      = _mapper.Map<DbOccurrenceEventType>(occurrence);
-                var existedOccurrence = existed as DbOccurrenceEventType;
-                existedOccurrence!.OccurredOn = dbOccurrence.OccurredOn;
-                existedOccurrence.OccurredAt  = dbOccurrence.OccurredAt;
-
-                result = _mapper.Map<OccurrenceEventType>(existedOccurrence);
-                break;
-            default:
-                throw new UnsupportedEntityException(request.EventType.GetType());
-        }
         if (request.SaveChanges)
             await _context.SaveChangesAsync(cancellationToken);
-        return new CqrsResult<SystemEventType?>(result, CqrsResultCode.Ok);
+        return new CqrsResult<SystemEventType?>(existed, CqrsResultCode.Ok);
     }
 }

@@ -65,7 +65,7 @@ public class EventTypeController: ControllerBase {
     /// </summary>
     [HttpPost]
     public async Task<ActionResult<SystemEventType>> CreateAsync(SystemEventType eventType, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new CreateEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+        var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
         switch (cqrsResult.StatusCode) {
             case CqrsResultCode.EntityIsDeleted:

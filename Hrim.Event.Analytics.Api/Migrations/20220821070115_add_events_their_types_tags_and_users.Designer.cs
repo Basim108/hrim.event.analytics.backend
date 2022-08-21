@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20220820201803_add_events_their_types_tags_and_users")]
+    [Migration("20220821070115_add_events_their_types_tags_and_users")]
     partial class add_events_their_types_tags_and_users
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,12 +61,11 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("description")
                         .HasComment("Description given by user, when user_event_type based on this one will be created.");
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("EventType")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("EventType")
-                        .HasColumnType("integer");
+                        .HasColumnType("text")
+                        .HasColumnName("event_type")
+                        .HasComment("Specifies a type of events that will be registered: duration, occurrence, etc");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean")
@@ -94,8 +93,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("event_types", "hrim_analytics");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("SystemEventType");
 
                     b.HasComment("User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
 
@@ -215,7 +212,9 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasComment("Date and UTC time of entity instance creation");
 
                     b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by")
+                        .HasComment("A user who created an instance of this event type");
 
                     b.Property<DateTimeOffset?>("FinishedAt")
                         .HasColumnType("timetz")
@@ -257,7 +256,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "StartedOn"), new[] { "StartedAt", "FinishedOn", "FinishedAt", "IsPublic" });
 
-                    b.ToTable("duration_event_types", "hrim_analytics");
+                    b.ToTable("duration_events", "hrim_analytics");
 
                     b.HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
 
@@ -284,7 +283,9 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasComment("Date and UTC time of entity instance creation");
 
                     b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by")
+                        .HasComment("A user who created an instance of this event type");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean")
@@ -321,42 +322,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.HasComment("When the main importance is the fact that an event occurred.\nThis kind of events may occur several times a day.");
 
                     b.HasCheckConstraint("CK_db_occurrence_events_concurrent_token", "concurrent_token > 0");
-                });
-
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbDurationEventType", b =>
-                {
-                    b.HasBaseType("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType");
-
-                    b.Property<DateTimeOffset?>("FinishedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly?>("FinishedOn")
-                        .HasColumnType("date");
-
-                    b.Property<DateTimeOffset>("StartedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly>("StartedOn")
-                        .HasColumnType("date");
-
-                    b.HasDiscriminator().HasValue("DbDurationEventType");
-
-                    b.HasCheckConstraint("CK_system_event_types_concurrent_token", "concurrent_token > 0");
-                });
-
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.EventTypes.DbOccurrenceEventType", b =>
-                {
-                    b.HasBaseType("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType");
-
-                    b.Property<DateTimeOffset>("OccurredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly>("OccurredOn")
-                        .HasColumnType("date");
-
-                    b.HasDiscriminator().HasValue("DbOccurrenceEventType");
-
-                    b.HasCheckConstraint("CK_system_event_types_concurrent_token", "concurrent_token > 0");
                 });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.SystemEventType", b =>

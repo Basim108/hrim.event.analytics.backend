@@ -15,7 +15,7 @@ public static class MvcBuilderExtensions
         {
             opt.SerializerSettings.NullValueHandling    = NullValueHandling.Ignore;
             opt.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-            opt.SerializerSettings.TypeNameHandling     = TypeNameHandling.Objects;
+            opt.SerializerSettings.TypeNameHandling     = TypeNameHandling.None;
             opt.SerializerSettings.ContractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
