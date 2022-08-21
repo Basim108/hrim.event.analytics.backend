@@ -64,6 +64,9 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetAllAsync(System.Threading.CancellationToken)">
             <summary> Get all user event types </summary>
         </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary> Get user event type by id </summary>
+        </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetDurationByIdAsync(System.Guid,System.Threading.CancellationToken)">
             <summary> Get a duration event type by id</summary>
         </member>
