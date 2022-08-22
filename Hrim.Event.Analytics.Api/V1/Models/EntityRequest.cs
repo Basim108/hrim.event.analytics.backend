@@ -1,5 +1,3 @@
-// ReSharper disable InconsistentNaming
-
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.ModelBinders;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Models;
 
-public class EntityRequest {
-    [FromRoute(Name = "id")]
-    public Guid Id { get; set; }
-
+public class EntityRequest: ByIdRequest {
     [FromQuery(Name = "entityType")]
     [ModelBinder(typeof(JsonModelBinder<EntityType>))]
     public EntityType EntityType { get; set; }

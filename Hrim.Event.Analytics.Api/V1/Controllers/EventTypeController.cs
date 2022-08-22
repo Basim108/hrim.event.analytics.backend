@@ -1,8 +1,8 @@
-using System.Net;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 using Hrim.Event.Analytics.Api.Services;
+using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,8 +32,8 @@ public class EventTypeController: EventAnalyticsApiController {
 
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserEventType>> GetByIdAsync(Guid id, CancellationToken cancellationToken) {
-        var result = await _mediator.Send(new GetEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
+    public async Task<ActionResult<UserEventType>> GetByIdAsync([FromRoute]ByIdRequest request, CancellationToken cancellationToken) {
+        var result = await _mediator.Send(new GetEventTypeById(request.Id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
                                     cancellationToken);
         return ProcessGetByIdResult(result);
     }
