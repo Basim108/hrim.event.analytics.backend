@@ -1,3 +1,4 @@
+using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hrim.Event.Analytics.Api.Extensions;
@@ -22,7 +23,7 @@ public static class ApiServiceCollectionRegistrations {
             ValidatorOptions.Global.PropertyNameResolver = (_, member, _)
                 => member?.Name.ToSnakeCase();
         });
-        
+        services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         services.AddApiSwagger();
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
         

@@ -47,10 +47,10 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
             <summary> </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.RestoreAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.RestoreAsync(Hrim.Event.Analytics.Api.V1.Models.EntityRequest,System.Threading.CancellationToken)">
             <summary> Restore a soft deleted instance of any entity</summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.SoftDeleteAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.SoftDeleteAsync(Hrim.Event.Analytics.Api.V1.Models.EntityRequest,System.Threading.CancellationToken)">
             <summary> Soft-delete an instance of any entity</summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventAnalyticsApiController">
@@ -154,6 +154,14 @@
         </member>
         <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventResponse.Durations">
             <summary>duration events that satisfy a request</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.EntityRequestValidator">
+            <summary>
+            Validates requests for entity controller
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.EntityRequestValidator.#ctor">
+            <summary> </summary>
         </member>
     </members>
 </doc>
