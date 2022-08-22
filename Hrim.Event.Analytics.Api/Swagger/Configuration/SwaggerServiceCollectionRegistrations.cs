@@ -10,6 +10,7 @@ public static class SwaggerServiceCollectionRegistrations {
     public static void AddApiSwagger(this IServiceCollection services) {
         services.AddSwaggerGenNewtonsoftSupport();
         services.AddSwaggerGen(c => {
+            c.UseDateOnlyTimeOnlyStringConverters();
             c.SwaggerDoc("v1", SwaggerConfig.MakeEventAnalytics());
             c.ExampleFilters();
             c.IncludeXmlComments(GetXmlCommentsPath());

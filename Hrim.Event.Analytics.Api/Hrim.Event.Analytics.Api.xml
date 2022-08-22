@@ -75,6 +75,9 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
             <summary> </summary>
         </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.GetUserEventsAsync(System.DateOnly,System.DateOnly,System.Guid,System.Threading.CancellationToken)">
+            <summary> Get user's events for a period </summary>
+        </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.CreateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Threading.CancellationToken)">
             <summary> Create an occurrence event </summary>
         </member>
@@ -109,6 +112,48 @@
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Threading.CancellationToken)">
             <summary> Update an event type </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Models.EventRequest">
+            <summary> Get all events for a period </summary>
+            <param name="Start">Includes durations that intersects start border </param>
+            <param name="End">Includes durations that intersects end border </param>
+            <param name="OwnerId">Returns only those events that were created by this user id</param>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Models.EventRequest.#ctor(System.DateOnly,System.DateOnly,System.Guid)">
+            <summary> Get all events for a period </summary>
+            <param name="Start">Includes durations that intersects start border </param>
+            <param name="End">Includes durations that intersects end border </param>
+            <param name="OwnerId">Returns only those events that were created by this user id</param>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventRequest.Start">
+            <summary>Includes durations that intersects start border </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventRequest.End">
+            <summary>Includes durations that intersects end border </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventRequest.OwnerId">
+            <summary>Returns only those events that were created by this user id</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Models.EventResponse">
+            <summary> Response for a period request </summary>
+            <param name="Request">A request for with this response</param>
+            <param name="Occurrences">occurrence events that satisfy a request</param>
+            <param name="Durations">duration events that satisfy a request</param>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Models.EventResponse.#ctor(Hrim.Event.Analytics.Api.V1.Models.EventRequest,System.Collections.Generic.IList{Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent},System.Collections.Generic.IList{Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent})">
+            <summary> Response for a period request </summary>
+            <param name="Request">A request for with this response</param>
+            <param name="Occurrences">occurrence events that satisfy a request</param>
+            <param name="Durations">duration events that satisfy a request</param>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventResponse.Request">
+            <summary>A request for with this response</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventResponse.Occurrences">
+            <summary>occurrence events that satisfy a request</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Api.V1.Models.EventResponse.Durations">
+            <summary>duration events that satisfy a request</summary>
         </member>
     </members>
 </doc>

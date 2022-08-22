@@ -1,9 +1,9 @@
-using System.Net;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.ModelBinders;
 using Hrim.Event.Analytics.Api.Services;
+using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +25,20 @@ public class EventController: EventAnalyticsApiController {
         _mediator        = mediator;
     }
 
+    /// <summary> Get user's events for a period </summary>
+    [HttpGet]
+    public async Task<EventResponse> GetUserEventsAsync(DateOnly start,
+                                                        DateOnly end, 
+                                                        [FromQuery(Name = "owner_id")]
+                                                        Guid ownerId,
+                                                        CancellationToken cancellationToken) {
+        var occurrences = await _mediator.Send(new GetUserOccurrencesForPeriod(start, end, ownerId, _requestAccessor.GetCorrelationId()),
+                                               cancellationToken);
+        var durations = await _mediator.Send(new GetUserDurationsForPeriod(start, end, ownerId, _requestAccessor.GetCorrelationId()),
+                                             cancellationToken);
+        return new EventResponse(new EventRequest(start, end, ownerId), occurrences, durations);
+    }
+
     /// <summary> Create an occurrence event </summary>
     [HttpPost("occurrence")]
     public async Task<ActionResult<OccurrenceEvent>> CreateOccurrenceAsync(OccurrenceEvent occurrence, CancellationToken cancellationToken) {
@@ -40,7 +54,7 @@ public class EventController: EventAnalyticsApiController {
                                               cancellationToken);
         return ProcessUpdateResult(cqrsResult);
     }
-    
+
     /// <summary> Create a duration event </summary>
     [HttpPost("duration")]
     public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEvent duration, CancellationToken cancellationToken) {

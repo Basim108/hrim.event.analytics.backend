@@ -192,6 +192,52 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetEventById`1.IsNotTrackable">
             <summary>If true then does not track changes of the entity properties</summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod">
+            <summary> Get all user's occurrence events for a period </summary>
+            <param name="Start">Includes events that equals to a start border </param>
+            <param name="End">Includes events that equals to an end border </param>
+            <param name="OwnerId">Returns only those events that were created by this user id</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.#ctor(System.DateOnly,System.DateOnly,System.Guid,System.Guid)">
+            <summary> Get all user's occurrence events for a period </summary>
+            <param name="Start">Includes events that equals to a start border </param>
+            <param name="End">Includes events that equals to an end border </param>
+            <param name="OwnerId">Returns only those events that were created by this user id</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.Start">
+            <summary>Includes events that equals to a start border </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.End">
+            <summary>Includes events that equals to an end border </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.OwnerId">
+            <summary>Returns only those events that were created by this user id</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod">
+            <summary> Get all user's durations events for a period </summary>
+            <param name="Start">Includes durations that intersects start border </param>
+            <param name="End">Includes durations that intersects end border </param>
+            <param name="OwnerId">Returns only those events that were created by this user id</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.#ctor(System.DateOnly,System.DateOnly,System.Guid,System.Guid)">
+            <summary> Get all user's durations events for a period </summary>
+            <param name="Start">Includes durations that intersects start border </param>
+            <param name="End">Includes durations that intersects end border </param>
+            <param name="OwnerId">Returns only those events that were created by this user id</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.Start">
+            <summary>Includes durations that intersects start border </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.End">
+            <summary>Includes durations that intersects end border </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.OwnerId">
+            <summary>Returns only those events that were created by this user id</summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventCreateCommand">
             <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
@@ -495,96 +541,66 @@
             Combines date from DateOnly and time with timezone from DateTimeOffset
             </summary>
         </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType">
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent">
             <summary>
             When it is important to register an event that has start time and end time this system_event_type can be used.
             <br/>This kind of events may occur several times a day.
             </summary>
             <param name="StartedAt">Date and time with end-user timezone when en event starts</param>
             <param name="FinishedAt">Date and time with end-user timezone when an event finishes</param>
-            <param name="Name">User event type name, e.g. 'nice mood', 'headache', etc</param>
-            <param name="Description">Description given by user, when user_event_type based on this one will be created.</param>
-            <param name="Color">A color that events will be drawing with in a calendar.</param>
-            <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
-            <param name="Id">Entity id</param>
+            <param name="Id">Event id</param>
+            <param name="EventTypeId">Id of event type on which this event is based on</param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.#ctor(System.Guid,System.DateTimeOffset,System.Nullable{System.DateTimeOffset},System.String,System.String,System.String,System.Boolean)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent.#ctor(System.Guid,System.DateTimeOffset,System.Nullable{System.DateTimeOffset},System.Guid)">
             <summary>
             When it is important to register an event that has start time and end time this system_event_type can be used.
             <br/>This kind of events may occur several times a day.
             </summary>
             <param name="StartedAt">Date and time with end-user timezone when en event starts</param>
             <param name="FinishedAt">Date and time with end-user timezone when an event finishes</param>
-            <param name="Name">User event type name, e.g. 'nice mood', 'headache', etc</param>
-            <param name="Description">Description given by user, when user_event_type based on this one will be created.</param>
-            <param name="Color">A color that events will be drawing with in a calendar.</param>
-            <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
-            <param name="Id">Entity id</param>
+            <param name="Id">Event id</param>
+            <param name="EventTypeId">Id of event type on which this event is based on</param>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.Id">
-            <summary>Entity id</summary>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent.Id">
+            <summary>Event id</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.StartedAt">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent.StartedAt">
             <summary>Date and time with end-user timezone when en event starts</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.FinishedAt">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent.FinishedAt">
             <summary>Date and time with end-user timezone when an event finishes</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.Name">
-            <summary>User event type name, e.g. 'nice mood', 'headache', etc</summary>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent.EventTypeId">
+            <summary>Id of event type on which this event is based on</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.Description">
-            <summary>Description given by user, when user_event_type based on this one will be created.</summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.Color">
-            <summary>A color that events will be drawing with in a calendar.</summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewDurationEventType.IsPublic">
-            <summary>An owner who created this user_event_type could share it with other end-users</summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType">
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent">
             <summary>
             When the main importance is the fact that an event occurred.
             <br/>This kind of events may occur several times a day.
             </summary>
             <param name="OccurredAt">Date and time with end-user timezone when an event occurred</param>
-            <param name="Name">User event type name, e.g. 'nice mood', 'headache', etc</param>
-            <param name="Description">Description given by user, when user_event_type based on this one will be created.</param>
-            <param name="Color">A color that events will be drawing with in a calendar.</param>
-            <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
-            <param name="Id">Entity id</param>
+            <param name="Id">Event id</param>
+            <param name="EventTypeId">Id of event type on which this event is based on</param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.#ctor(System.Guid,System.DateTimeOffset,System.String,System.String,System.String,System.Boolean)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent.#ctor(System.Guid,System.DateTimeOffset,System.Guid)">
             <summary>
             When the main importance is the fact that an event occurred.
             <br/>This kind of events may occur several times a day.
             </summary>
             <param name="OccurredAt">Date and time with end-user timezone when an event occurred</param>
-            <param name="Name">User event type name, e.g. 'nice mood', 'headache', etc</param>
-            <param name="Description">Description given by user, when user_event_type based on this one will be created.</param>
-            <param name="Color">A color that events will be drawing with in a calendar.</param>
-            <param name="IsPublic">An owner who created this user_event_type could share it with other end-users</param>
-            <param name="Id">Entity id</param>
+            <param name="Id">Event id</param>
+            <param name="EventTypeId">Id of event type on which this event is based on</param>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.Id">
-            <summary>Entity id</summary>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent.Id">
+            <summary>Event id</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.OccurredAt">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent.OccurredAt">
             <summary>Date and time with end-user timezone when an event occurred</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.Name">
-            <summary>User event type name, e.g. 'nice mood', 'headache', etc</summary>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent.EventTypeId">
+            <summary>Id of event type on which this event is based on</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.Description">
-            <summary>Description given by user, when user_event_type based on this one will be created.</summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.Color">
-            <summary>A color that events will be drawing with in a calendar.</summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewOccurrenceEventType.IsPublic">
-            <summary>An owner who created this user_event_type could share it with other end-users</summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType">
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType">
             <summary>
             Model to present base properties of any derived event type.
             <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
@@ -596,7 +612,7 @@
             <param name="IsDeleted">Soft deletion flag</param>
             <param name="Id">Entity id</param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.#ctor(System.Guid,System.String,System.String,System.String,System.Boolean,System.Boolean)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.#ctor(System.Guid,System.String,System.String,System.String,System.Boolean,System.Boolean)">
             <summary>
             Model to present base properties of any derived event type.
             <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
@@ -608,22 +624,22 @@
             <param name="IsDeleted">Soft deletion flag</param>
             <param name="Id">Entity id</param>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.Id">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.Id">
             <summary>Entity id</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.Name">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.Name">
             <summary>User event type name, e.g. 'nice mood', 'headache', etc</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.Description">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.Description">
             <summary>Description given by user, when user_event_type based on this one will be created.</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.Color">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.Color">
             <summary>A color that events will be drawing with in a calendar.</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.IsPublic">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.IsPublic">
             <summary>An owner who created this user_event_type could share it with other end-users</summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewSystemEventType.IsDeleted">
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType.IsDeleted">
             <summary>Soft deletion flag</summary>
         </member>
     </members>

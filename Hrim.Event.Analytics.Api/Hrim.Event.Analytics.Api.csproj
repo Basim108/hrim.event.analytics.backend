@@ -13,6 +13,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="1.0.3" />
+        <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="1.0.3" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
         <PackageReference Include="Hrimsoft.Core" Version="0.0.11" />
         <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />

@@ -26,7 +26,7 @@ public class EventTypeController: EventAnalyticsApiController {
 
     /// <summary> Get all user event types </summary>
     [HttpGet]
-    public Task<IList<ViewSystemEventType>> GetAllAsync(CancellationToken cancellationToken)
+    public Task<IList<ViewEventType>> GetAllAsync(CancellationToken cancellationToken)
         => _mediator.Send(new GetViewEventTypes(_requestAccessor.GetCorrelationId()),
                           cancellationToken);
 

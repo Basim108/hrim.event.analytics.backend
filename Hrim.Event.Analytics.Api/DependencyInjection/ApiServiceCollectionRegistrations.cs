@@ -13,7 +13,7 @@ namespace Hrim.Event.Analytics.Api.DependencyInjection;
 
 public static class ApiServiceCollectionRegistrations {
     public static void AddEventAnalyticsServices(this IServiceCollection services, IConfiguration appConfig) {
-        services.AddControllers()
+        services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
                 .AddHrimsoftJsonOptions();
         services.AddFluentValidationAutoValidation(_ => {
             ValidatorOptions.Global.LanguageManager.Enabled = false;
