@@ -5,32 +5,33 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-    
+
     <PropertyGroup>
         <DocumentationFile>Hrim.Event.Analytics.Abstractions.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="10.0.1" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <EmbeddedResource Update="CoreLogs.resx">
-        <Generator>PublicResXFileCodeGenerator</Generator>
-        <LastGenOutput>CoreLogs.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
+        <PackageReference Include="MediatR" Version="10.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="CoreLogs.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>CoreLogs.resx</DependentUpon>
-      </Compile>
+        <EmbeddedResource Update="CoreLogs.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>CoreLogs.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="appsettings.json" />
+        <Compile Update="CoreLogs.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>CoreLogs.resx</DependentUpon>
+        </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+        <SonarQubeSetting Include="sonar.coverage.exclusions">
+            <Value>**/*.Designer.cs</Value>
+        </SonarQubeSetting>
+    </ItemGroup>
 </Project>
