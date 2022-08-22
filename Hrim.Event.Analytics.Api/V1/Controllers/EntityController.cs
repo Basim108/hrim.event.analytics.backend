@@ -1,5 +1,6 @@
 using System.Net;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -28,16 +29,16 @@ public class EntityController: ControllerBase {
 
     /// <summary> Restore a soft deleted instance of any entity</summary>
     [HttpPatch("{id}")]
-    public async Task<ActionResult<Entity>> RestoreAsync(Guid id,
+    public async Task<ActionResult<HrimEntity>> RestoreAsync(Guid id,
                                                          [FromQuery(Name = "entityType")] [ModelBinder(typeof(JsonModelBinder<EntityType>))]
                                                          EntityType entityType,
                                                          CancellationToken cancellationToken) {
         CqrsResultCode? resultCode;
-        Entity?         result;
+        HrimEntity?         result;
         switch (entityType) {
             case EntityType.EventType:
-                var restoreEventType = new RestoreEntityCommand<SystemEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
-                (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<SystemEventType>, SystemEventType>(restoreEventType, cancellationToken);
+                var restoreEventType = new RestoreEntityCommand<UserEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
+                (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<UserEventType>, UserEventType>(restoreEventType, cancellationToken);
                 break;
             case EntityType.OccurrenceEvent:
                 var restoreOccurrence = new RestoreEntityCommand<OccurrenceEvent>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
@@ -68,16 +69,16 @@ public class EntityController: ControllerBase {
 
     /// <summary> Soft-delete an instance of any entity</summary>
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Entity>> SoftDeleteAsync(Guid id,
+    public async Task<ActionResult<HrimEntity>> SoftDeleteAsync(Guid id,
                                                             [FromQuery(Name = "entityType")] [ModelBinder(typeof(JsonModelBinder<EntityType>))]
                                                             EntityType entityType,
                                                             CancellationToken cancellationToken) {
         CqrsResultCode? resultCode;
-        Entity?         result;
+        HrimEntity?         result;
         switch (entityType) {
             case EntityType.EventType:
-                var deleteEventType = new SoftDeleteEntityCommand<SystemEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
-                (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<SystemEventType>, SystemEventType>(deleteEventType, cancellationToken);
+                var deleteEventType = new SoftDeleteEntityCommand<UserEventType>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
+                (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<UserEventType>, UserEventType>(deleteEventType, cancellationToken);
                 break;
             case EntityType.OccurrenceEvent:
                 var deleteOccurrence = new SoftDeleteEntityCommand<OccurrenceEvent>(id, SaveChanges: true, _requestAccessor.GetCorrelationId());
@@ -110,9 +111,9 @@ public class EntityController: ControllerBase {
         throw new UnexpectedCqrsStatusCodeException(resultCode);
     }
 
-    private async Task<(CqrsResultCode ResultCode, Entity? result)> InvokeDeletionAsync<TCommand, TEntity>(TCommand command, 
+    private async Task<(CqrsResultCode ResultCode, HrimEntity? result)> InvokeDeletionAsync<TCommand, TEntity>(TCommand command, 
                                                                                                            CancellationToken cancellationToken)
-        where TEntity : Entity, new()
+        where TEntity : HrimEntity, new()
         where TCommand : IRequest<CqrsResult<TEntity?>> {
         var userResult = await _mediator.Send(command, cancellationToken);
         return (userResult.StatusCode, userResult.Result);

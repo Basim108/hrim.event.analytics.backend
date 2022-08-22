@@ -11,30 +11,30 @@ public static class EntityDbConfig {
     public const string POSTGRES_GUID_GENERATOR = "uuid_generate_v4()";
 
     public static void AddEntityProperties<TEntity>(this EntityTypeBuilder<TEntity> builder)
-        where TEntity : Entity {
+        where TEntity : HrimEntity {
         builder.HasKey(x => x.Id);
 
         builder.Property(p => p.Id)
-               .HasColumnName(nameof(Entity.Id).ToSnakeCase())
+               .HasColumnName(nameof(HrimEntity.Id).ToSnakeCase())
                .HasDefaultValueSql(POSTGRES_GUID_GENERATOR);
 
         builder.Property(p => p.CreatedAt)
-               .HasColumnName(nameof(Entity.CreatedAt).ToSnakeCase())
+               .HasColumnName(nameof(HrimEntity.CreatedAt).ToSnakeCase())
                .HasConversion(UtcDateTimeConverter.Get())
                .HasComment("Date and UTC time of entity instance creation")
                .HasColumnType("timestamptz")
                .IsRequired();
 
         builder.Property(p => p.UpdatedAt)
-               .HasColumnName(nameof(Entity.UpdatedAt).ToSnakeCase())
+               .HasColumnName(nameof(HrimEntity.UpdatedAt).ToSnakeCase())
                .HasConversion(UtcDateTimeConverter.Get())
                .HasComment("Date and UTC time of entity instance last update ")
                .HasColumnType("timestamptz");
 
         builder.Property(p => p.IsDeleted)
-               .HasColumnName(nameof(Entity.IsDeleted).ToSnakeCase());
+               .HasColumnName(nameof(HrimEntity.IsDeleted).ToSnakeCase());
         
-        var concurrentTokenColumn = nameof(Entity.ConcurrentToken).ToSnakeCase();
+        var concurrentTokenColumn = nameof(HrimEntity.ConcurrentToken).ToSnakeCase();
         builder.Property(p => p.ConcurrentToken)
                .HasColumnName(concurrentTokenColumn)
                .HasComment("Update is possible only when this token equals to the token in the storage")

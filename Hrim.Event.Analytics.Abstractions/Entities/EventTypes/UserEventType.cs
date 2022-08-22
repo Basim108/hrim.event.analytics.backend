@@ -6,8 +6,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 /// Event types created by user
 /// <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
 /// </summary>
-// TODO: rename to UserEventType
-public class SystemEventType: Entity {
+public class UserEventType: HrimEntity {
     /// <summary>
     /// Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>

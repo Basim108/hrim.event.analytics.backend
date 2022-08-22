@@ -7,7 +7,7 @@ namespace Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 /// <br/>This kind of events may occur several times a day.
 /// </summary>
 [Obsolete("It's wrong design - must be deleted.")]
-public class DbDurationEventType: SystemEventType {
+public class DbDurationEventType: UserEventType {
     /// <summary>
     /// Date when an event started
     /// </summary>

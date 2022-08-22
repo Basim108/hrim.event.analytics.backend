@@ -45,7 +45,7 @@
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
             <Value>
-                **/20220821070115_add_events_their_types_tags_and_users.cs, 
+                **/20220821113927_add_events_their_types_tags_and_users.cs, 
                 **/*.Designer.cs, 
                 **/EventAnalyticDbContextModelSnapshot.cs</Value>
         </SonarQubeSetting>

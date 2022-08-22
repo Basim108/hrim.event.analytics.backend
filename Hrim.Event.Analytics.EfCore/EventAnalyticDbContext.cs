@@ -13,7 +13,7 @@ public class EventAnalyticDbContext: DbContext {
     public EventAnalyticDbContext(DbContextOptions<EventAnalyticDbContext> options)
         : base(options) { }
 
-    public DbSet<SystemEventType>   UserEventTypes   { get; set; }
+    public DbSet<UserEventType>     UserEventTypes   { get; set; }
     public DbSet<DbDurationEvent>   DurationEvents   { get; set; }
     public DbSet<DbOccurrenceEvent> OccurrenceEvents { get; set; }
     public DbSet<HrimUser>          HrimUsers        { get; set; }
@@ -24,7 +24,7 @@ public class EventAnalyticDbContext: DbContext {
         modelBuilder.HasPostgresExtension("uuid-ossp"); // enables guid generation functions e.g. uuid_generate_v4
 
         modelBuilder.ApplyConfiguration(new HrimUserDbConfig());
-        modelBuilder.ApplyConfiguration(new SystemEventTypeDbConfig());
+        modelBuilder.ApplyConfiguration(new UserEventTypeDbConfig());
         modelBuilder.ApplyConfiguration(new DurationEventDbConfig());
         modelBuilder.ApplyConfiguration(new OccurenceEventDbConfig());
         modelBuilder.ApplyConfiguration(new HrimTagDbConfig());

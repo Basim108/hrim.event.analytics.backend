@@ -28,7 +28,7 @@ public static class SwaggerServiceCollectionRegistrations {
     }
 
     private static string GetAbstractionsXmlCommentsPath() {
-        var xmlFile = $"{Assembly.GetAssembly(typeof(Entity))?.GetName().Name}.xml";
+        var xmlFile = $"{Assembly.GetAssembly(typeof(HrimEntity))?.GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         return xmlPath;
     }

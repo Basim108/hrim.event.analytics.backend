@@ -1,7 +1,7 @@
 namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary> Each entity own these properties </summary>
-public abstract class Entity {
+public abstract class HrimEntity {
     /// <summary> Entity id </summary>
     public Guid Id { get; set; }
 

@@ -1,4 +1,5 @@
 using System.Net;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
@@ -34,7 +35,7 @@ public class EventTypeController: ControllerBase {
 
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<SystemEventType>> GetByIdAsync(Guid id, CancellationToken cancellationToken) {
+    public async Task<ActionResult<UserEventType>> GetByIdAsync(Guid id, CancellationToken cancellationToken) {
         var result = await _mediator.Send(new GetEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
                                     cancellationToken);
         if (result == null)
@@ -45,40 +46,40 @@ public class EventTypeController: ControllerBase {
         }
         return Ok(result);
     }
-
-    /// <summary> Get a duration event type by id</summary>
-    [HttpGet("duration/{id}")]
-    public async Task<ActionResult<DurationEventType>> GetDurationByIdAsync(Guid id, CancellationToken cancellationToken) {
-        var result = await _mediator.Send(new GetDurationEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
-                                          cancellationToken);
-        if (result == null)
-            return NotFound();
-        if (result.IsDeleted == true) {
-            Response.StatusCode = (int)HttpStatusCode.Gone;
-            return new EmptyResult();
-        }
-        return Ok(result);
-    }
-
-    /// <summary> Get an occurrence event type by id</summary>
-    [HttpGet("occurrence/{id}")]
-    public async Task<ActionResult<OccurrenceEventType>> GetOccurrenceByIdAsync(Guid id, CancellationToken cancellationToken) {
-        var result = await _mediator.Send(new GetOccurrenceEventTypeById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
-                                          cancellationToken);
-        if (result == null)
-            return NotFound();
-        if (result.IsDeleted == true) {
-            Response.StatusCode = (int)HttpStatusCode.Gone;
-            return new EmptyResult();
-        }
-        return Ok(result);
-    }
+    // TODO: do not forget to implement Get methods for events
+    // /// <summary> Get a duration event type by id</summary>
+    // [HttpGet("duration/{id}")]
+    // public async Task<ActionResult<DurationEvent>> GetDurationByIdAsync(Guid id, CancellationToken cancellationToken) {
+    //     var result = await _mediator.Send(new GetDurationEventById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
+    //                                       cancellationToken);
+    //     if (result == null)
+    //         return NotFound();
+    //     if (result.IsDeleted == true) {
+    //         Response.StatusCode = (int)HttpStatusCode.Gone;
+    //         return new EmptyResult();
+    //     }
+    //     return Ok(result);
+    // }
+    //
+    // /// <summary> Get an occurrence event type by id</summary>
+    // [HttpGet("occurrence/{id}")]
+    // public async Task<ActionResult<OccurrenceEventType>> GetOccurrenceByIdAsync(Guid id, CancellationToken cancellationToken) {
+    //     var result = await _mediator.Send(new GetOccurrenceEventById(id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
+    //                                       cancellationToken);
+    //     if (result == null)
+    //         return NotFound();
+    //     if (result.IsDeleted == true) {
+    //         Response.StatusCode = (int)HttpStatusCode.Gone;
+    //         return new EmptyResult();
+    //     }
+    //     return Ok(result);
+    // }
 
     /// <summary>
     /// Create a user event type based on ony specific system event type, depends on $type field in json
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<SystemEventType>> CreateAsync(SystemEventType eventType, CancellationToken cancellationToken) {
+    public async Task<ActionResult<UserEventType>> CreateAsync(UserEventType eventType, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
         switch (cqrsResult.StatusCode) {
@@ -91,12 +92,12 @@ public class EventTypeController: ControllerBase {
             case CqrsResultCode.Created:
                 return Ok(cqrsResult.Result);
         }
-        throw new UnexpectedCqrsResultException<SystemEventType?>(cqrsResult);
+        throw new UnexpectedCqrsResultException<UserEventType?>(cqrsResult);
     }
 
     /// <summary> Update a user event type based on ony specific system event type, depends on $type field in json </summary>
     [HttpPut]
-    public async Task<ActionResult<SystemEventType>> UpdateAsync(SystemEventType eventType, CancellationToken cancellationToken) {
+    public async Task<ActionResult<UserEventType>> UpdateAsync(UserEventType eventType, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new UpdateEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
         switch (cqrsResult.StatusCode) {
@@ -110,6 +111,6 @@ public class EventTypeController: ControllerBase {
             case CqrsResultCode.Ok:
                 return Ok(cqrsResult.Result);
         }
-        throw new UnexpectedCqrsResultException<SystemEventType?>(cqrsResult);
+        throw new UnexpectedCqrsResultException<UserEventType?>(cqrsResult);
     }
 }

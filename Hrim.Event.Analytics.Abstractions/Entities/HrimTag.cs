@@ -1,7 +1,7 @@
 namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary> A tag that could be linked to an instance of any entity</summary>
-public class HrimTag: Entity {
+public class HrimTag: HrimEntity {
     /// <summary>A tag</summary>
     public string Tag { get; set; } = null!;
 

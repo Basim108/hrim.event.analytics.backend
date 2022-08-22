@@ -14,5 +14,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// <remarks>In case you need to set IsDeleted flag to false, use <see cref="RestoreEntityByIdCommand"/> CQRS command</remarks>
 /// <seealso cref="DurationEventType"/>
 /// <seealso cref="OccurrenceEventType"/>
-public record UpdateEventTypeCommand(SystemEventType EventType, bool SaveChanges, Guid CorrelationId)
-    : BaseRequest(CorrelationId), IRequest<CqrsResult<SystemEventType?>>;
+public record UpdateEventTypeCommand(UserEventType EventType, bool SaveChanges, Guid CorrelationId)
+    : BaseRequest(CorrelationId), IRequest<CqrsResult<UserEventType?>>;
