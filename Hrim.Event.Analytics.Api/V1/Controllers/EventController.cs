@@ -2,12 +2,10 @@ using System.Net;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
-using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Api.ModelBinders;
 using Hrim.Event.Analytics.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
@@ -16,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 /// </summary>
 [ApiController]
 [Route("v1/event")]
-public class EventController: ControllerBase {
+public class EventController: EventAnalyticsApiController {
     private readonly IApiRequestAccessor _requestAccessor;
     private readonly IMediator           _mediator;
 
@@ -30,43 +28,35 @@ public class EventController: ControllerBase {
     /// <summary> Create an occurrence event </summary>
     [HttpPost("occurrence")]
     public async Task<ActionResult<OccurrenceEvent>> CreateOccurrenceAsync(OccurrenceEvent occurrence, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new CreateOccurrenceEventCommand(occurrence, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+        var cqrsResult = await _mediator.Send(new OccurrenceEventCreateCommand(occurrence, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
-        switch (cqrsResult.StatusCode) {
-            case CqrsResultCode.BadRequest:
-                return BadRequest(JsonConvert.SerializeObject(cqrsResult.Info));
-            case CqrsResultCode.Ok:
-            case CqrsResultCode.Created:
-                return Ok(cqrsResult.Result);
-            case CqrsResultCode.EntityIsDeleted:
-                Response.StatusCode = (int)HttpStatusCode.Gone;
-                return new ObjectResult(cqrsResult.Result);
-            case CqrsResultCode.Conflict:
-                return Conflict(cqrsResult.Result);
-        }
-        throw new UnexpectedCqrsResultException<OccurrenceEvent?>(cqrsResult);
+        return ProcessCreateResult(cqrsResult);
     }
 
-    /// <summary> Create an occurrence event </summary>
-    [HttpPost("duration")]
-    public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEvent duration, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new CreateDurationEventCommand(duration, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+    /// <summary> Update a duration event </summary>
+    [HttpPut("occurrence")]
+    public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(OccurrenceEvent eventToUpdate, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(eventToUpdate, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
-        switch (cqrsResult.StatusCode) {
-            case CqrsResultCode.BadRequest:
-                return BadRequest(JsonConvert.SerializeObject(cqrsResult.Info));
-            case CqrsResultCode.Ok:
-            case CqrsResultCode.Created:
-                return Ok(cqrsResult.Result);
-            case CqrsResultCode.EntityIsDeleted:
-                Response.StatusCode = (int)HttpStatusCode.Gone;
-                return new ObjectResult(cqrsResult.Result);
-            case CqrsResultCode.Conflict:
-                return Conflict(cqrsResult.Result);
-        }
-        throw new UnexpectedCqrsResultException<DurationEvent?>(cqrsResult);
+        return ProcessUpdateResult(cqrsResult);
     }
     
+    /// <summary> Create a duration event </summary>
+    [HttpPost("duration")]
+    public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEvent duration, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new DurationEventCreateCommand(duration, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+                                              cancellationToken);
+        return ProcessCreateResult(cqrsResult);
+    }
+
+    /// <summary> Update a duration event </summary>
+    [HttpPut("duration")]
+    public async Task<ActionResult<DurationEvent>> UpdateDurationAsync(DurationEvent eventToUpdate, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new DurationEventUpdateCommand(eventToUpdate, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+                                              cancellationToken);
+        return ProcessUpdateResult(cqrsResult);
+    }
+
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]
     public async Task<ActionResult<BaseEvent>> GetByIdAsync(Guid id,
@@ -87,12 +77,6 @@ public class EventController: ControllerBase {
             default:
                 return BadRequest("Unsupported entity: " + entityType);
         }
-        if (eventInstance == null)
-            return NotFound();
-        if (eventInstance.IsDeleted == true) {
-            Response.StatusCode = (int)HttpStatusCode.Gone;
-            return new EmptyResult();
-        }
-        return Ok(eventInstance);
+        return ProcessGetByIdResult(eventInstance);
     }
 }

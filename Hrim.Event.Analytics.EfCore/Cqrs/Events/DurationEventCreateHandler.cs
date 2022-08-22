@@ -12,13 +12,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
-public class CreateDurationEventHandler: IRequestHandler<CreateDurationEventCommand, CqrsResult<DurationEvent?>> {
-    private readonly ILogger<CreateDurationEventHandler> _logger;
+public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateCommand, CqrsResult<DurationEvent?>> {
+    private readonly ILogger<DurationEventCreateHandler> _logger;
     private readonly IMapper                             _mapper;
     private readonly IMediator                           _mediator;
     private readonly EventAnalyticDbContext              _context;
 
-    public CreateDurationEventHandler(ILogger<CreateDurationEventHandler> logger,
+    public DurationEventCreateHandler(ILogger<DurationEventCreateHandler> logger,
                                       IMapper                             mapper,
                                       IMediator                           mediator,
                                       EventAnalyticDbContext              context) {
@@ -28,22 +28,21 @@ public class CreateDurationEventHandler: IRequestHandler<CreateDurationEventComm
         _context  = context;
     }
 
-    public Task<CqrsResult<DurationEvent?>> Handle(CreateDurationEventCommand request, CancellationToken cancellationToken) {
+    public Task<CqrsResult<DurationEvent?>> Handle(DurationEventCreateCommand request, CancellationToken cancellationToken) {
         if (request.EventInfo == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventInfo)}");
 
         return HandleAsync(request, cancellationToken);
     }
 
-    private async Task<CqrsResult<DurationEvent?>> HandleAsync(CreateDurationEventCommand request, CancellationToken cancellationToken) {
+    private async Task<CqrsResult<DurationEvent?>> HandleAsync(DurationEventCreateCommand request, CancellationToken cancellationToken) {
         var mappedEventInfo = _mapper.Map<DbDurationEvent>(request.EventInfo);
-        var existed = await _context.OccurrenceEvents
+        var existed = await _context.DurationEvents
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(x => x.CreatedById == request.EventInfo.CreatedById &&
-                                                              x.OccurredOn  == mappedEventInfo.StartedOn     &&
-                                                              x.OccurredAt  == mappedEventInfo.StartedAt     &&
-                                                              x.EventTypeId == mappedEventInfo.EventTypeId   &&
-                                                              x.IsDeleted   != true,
+                                                              x.StartedOn   == mappedEventInfo.StartedOn     &&
+                                                              x.StartedAt   == mappedEventInfo.StartedAt     &&
+                                                              x.EventTypeId == mappedEventInfo.EventTypeId,
                                                          cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
@@ -54,6 +53,7 @@ public class CreateDurationEventHandler: IRequestHandler<CreateDurationEventComm
             _logger.LogInformation(EfCoreLogs.CannotCreateIsAlreadyExisted + existed, nameof(DurationEvent));
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
         }
+        // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
         var isUserExists = await _mediator.Send(new CheckUserExistence(request.EventInfo.CreatedById, request.CorrelationId),
                                                 cancellationToken);
         if (isUserExists.StatusCode != CqrsResultCode.Ok) {
@@ -73,7 +73,7 @@ public class CreateDurationEventHandler: IRequestHandler<CreateDurationEventComm
         if (request.SaveChanges) {
             await _context.SaveChangesAsync(cancellationToken);
         }
-        var savedBusiness = _mapper.Map<DurationEvent>(entityToCreate);
-        return new CqrsResult<DurationEvent?>(savedBusiness, CqrsResultCode.Created);
+        var createdEvent = _mapper.Map<DurationEvent>(entityToCreate);
+        return new CqrsResult<DurationEvent?>(createdEvent, CqrsResultCode.Created);
     }
 }

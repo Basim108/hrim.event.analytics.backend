@@ -13,3 +13,7 @@ public record CheckEntityExistence(Guid Id, EntityType EntityType, Guid Correlat
 /// <summary> Checks the existence of a user in the storage </summary>
 public record CheckUserExistence(Guid Id, Guid CorrelationId)
     : CheckEntityExistence(Id, EntityType.HrimUser, CorrelationId);
+    
+/// <summary> Checks the existence of a user event type in the storage </summary>
+public record CheckEventTypeExistence(Guid Id, Guid CorrelationId)
+    : CheckEntityExistence(Id, EntityType.EventType, CorrelationId);

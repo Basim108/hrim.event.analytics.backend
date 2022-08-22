@@ -33,8 +33,9 @@ public static class EfCoreServiceRegistration {
 
         services.AddTransient<IRequestHandler<GetEventById<DurationEvent>, DurationEvent?>, GetEventByIdHandler<DurationEvent>>();
         services.AddTransient<IRequestHandler<GetEventById<OccurrenceEvent>, OccurrenceEvent?>, GetEventByIdHandler<OccurrenceEvent>>();
-        
+
         services.AddTransient<IRequestHandler<CheckUserExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
+        services.AddTransient<IRequestHandler<CheckEventTypeExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
 
         services.AddAutoMapper(typeof(DurationEventTypeProfile),
                                typeof(OccurrenceEventTypeProfile));

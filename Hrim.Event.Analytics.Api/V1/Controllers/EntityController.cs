@@ -16,7 +16,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 /// <summary> Manage any entity type </summary>
 [ApiController]
 [Route("v1/entity")]
-public class EntityController: ControllerBase {
+public class EntityController: EventAnalyticsApiController {
     private readonly IApiRequestAccessor _requestAccessor;
     private readonly IMediator           _mediator;
 

@@ -53,6 +53,20 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EntityController.SoftDeleteAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
             <summary> Soft-delete an instance of any entity</summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventAnalyticsApiController">
+            <summary>
+            Base controller for all event analytics api controllers
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventAnalyticsApiController.ProcessCreateResult``1(Hrim.Event.Analytics.Abstractions.Cqrs.CqrsResult{``0})">
+            <summary> Process CQRS result for create endpoints </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventAnalyticsApiController.ProcessUpdateResult``1(Hrim.Event.Analytics.Abstractions.Cqrs.CqrsResult{``0})">
+            <summary> Process CQRS result for update endpoints </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventAnalyticsApiController.ProcessGetByIdResult``1(``0)">
+            <summary> Process Get endpoint results </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventController">
             <summary>
             Manage user event types with this crud controller
@@ -64,8 +78,14 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.CreateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Threading.CancellationToken)">
             <summary> Create an occurrence event </summary>
         </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.UpdateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Threading.CancellationToken)">
+            <summary> Update a duration event </summary>
+        </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.CreateDurationAsync(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Threading.CancellationToken)">
-            <summary> Create an occurrence event </summary>
+            <summary> Create a duration event </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.UpdateDurationAsync(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Threading.CancellationToken)">
+            <summary> Update a duration event </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.GetByIdAsync(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Threading.CancellationToken)">
             <summary> Get user event type by id </summary>
@@ -85,12 +105,10 @@
             <summary> Get user event type by id </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Threading.CancellationToken)">
-            <summary>
-            Create a user event type based on ony specific system event type, depends on $type field in json
-            </summary>
+            <summary> Create a new event type </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Threading.CancellationToken)">
-            <summary> Update a user event type based on ony specific system event type, depends on $type field in json </summary>
+            <summary> Update an event type </summary>
         </member>
     </members>
 </doc>
