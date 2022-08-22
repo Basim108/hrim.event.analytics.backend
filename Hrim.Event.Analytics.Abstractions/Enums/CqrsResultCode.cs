@@ -7,6 +7,7 @@ namespace Hrim.Event.Analytics.Abstractions.Enums;
 public enum CqrsResultCode {
     Ok                  = 200,
     Created             = 201,
+    BadRequest          = 400,
     Forbidden           = 403,
     NotFound            = 404,
     Conflict            = 409,

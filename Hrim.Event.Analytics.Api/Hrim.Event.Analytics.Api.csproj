@@ -13,8 +13,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="1.0.3" />
+        <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="1.0.3" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
-        <PackageReference Include="Hrimsoft.Core" Version="0.0.9" />
+        <PackageReference Include="Hrimsoft.Core" Version="0.0.11" />
         <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
@@ -26,7 +28,7 @@
         <PackageReference Include="Serilog" Version="2.11.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.5" />
         <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
@@ -45,9 +47,9 @@
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
             <Value>
-                **/20220821070115_add_events_their_types_tags_and_users.cs, 
+                **/*/20220821113927_add_events_their_types_tags_and_users.cs, 
                 **/*.Designer.cs, 
-                **/EventAnalyticDbContextModelSnapshot.cs</Value>
+                **/*/EventAnalyticDbContextModelSnapshot.cs</Value>
         </SonarQubeSetting>
     </ItemGroup>
     <ItemGroup>

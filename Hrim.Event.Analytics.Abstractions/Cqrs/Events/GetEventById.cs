@@ -1,15 +1,16 @@
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using MediatR;
 
-namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
+namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 
 /// <summary>
-/// Returns a full information about a specific entity type by its identifier
+/// Returns a full information about a specific event by its identifier
 /// </summary>
-/// <param name="EventTypeId">Id of a requested event type</param>
+/// <param name="Id">Id of a requested event</param>
 /// <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
 /// <param name="CorrelationId"><see cref="BaseRequest"/></param>
 /// <returns>Null when entity is not found and an entity instance otherwise</returns>
 /// <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
-public record GetDurationEventTypeById(Guid EventTypeId, bool IsNotTrackable, Guid CorrelationId)
-    : BaseRequest(CorrelationId), IRequest<DurationEventType?>;
+public record GetEventById<TEvent>(Guid Id, bool IsNotTrackable, Guid CorrelationId)
+    : BaseRequest(CorrelationId), IRequest<TEvent?>
+    where TEvent: BaseEvent, new();

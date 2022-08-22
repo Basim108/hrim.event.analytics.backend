@@ -7,16 +7,18 @@ namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
 public static class EventBaseDbConfig {
     public static void AddEventBaseProperties<TEntity>(this EntityTypeBuilder<TEntity> builder)
-        where TEntity : EventBase {
+        where TEntity : BaseEvent {
 
         builder.Property(p => p.CreatedById)
-               .HasColumnName(nameof(EventBase.CreatedBy).ToSnakeCase())
+               .HasColumnName(nameof(BaseEvent.CreatedBy).ToSnakeCase())
                .HasComment("A user who created an instance of this event type")
                .IsRequired();
         builder.HasOne(x => x.CreatedBy);
         
-        builder.Property(p => p.IsPublic)
-               .HasColumnName(nameof(EventBase.IsPublic).ToSnakeCase())
-               .HasComment("An owner who created this event_type could share it with other end-users.\nWill override IsPublic value of an event_type instance");
+        builder.Property(p => p.EventTypeId)
+               .HasColumnName(nameof(BaseEvent.EventTypeId).ToSnakeCase())
+               .HasComment("Event type on which current event is based.")
+               .IsRequired();
+        builder.HasOne(x => x.EventType);
     }
 }

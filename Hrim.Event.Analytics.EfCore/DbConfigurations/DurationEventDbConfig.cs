@@ -11,19 +11,20 @@ public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent> {
                .HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
 
         builder.HasIndex(x => new {
-                             x.CreatedById,
-                             x.StartedOn
-                         })
+                    x.CreatedById,
+                    x.StartedOn
+                })
                .IncludeProperties(x => new {
-                                      x.StartedAt,
-                                      x.FinishedOn,
-                                      x.FinishedAt,
-                                      x.IsPublic
-                                  });
+                    x.EventTypeId,
+                    x.StartedAt,
+                    x.FinishedOn,
+                    x.FinishedAt,
+                    x.IsDeleted
+                });
 
         builder.AddEntityProperties();
         builder.AddEventBaseProperties();
-        
+
         builder.Property(p => p.StartedOn)
                .HasColumnName(nameof(DbDurationEvent.StartedOn).ToSnakeCase())
                .HasComment("Date when an event started")

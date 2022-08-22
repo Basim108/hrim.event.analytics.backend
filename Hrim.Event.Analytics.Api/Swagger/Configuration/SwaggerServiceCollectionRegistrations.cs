@@ -10,6 +10,7 @@ public static class SwaggerServiceCollectionRegistrations {
     public static void AddApiSwagger(this IServiceCollection services) {
         services.AddSwaggerGenNewtonsoftSupport();
         services.AddSwaggerGen(c => {
+            c.UseDateOnlyTimeOnlyStringConverters();
             c.SwaggerDoc("v1", SwaggerConfig.MakeEventAnalytics());
             c.ExampleFilters();
             c.IncludeXmlComments(GetXmlCommentsPath());
@@ -28,7 +29,7 @@ public static class SwaggerServiceCollectionRegistrations {
     }
 
     private static string GetAbstractionsXmlCommentsPath() {
-        var xmlFile = $"{Assembly.GetAssembly(typeof(Entity))?.GetName().Name}.xml";
+        var xmlFile = $"{Assembly.GetAssembly(typeof(HrimEntity))?.GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         return xmlPath;
     }

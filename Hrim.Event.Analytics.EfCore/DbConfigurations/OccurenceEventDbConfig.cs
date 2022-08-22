@@ -14,7 +14,10 @@ public class OccurenceEventDbConfig: IEntityTypeConfiguration<DbOccurrenceEvent>
                              x.CreatedById,
                              x.OccurredAt
                          })
-               .IncludeProperties(x => x.IsPublic);
+               .IncludeProperties(x => new {
+                    x.EventTypeId,
+                    x.IsDeleted
+                });
 
         builder.AddEntityProperties();
         builder.AddEventBaseProperties();
