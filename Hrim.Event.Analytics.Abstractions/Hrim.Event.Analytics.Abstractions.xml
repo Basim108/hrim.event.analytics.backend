@@ -108,8 +108,34 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.SoftDeleteEntityCommand`1.SaveChanges">
             <summary>If true, then changes will be flushed to the storages</summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.CreateDurationEventCommand">
+            <summary> Creates an instance of duration event </summary>
+            <param name="EventInfo">an instance that has to be created</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns>
+            Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
+            Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
+            </returns>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.CreateDurationEventCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Boolean,System.Guid)">
+            <summary> Creates an instance of duration event </summary>
+            <param name="EventInfo">an instance that has to be created</param>
+            <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <returns>
+            Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
+            Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
+            </returns>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.CreateDurationEventCommand.EventInfo">
+            <summary>an instance that has to be created</summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.CreateDurationEventCommand.SaveChanges">
+            <summary>If true, then changes will be flushed to the storages</summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.CreateOccurrenceEventCommand">
-            <summary> Creates an instance of a occurrence event </summary>
+            <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
             <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
@@ -119,7 +145,7 @@
             </returns>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.CreateOccurrenceEventCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Boolean,System.Guid)">
-            <summary> Creates an instance of a occurrence event </summary>
+            <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
             <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>

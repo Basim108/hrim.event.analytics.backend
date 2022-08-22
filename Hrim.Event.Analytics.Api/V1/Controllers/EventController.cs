@@ -47,6 +47,26 @@ public class EventController: ControllerBase {
         throw new UnexpectedCqrsResultException<OccurrenceEvent?>(cqrsResult);
     }
 
+    /// <summary> Create an occurrence event </summary>
+    [HttpPost("duration")]
+    public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEvent duration, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new CreateDurationEventCommand(duration, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+                                              cancellationToken);
+        switch (cqrsResult.StatusCode) {
+            case CqrsResultCode.BadRequest:
+                return BadRequest(JsonConvert.SerializeObject(cqrsResult.Info));
+            case CqrsResultCode.Ok:
+            case CqrsResultCode.Created:
+                return Ok(cqrsResult.Result);
+            case CqrsResultCode.EntityIsDeleted:
+                Response.StatusCode = (int)HttpStatusCode.Gone;
+                return new ObjectResult(cqrsResult.Result);
+            case CqrsResultCode.Conflict:
+                return Conflict(cqrsResult.Result);
+        }
+        throw new UnexpectedCqrsResultException<DurationEvent?>(cqrsResult);
+    }
+    
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]
     public async Task<ActionResult<BaseEvent>> GetByIdAsync(Guid id,

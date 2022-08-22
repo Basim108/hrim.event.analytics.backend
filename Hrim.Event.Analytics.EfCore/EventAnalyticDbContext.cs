@@ -2,7 +2,6 @@
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.DbConfigurations;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
-using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 using Microsoft.EntityFrameworkCore;
 
 #pragma warning disable CS8618

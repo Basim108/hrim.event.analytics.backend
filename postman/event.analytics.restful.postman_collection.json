@@ -10,6 +10,226 @@
 			"name": "EventTypes",
 			"item": [
 				{
+					"name": "Get All Event Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{event-analytics-api}}/v1/event-type",
+							"protocol": "https",
+							"host": [
+								"{{event-analytics-api}}"
+							],
+							"path": [
+								"v1",
+								"event-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event Type By Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{event-analytics-api}}/v1/event-type/{{occurrence_event_type_id}}",
+							"protocol": "https",
+							"host": [
+								"{{event-analytics-api}}"
+							],
+							"path": [
+								"v1",
+								"event-type",
+								"{{occurrence_event_type_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Occurrence Event Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Your test name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).not.to.be.undefined;",
+									"    pm.environment.set(\"occurrence_event_type_id\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nice yoga practice\",\n    \"color\": \"#ff00ff\",\n    \"is_public\": true,\n    \"created_by_id\": \"2c469d37-3728-4d1a-974a-6702cbdf3642\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{event-analytics-api}}/v1/event-type",
+							"protocol": "https",
+							"host": [
+								"{{event-analytics-api}}"
+							],
+							"path": [
+								"v1",
+								"event-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Duration Event Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Your test name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).not.to.be.undefined;",
+									"    pm.environment.set(\"duration_event_type_id\", jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Headache\",\n    \"color\": \"#ff0000\",\n    \"is_public\": true,\n    \"created_by_id\": \"2c469d37-3728-4d1a-974a-6702cbdf3642\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{event-analytics-api}}/v1/event-type",
+							"protocol": "https",
+							"host": [
+								"{{event-analytics-api}}"
+							],
+							"path": [
+								"v1",
+								"event-type"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Event Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_event_type_id}}?entityType=event_type",
+							"protocol": "https",
+							"host": [
+								"{{event-analytics-api}}"
+							],
+							"path": [
+								"v1",
+								"entity",
+								"{{occurrence_event_type_id}}"
+							],
+							"query": [
+								{
+									"key": "entityType",
+									"value": "event_type"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restore Event Type",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_event_type_id}}?entityType=event_type",
+							"protocol": "https",
+							"host": [
+								"{{event-analytics-api}}"
+							],
+							"path": [
+								"v1",
+								"entity",
+								"{{occurrence_event_type_id}}"
+							],
+							"query": [
+								{
+									"key": "entityType",
+									"value": "event_type"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
 					"name": "Occurence",
 					"item": [
 						{
@@ -30,16 +250,21 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/event-type/occurrence/{{occurrence_id}}",
+									"raw": "https://{{event-analytics-api}}/v1/event/{{occurrence_id}}?eventType=occurrence_event",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type",
-										"occurrence",
+										"event",
 										"{{occurrence_id}}"
+									],
+									"query": [
+										{
+											"key": "eventType",
+											"value": "occurrence_event"
+										}
 									]
 								}
 							},
@@ -47,12 +272,31 @@
 						},
 						{
 							"name": "Create Occurence",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Your test name\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.id).not.to.be.undefined;",
+											"    pm.environment.set(\"occurrence_id\", jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Abstractions.Entities.EventTypes.OccurrenceEventType, Hrim.Event.Analytics.Abstractions\",\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Nice yoga practice\",\n    \"color\": \"#ff00ff\",\n    \"is_public\": true,\n    \"created_by_id\": \"2eeb4cc8-4053-4c98-b317-27e10065991e\"\n}",
+									"raw": "{\n    \"occurred_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"event_type_id\": \"{{occurrence_event_type_id}}\",\n    \"created_by_id\": \"2c469d37-3728-4d1a-974a-6702cbdf3642\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -60,14 +304,15 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event/occurrence",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type"
+										"event",
+										"occurrence"
 									]
 								}
 							},
@@ -88,14 +333,15 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event/occurrence",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type"
+										"event",
+										"occurrence"
 									]
 								}
 							},
@@ -116,7 +362,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_id}}?entityType=occurrence_event_type",
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_id}}?entityType=occurrence_event",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
@@ -129,7 +375,7 @@
 									"query": [
 										{
 											"key": "entityType",
-											"value": "occurrence_event_type"
+											"value": "occurrence_event"
 										}
 									]
 								}
@@ -151,7 +397,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_id}}?entityType=occurrence_event_type",
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{occurrence_id}}?entityType=occurrence_event",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
@@ -164,7 +410,7 @@
 									"query": [
 										{
 											"key": "entityType",
-											"value": "occurrence_event_type"
+											"value": "occurrence_event"
 										}
 									]
 								}
@@ -194,16 +440,21 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/event-type/duration/{{duration_id}}",
+									"raw": "https://{{event-analytics-api}}/v1/event/{{duration_id}}?eventType=duration_event",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type",
-										"duration",
+										"event",
 										"{{duration_id}}"
+									],
+									"query": [
+										{
+											"key": "eventType",
+											"value": "duration_event"
+										}
 									]
 								}
 							},
@@ -222,7 +473,7 @@
 											"});",
 											"pm.test(\"Your test name\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.id).not.to.be.undefined();",
+											"    pm.expect(jsonData.id).not.to.be.undefined;",
 											"    pm.environment.set(\"duration_id\", jsonData.id);",
 											"});"
 										],
@@ -235,7 +486,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"$type\": \"Hrim.Event.Analytics.Abstractions.Entities.EventTypes.DurationEventType, Hrim.Event.Analytics.Abstractions\",\n    \"started_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"name\": \"Headache\",\n    \"color\": \"#ff0000\",\n    \"is_public\": true,\n    \"created_by_id\": \"2eeb4cc8-4053-4c98-b317-27e10065991e\"\n}",
+									"raw": "{\n    \"started_at\": \"2022-07-28T21:51:10.479792+04:00\",\n    \"event_type_id\": \"{{duration_event_type_id}}\",\n    \"created_by_id\": \"2c469d37-3728-4d1a-974a-6702cbdf3642\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -243,14 +494,15 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event/duration",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type"
+										"event",
+										"duration"
 									]
 								}
 							},
@@ -271,14 +523,15 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/event-type",
+									"raw": "https://{{event-analytics-api}}/v1/event/duration",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
 									],
 									"path": [
 										"v1",
-										"event-type"
+										"event",
+										"duration"
 									]
 								}
 							},
@@ -299,7 +552,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/entity/{{duration_id}}?entityType=duration_event_type",
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{duration_id}}?entityType=duration_event",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
@@ -312,7 +565,7 @@
 									"query": [
 										{
 											"key": "entityType",
-											"value": "duration_event_type"
+											"value": "duration_event"
 										}
 									]
 								}
@@ -334,7 +587,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{event-analytics-api}}/v1/entity/{{duration_id}}?entityType=duration_event_type",
+									"raw": "https://{{event-analytics-api}}/v1/entity/{{duration_id}}?entityType=duration_event",
 									"protocol": "https",
 									"host": [
 										"{{event-analytics-api}}"
@@ -347,7 +600,7 @@
 									"query": [
 										{
 											"key": "entityType",
-											"value": "duration_event_type"
+											"value": "duration_event"
 										}
 									]
 								}
@@ -355,25 +608,6 @@
 							"response": []
 						}
 					]
-				},
-				{
-					"name": "Get All Event Types",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://{{event-analytics-api}}/v1/event-type",
-							"protocol": "https",
-							"host": [
-								"{{event-analytics-api}}"
-							],
-							"path": [
-								"v1",
-								"event-type"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		}

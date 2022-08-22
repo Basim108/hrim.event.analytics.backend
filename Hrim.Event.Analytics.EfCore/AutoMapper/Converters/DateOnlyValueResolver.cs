@@ -1,8 +1,6 @@
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
-using Hrim.Event.Analytics.EfCore.DbEntities.EventTypes;
 
 namespace Hrim.Event.Analytics.EfCore.AutoMapper.Converters;
 
