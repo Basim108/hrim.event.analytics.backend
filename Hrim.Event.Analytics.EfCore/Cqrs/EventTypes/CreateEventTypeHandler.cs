@@ -1,4 +1,3 @@
-using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -23,6 +22,10 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
     public Task<CqrsResult<UserEventType?>> Handle(CreateUserEventTypeCommand request, CancellationToken cancellationToken) {
         if (request.EventType == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventType)}");
+        if (request.Context == null)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
+        if (request.Context.UserId == default)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}.{request.Context.UserId}");
 
         return HandleAsync(request, cancellationToken);
     }
@@ -31,7 +34,7 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
         using var eventTypeNameScope = _logger.BeginScope("EventTypeName={EventTypeName}", request.EventType.Name);
         var existed = await _context.UserEventTypes
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == request.EventType.CreatedById &&
+                                    .FirstOrDefaultAsync(x => x.CreatedById == request.Context.UserId &&
                                                               x.Name        == request.EventType.Name,
                                                          cancellationToken);
         if (existed != null) {
@@ -50,7 +53,7 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
             Color           = request.EventType.Color,
             EventType       = request.EventType.EventType,
             IsPublic        = request.EventType.IsPublic,
-            CreatedById     = request.EventType.CreatedById,
+            CreatedById     = request.Context.UserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };

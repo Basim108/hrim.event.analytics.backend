@@ -43,6 +43,7 @@
 
     <ItemGroup>
       <Folder Include="Migrations" />
+      <Folder Include="V1\Models\EventTypes" />
     </ItemGroup>
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">

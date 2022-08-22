@@ -40,8 +40,8 @@ public class EventTypeController: EventAnalyticsApiController {
 
     /// <summary> Create a new event type </summary>
     [HttpPost]
-    public async Task<ActionResult<UserEventType>> CreateAsync(UserEventType eventType, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+    public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(request, SaveChanges: true, _requestAccessor.GetOperationContext()),
                                               cancellationToken);
         return ProcessCreateResult(cqrsResult);
     }

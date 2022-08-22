@@ -4,33 +4,26 @@
         <name>Hrim.Event.Analytics.Abstractions</name>
     </assembly>
     <members>
-        <member name="T:Hrim.Event.Analytics.Abstractions.BaseRequest">
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest">
             <summary> Requests (commands and queries) </summary>
-            <param name="CorrelationId">Id that will be passed through the whole sequence of commands, queries, jobs, etc</param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.BaseRequest.#ctor(System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest.#ctor(System.Guid)">
             <summary> Requests (commands and queries) </summary>
-            <param name="CorrelationId">Id that will be passed through the whole sequence of commands, queries, jobs, etc</param>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.BaseRequest.CorrelationId">
-            <summary>Id that will be passed through the whole sequence of commands, queries, jobs, etc</summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.UserBaseRequest">
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest">
             <summary>
-            Requests (commands and queries) that are made on behave of a specific user
+            Requests (commands and queries) that initiated by an end-user
             </summary>
-            <param name="OperatorId">User id</param>
-            <param name="CorrelationId"></param>
+            <param name="Context"></param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.UserBaseRequest.#ctor(System.Guid,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest.#ctor(Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary>
-            Requests (commands and queries) that are made on behave of a specific user
+            Requests (commands and queries) that initiated by an end-user
             </summary>
-            <param name="OperatorId">User id</param>
-            <param name="CorrelationId"></param>
+            <param name="Context"></param>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.UserBaseRequest.OperatorId">
-            <summary>User id</summary>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest.Context">
+            <summary></summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.CqrsResult`1">
             <summary> In order to avoid throwing an necessary exception, CQRS commands and queries could use this record to provide more information about execution result</summary>
@@ -48,13 +41,13 @@
             <summary> Checks the existence of entity in the storage </summary>
             <param name="Id">Id of the entity that has to be checked</param>
             <param name="EntityType">type of entity</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.CheckEntityExistence.#ctor(System.Guid,Hrim.Event.Analytics.Abstractions.Enums.EntityType,System.Guid)">
             <summary> Checks the existence of entity in the storage </summary>
             <param name="Id">Id of the entity that has to be checked</param>
             <param name="EntityType">type of entity</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.CheckEntityExistence.Id">
             <summary>Id of the entity that has to be checked</summary>
@@ -78,14 +71,14 @@
             <summary> Restore any type of entity from soft deletion </summary>
             <param name="Id">Entity Id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
             <summary> Restore any type of entity from soft deletion </summary>
             <param name="Id">Entity Id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1.Id">
@@ -98,14 +91,14 @@
             <summary> Soft deletion an instance of any entity type </summary>
             <param name="Id">Entity id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.SoftDeleteEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
             <summary> Soft deletion an instance of any entity type </summary>
             <param name="Id">Entity id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.SoftDeleteEntityCommand`1.Id">
@@ -118,7 +111,7 @@
             <summary> Creates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -128,7 +121,7 @@
             <summary> Creates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -144,7 +137,7 @@
             <summary> Updates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -154,7 +147,7 @@
             <summary> Updates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -172,7 +165,7 @@
             </summary>
             <param name="Id">Id of a requested event</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
@@ -182,7 +175,7 @@
             </summary>
             <param name="Id">Id of a requested event</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
@@ -197,14 +190,14 @@
             <param name="Start">Includes events that equals to a start border </param>
             <param name="End">Includes events that equals to an end border </param>
             <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.#ctor(System.DateOnly,System.DateOnly,System.Guid,System.Guid)">
             <summary> Get all user's occurrence events for a period </summary>
             <param name="Start">Includes events that equals to a start border </param>
             <param name="End">Includes events that equals to an end border </param>
             <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.Start">
             <summary>Includes events that equals to a start border </summary>
@@ -220,14 +213,14 @@
             <param name="Start">Includes durations that intersects start border </param>
             <param name="End">Includes durations that intersects end border </param>
             <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.#ctor(System.DateOnly,System.DateOnly,System.Guid,System.Guid)">
             <summary> Get all user's durations events for a period </summary>
             <param name="Start">Includes durations that intersects start border </param>
             <param name="End">Includes durations that intersects end border </param>
             <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.Start">
             <summary>Includes durations that intersects start border </summary>
@@ -242,7 +235,7 @@
             <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -252,7 +245,7 @@
             <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -268,7 +261,7 @@
             <summary> Updates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -278,7 +271,7 @@
             <summary> Updates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -294,17 +287,17 @@
             <summary> Creates an instance of a system event type </summary>
             <param name="EventType">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateUserEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.CreateUserEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Creates an instance of a system event type </summary>
             <param name="EventType">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -322,7 +315,7 @@
             </summary>
             <param name="Id">Id of a requested event type</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
@@ -332,7 +325,7 @@
             </summary>
             <param name="Id">Id of a requested event type</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
@@ -352,7 +345,7 @@
             <summary> Updates an instance of the system event type </summary>
             <param name="EventType">an instance with modified data that has to be stored</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
             Otherwise returns an updated instance with a new ConcurrentToken value (200).
@@ -365,7 +358,7 @@
             <summary> Updates an instance of the system event type </summary>
             <param name="EventType">an instance with modified data that has to be stored</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.BaseRequest"/></param>
+            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
             <returns>
             Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
             Otherwise returns an updated instance with a new ConcurrentToken value (200).
@@ -379,6 +372,22 @@
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.SaveChanges">
             <summary>If true, then changes will be flushed to the storages</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext">
+            <summary></summary>
+            <param name="UserId"></param>
+            <param name="CorrelationId">Id that will be passed through the whole sequence of commands, queries, jobs, etc</param>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext.#ctor(System.Guid,System.Guid)">
+            <summary></summary>
+            <param name="UserId"></param>
+            <param name="CorrelationId">Id that will be passed through the whole sequence of commands, queries, jobs, etc</param>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext.UserId">
+            <summary></summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext.CorrelationId">
+            <summary>Id that will be passed through the whole sequence of commands, queries, jobs, etc</summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Events.BaseEvent">
             <summary>
@@ -599,6 +608,36 @@
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent.EventTypeId">
             <summary>Id of event type on which this event is based on</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest">
+            <summary>
+            Model for event type creation
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest.Name">
+            <summary>
+            Event type name, e.g. 'nice mood', 'headache', etc
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest.Description">
+            <summary>
+            Description given by user, when user_event_type based on this one will be created.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest.Color">
+            <summary>
+            A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest.IsPublic">
+            <summary>
+            An owner who created this event_type could share it with other end-users
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest.EventType">
+            <summary>
+            Specifies a type of events that will be registered: duration, occurrence, etc
+            </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType">
             <summary>

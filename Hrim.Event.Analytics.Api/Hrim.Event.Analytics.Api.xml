@@ -107,7 +107,7 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetByIdAsync(Hrim.Event.Analytics.Api.V1.Models.ByIdRequest,System.Threading.CancellationToken)">
             <summary> Get user event type by id </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest,System.Threading.CancellationToken)">
             <summary> Create a new event type </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Threading.CancellationToken)">
@@ -169,6 +169,12 @@
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Validators.EntityRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.EventTypes.CreateEventTypeRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.EventTypes.CreateEventTypeRequestValidator.#ctor">
             <summary> </summary>
         </member>
     </members>
