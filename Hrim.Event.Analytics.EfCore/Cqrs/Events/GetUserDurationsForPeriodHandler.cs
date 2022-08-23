@@ -15,9 +15,9 @@ public class GetUserDurationsForPeriodHandler: IRequestHandler<GetUserDurationsF
 
     public async Task<IList<ViewDurationEvent>> Handle(GetUserDurationsForPeriod request, CancellationToken cancellationToken) {
         var dbEntities = await _context.DurationEvents
-                                       .Where(x => x.CreatedById == request.OwnerId &&
-                                                   x.StartedOn   >= request.Start   &&
-                                                   x.StartedOn   <= request.End     &&
+                                       .Where(x => x.CreatedById == request.Context.UserId &&
+                                                   x.StartedOn   >= request.Start          &&
+                                                   x.StartedOn   <= request.End            &&
                                                    x.IsDeleted   != true)
                                        .AsNoTracking()
                                        .Select(x => new {

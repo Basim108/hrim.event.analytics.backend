@@ -55,7 +55,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
         }
         // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isUserExists = await _mediator.Send(new CheckUserExistence(request.EventInfo.CreatedById, request.CorrelationId),
+        var isUserExists = await _mediator.Send(new CheckUserExistence(request.EventInfo.CreatedById, request.Context.CorrelationId),
                                                 cancellationToken);
         if (isUserExists.StatusCode != CqrsResultCode.Ok) {
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.BadRequest, "User who set as an owner of the event does not exist");

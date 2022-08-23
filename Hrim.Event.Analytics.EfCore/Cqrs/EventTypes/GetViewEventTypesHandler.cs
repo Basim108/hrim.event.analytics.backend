@@ -14,11 +14,18 @@ public class GetViewEventTypesHandler: IRequestHandler<GetViewEventTypes, IList<
         _context = context;
     }
 
-    public async Task<IList<ViewEventType>> Handle(GetViewEventTypes request, CancellationToken cancellationToken) {
-        var query = _context.UserEventTypes.AsQueryable();
-        if (request.CreatedById != Guid.Empty) {
-            query = query.Where(x => x.CreatedById == request.CreatedById);
-        }
+    public Task<IList<ViewEventType>> Handle(GetViewEventTypes request, CancellationToken cancellationToken) {
+        if (request.Context == null)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
+        if (request.Context.UserId == Guid.Empty)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}.{nameof(request.Context.UserId)}");
+
+        return HandleAsync(request, cancellationToken);
+    }
+    
+    private async Task<IList<ViewEventType>> HandleAsync(GetViewEventTypes request, CancellationToken cancellationToken) {
+        var query = _context.UserEventTypes
+                            .Where(x => x.CreatedById == request.Context.UserId);
         if (request.IsPublic) {
             query = query.Where(x => x.IsPublic);
         }
@@ -27,11 +34,11 @@ public class GetViewEventTypesHandler: IRequestHandler<GetViewEventTypes, IList<
         }
         var result = await query.AsNoTracking()
                                 .Select(x => new ViewEventType(x.Id,
-                                                                     x.Name,
-                                                                     x.Description,
-                                                                     x.Color,
-                                                                     x.IsPublic,
-                                                                     x.IsDeleted == true))
+                                                               x.Name,
+                                                               x.Description,
+                                                               x.Color,
+                                                               x.IsPublic,
+                                                               x.IsDeleted == true))
                                 .ToListAsync(cancellationToken);
         return result;
     }
