@@ -21,4 +21,7 @@
     <data name="JsonModelBinderDeserializationError" xml:space="preserve">
         <value>Json deserialization of PropertyName={PropertyName},  ExceptionMessage={ExceptionMessage}, StackTrace={StackTrace}</value>
     </data>
+    <data name="ForbidAsNotEntityOwner" xml:space="preserve">
+        <value>Operation is forbidden as you are not an owner of the entity.</value>
+    </data>
 </root>

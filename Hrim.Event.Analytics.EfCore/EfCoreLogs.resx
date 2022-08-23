@@ -36,4 +36,7 @@
     <data name="CannotRestoreEntityIsNotDeleted" xml:space="preserve">
         <value>Cannot restore entity as it is not deleted: EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.</value>
     </data>
+    <data name="OperationIsForbiddenByUserId" xml:space="preserve">
+        <value>Operation={Operation} is forbidden as entity belongs to EntityOwnerId={EntityOwnerId}, EntityType={EntityType}.</value>
+    </data>
 </root>

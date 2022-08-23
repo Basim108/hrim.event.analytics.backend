@@ -1,10 +1,11 @@
-namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Enums;
+
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes; 
 
 /// <summary>
-/// Event types created by user
-/// <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
+/// Model for event type creation
 /// </summary>
-public class UserEventType: HrimEntity {
+public class CreateEventTypeRequest {
     /// <summary>
     /// Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>
@@ -19,16 +20,6 @@ public class UserEventType: HrimEntity {
     /// A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'
     /// </summary>
     public string Color { get; set; } = null!;
-
-    /// <summary>
-    /// A user id who created an instance of the event type
-    /// </summary>
-    public Guid CreatedById { get; set; }
-
-    /// <summary>
-    /// A user who created an instance of this event type
-    /// </summary>
-    public HrimUser? CreatedBy { get; set; }
 
     /// <summary>
     /// An owner who created this event_type could share it with other end-users

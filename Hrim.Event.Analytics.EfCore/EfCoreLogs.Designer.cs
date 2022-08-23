@@ -80,5 +80,11 @@ namespace Hrim.Event.Analytics.EfCore {
                 return ResourceManager.GetString("CannotRestoreEntityIsNotDeleted", resourceCulture);
             }
         }
+        
+        public static string OperationIsForbiddenByUserId {
+            get {
+                return ResourceManager.GetString("OperationIsForbiddenByUserId", resourceCulture);
+            }
+        }
     }
 }

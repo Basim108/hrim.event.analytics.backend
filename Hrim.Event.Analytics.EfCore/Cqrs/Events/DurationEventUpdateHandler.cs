@@ -50,23 +50,33 @@ public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateComm
             var conflictedEvent = _mapper.Map<DurationEvent>(existed);
             return new CqrsResult<DurationEvent?>(conflictedEvent, CqrsResultCode.Conflict);
         }
-        if (existed.StartedOn != mappedEventInfo.StartedOn)
+        var isChanged = false;
+        if (existed.StartedOn != mappedEventInfo.StartedOn) {
             existed.StartedOn = mappedEventInfo.StartedOn;
-        if (!existed.StartedAt.IsTimeEquals(mappedEventInfo.StartedAt))
+            isChanged         = true;
+        }
+        if (!existed.StartedAt.IsTimeEquals(mappedEventInfo.StartedAt)) {
             existed.StartedAt = mappedEventInfo.StartedAt;
-        
-        if (existed.FinishedOn != mappedEventInfo.FinishedOn)
+            isChanged         = true;
+        }
+        if (existed.FinishedOn != mappedEventInfo.FinishedOn) {
             existed.FinishedOn = mappedEventInfo.FinishedOn;
-        if (!existed.FinishedAt.IsTimeEquals(mappedEventInfo.FinishedAt))
+            isChanged          = true;
+        }
+        if (!existed.FinishedAt.IsTimeEquals(mappedEventInfo.FinishedAt)) {
             existed.FinishedAt = mappedEventInfo.FinishedAt;
-        
-        if (existed.EventTypeId != mappedEventInfo.EventTypeId)
+            isChanged          = true;
+        }
+        if (existed.EventTypeId != mappedEventInfo.EventTypeId) {
             existed.EventTypeId = request.EventInfo.EventTypeId;
-        
-        existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
-        existed.ConcurrentToken++;
-        if (request.SaveChanges) {
-            await _context.SaveChangesAsync(cancellationToken);
+            isChanged           = true;
+        }
+        if (isChanged) {
+            existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
+            existed.ConcurrentToken++;
+            if (request.SaveChanges) {
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
         var updatedEvent = _mapper.Map<DurationEvent>(existed);
         return new CqrsResult<DurationEvent?>(updatedEvent, CqrsResultCode.Ok);

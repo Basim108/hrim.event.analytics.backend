@@ -59,12 +59,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("description")
                         .HasComment("Description given by user, when user_event_type based on this one will be created.");
 
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("event_type")
-                        .HasComment("Specifies a type of events that will be registered: duration, occurrence, etc");
-
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -190,7 +184,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.HasCheckConstraint("CK_hrim_users_concurrent_token", "concurrent_token > 0");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationBaseEvent", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -260,10 +254,10 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
 
-                    b.HasCheckConstraint("CK_db_duration_base_events_concurrent_token", "concurrent_token > 0");
+                    b.HasCheckConstraint("CK_db_duration_events_concurrent_token", "concurrent_token > 0");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceBaseEvent", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -323,7 +317,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasComment("When the main importance is the fact that an event occurred.\nThis kind of events may occur several times a day.");
 
-                    b.HasCheckConstraint("CK_db_occurrence_base_events_concurrent_token", "concurrent_token > 0");
+                    b.HasCheckConstraint("CK_db_occurrence_events_concurrent_token", "concurrent_token > 0");
                 });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
@@ -348,7 +342,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("CreatedBy");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationBaseEvent", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
                 {
                     b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
                         .WithMany()
@@ -367,7 +361,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("EventType");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceBaseEvent", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
                 {
                     b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
                         .WithMany()
