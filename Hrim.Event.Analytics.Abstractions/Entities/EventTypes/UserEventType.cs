@@ -1,5 +1,3 @@
-using Hrim.Event.Analytics.Abstractions.Enums;
-
 namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 
 /// <summary>
@@ -36,9 +34,4 @@ public class UserEventType: HrimEntity {
     /// An owner who created this event_type could share it with other end-users
     /// </summary>
     public bool IsPublic { get; set; }
-    
-    /// <summary>
-    /// Specifies a type of events that will be registered: duration, occurrence, etc
-    /// </summary>
-    public EventType EventType {get;set;}
 }

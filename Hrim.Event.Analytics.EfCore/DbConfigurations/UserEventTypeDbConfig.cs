@@ -39,11 +39,5 @@ public class UserEventTypeDbConfig: IEntityTypeConfiguration<UserEventType> {
                .HasComment("A user who created an instance of this event type")
                .IsRequired();
         builder.HasOne(x => x.CreatedBy);
-        
-        builder.Property(p => p.EventType)
-               .HasColumnName(nameof(UserEventType.EventType).ToSnakeCase())
-               .HasComment("Specifies a type of events that will be registered: duration, occurrence, etc")
-               .HasConversion(new EnumToStringConverter<EventType>())
-               .IsRequired();
     }
 }

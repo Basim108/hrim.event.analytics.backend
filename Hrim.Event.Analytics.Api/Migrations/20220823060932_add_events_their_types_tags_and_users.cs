@@ -45,7 +45,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     color = table.Column<string>(type: "text", nullable: false, comment: "A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'"),
                     created_by = table.Column<Guid>(type: "uuid", nullable: false, comment: "A user who created an instance of this event type"),
                     is_public = table.Column<bool>(type: "boolean", nullable: false, comment: " An owner who created this event_type could share it with other end-users"),
-                    event_type = table.Column<string>(type: "text", nullable: false, comment: "Specifies a type of events that will be registered: duration, occurrence, etc"),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: true),
@@ -112,7 +111,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_duration_events", x => x.id);
-                    table.CheckConstraint("CK_db_duration_base_events_concurrent_token", "concurrent_token > 0");
+                    table.CheckConstraint("CK_db_duration_events_concurrent_token", "concurrent_token > 0");
                     table.ForeignKey(
                         name: "FK_duration_events_event_types_event_type_id",
                         column: x => x.event_type_id,
@@ -148,7 +147,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_occurrence_events", x => x.id);
-                    table.CheckConstraint("CK_db_occurrence_base_events_concurrent_token", "concurrent_token > 0");
+                    table.CheckConstraint("CK_db_occurrence_events_concurrent_token", "concurrent_token > 0");
                     table.ForeignKey(
                         name: "FK_occurrence_events_event_types_event_type_id",
                         column: x => x.event_type_id,

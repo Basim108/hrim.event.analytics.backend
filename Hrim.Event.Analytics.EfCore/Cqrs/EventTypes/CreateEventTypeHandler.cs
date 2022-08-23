@@ -51,7 +51,6 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
                               ? null
                               : request.EventType.Description.Trim(),
             Color           = request.EventType.Color,
-            EventType       = request.EventType.EventType,
             IsPublic        = request.EventType.IsPublic,
             CreatedById     = request.Context.UserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),

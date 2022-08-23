@@ -50,5 +50,11 @@ namespace Hrim.Event.Analytics.Api {
                 return ResourceManager.GetString("JsonModelBinderDeserializationError", resourceCulture);
             }
         }
+        
+        internal static string ForbidAsNotEntityOwner {
+            get {
+                return ResourceManager.GetString("ForbidAsNotEntityOwner", resourceCulture);
+            }
+        }
     }
 }

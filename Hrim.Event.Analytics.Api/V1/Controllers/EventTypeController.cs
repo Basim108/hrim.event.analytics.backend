@@ -33,9 +33,9 @@ public class EventTypeController: EventAnalyticsApiController {
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]
     public async Task<ActionResult<UserEventType>> GetByIdAsync([FromRoute]ByIdRequest request, CancellationToken cancellationToken) {
-        var result = await _mediator.Send(new GetEventTypeById(request.Id, IsNotTrackable: true, _requestAccessor.GetCorrelationId()),
+        var result = await _mediator.Send(new GetEventTypeById(request.Id, IsNotTrackable: true, _requestAccessor.GetOperationContext()),
                                     cancellationToken);
-        return ProcessGetByIdResult(result);
+        return ProcessCqrsResult(result);
     }
 
     /// <summary> Create a new event type </summary>
@@ -43,14 +43,14 @@ public class EventTypeController: EventAnalyticsApiController {
     public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(request, SaveChanges: true, _requestAccessor.GetOperationContext()),
                                               cancellationToken);
-        return ProcessCreateResult(cqrsResult);
+        return ProcessCqrsResult(cqrsResult);
     }
 
     /// <summary> Update an event type </summary>
     [HttpPut]
-    public async Task<ActionResult<UserEventType>> UpdateAsync(UserEventType eventType, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new UpdateEventTypeCommand(eventType, SaveChanges: true, _requestAccessor.GetCorrelationId()),
+    public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new UpdateEventTypeCommand(request, SaveChanges: true, _requestAccessor.GetOperationContext()),
                                               cancellationToken);
-        return ProcessUpdateResult(cqrsResult);
+        return ProcessCqrsResult(cqrsResult);
     }
 }

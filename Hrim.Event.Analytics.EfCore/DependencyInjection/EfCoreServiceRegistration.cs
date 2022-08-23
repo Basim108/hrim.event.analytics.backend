@@ -31,8 +31,8 @@ public static class EfCoreServiceRegistration {
         services.AddTransient<IRequestHandler<RestoreEntityCommand<HrimTag>, CqrsResult<HrimTag?>>, RestoreEntityCommandHandler<HrimTag>>();
         services.AddTransient<IRequestHandler<RestoreEntityCommand<HrimUser>, CqrsResult<HrimUser?>>, RestoreEntityCommandHandler<HrimUser>>();
 
-        services.AddTransient<IRequestHandler<GetEventById<DurationEvent>, DurationEvent?>, GetEventByIdHandler<DurationEvent>>();
-        services.AddTransient<IRequestHandler<GetEventById<OccurrenceEvent>, OccurrenceEvent?>, GetEventByIdHandler<OccurrenceEvent>>();
+        services.AddTransient<IRequestHandler<GetEventById<DurationEvent>, CqrsResult<DurationEvent?>>, GetEventByIdHandler<DurationEvent>>();
+        services.AddTransient<IRequestHandler<GetEventById<OccurrenceEvent>, CqrsResult<OccurrenceEvent?>>, GetEventByIdHandler<OccurrenceEvent>>();
 
         services.AddTransient<IRequestHandler<CheckUserExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
         services.AddTransient<IRequestHandler<CheckEventTypeExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();

@@ -23,10 +23,14 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
     public Task<CqrsResult<UserEventType?>> Handle(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
         if (request.EventType == null)
             throw new ArgumentNullException(nameof(request.EventType));
+        if (request.Context == null)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
+        if (request.Context.UserId == default)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}.{request.Context.UserId}");
 
         return HandleAsync(request, cancellationToken);
     }
-    
+
     private async Task<CqrsResult<UserEventType?>> HandleAsync(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
         using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.EventType.Id);
         var existed = await _context.UserEventTypes
@@ -44,16 +48,36 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
             _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(UserEventType));
             return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Conflict);
         }
-        existed.ConcurrentToken++;
-        existed.Color    = request.EventType.Color;
-        existed.Name     = request.EventType.Name;
-        existed.IsPublic = request.EventType.IsPublic;
-        existed.Description = string.IsNullOrWhiteSpace(request.EventType.Description)
-                                  ? null
-                                  : request.EventType.Description;
-        existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
-        if (request.SaveChanges)
-            await _context.SaveChangesAsync(cancellationToken);
+        if (existed.CreatedById != request.Context.UserId) {
+            _logger.LogInformation(EfCoreLogs.OperationIsForbiddenByUserId, existed.CreatedById, HrimOperations.Update, nameof(UserEventType));
+            return new CqrsResult<UserEventType?>(null, CqrsResultCode.Forbidden);
+        }
+        var isChanged = false;
+        if (existed.Color != request.EventType.Color) {
+            existed.Color = request.EventType.Color;
+            isChanged     = true;
+        }
+        if (existed.Name != request.EventType.Name) {
+            existed.Name = request.EventType.Name;
+            isChanged    = true;
+        }
+        if (existed.IsPublic != request.EventType.IsPublic) {
+            existed.IsPublic = request.EventType.IsPublic;
+            isChanged        = true;
+        }
+        var newDescription = string.IsNullOrWhiteSpace(request.EventType.Description)
+                                 ? null
+                                 : request.EventType.Description.Trim();
+        if (existed.Description != newDescription) {
+            existed.Description = newDescription;
+            isChanged           = true;
+        }
+        if (isChanged) {
+            existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
+            existed.ConcurrentToken++;
+            if (request.SaveChanges)
+                await _context.SaveChangesAsync(cancellationToken);
+        }
         return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Ok);
     }
 }

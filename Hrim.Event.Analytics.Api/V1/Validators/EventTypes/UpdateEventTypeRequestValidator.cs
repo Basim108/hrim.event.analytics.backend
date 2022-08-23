@@ -4,9 +4,13 @@ using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 namespace Hrim.Event.Analytics.Api.V1.Validators.EventTypes;
 
 /// <inheritdoc />
-public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeRequest> {
+public class UpdateEventTypeRequestValidator: AbstractValidator<UpdateEventTypeRequest> {
     /// <summary> </summary>
-    public CreateEventTypeRequestValidator() {
+    public UpdateEventTypeRequestValidator() {
+        RuleFor(x => x.Id)
+           .NotEmpty()
+           .WithMessage(ValidationMessages.IsRequired);
+        
         RuleFor(x => x.Name)
            .NotEmpty()
            .WithMessage(ValidationMessages.IsRequired)
@@ -23,6 +27,9 @@ public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeR
         RuleFor(x => x.Color)
            .NotEmpty()
            .WithMessage(ValidationMessages.IsRequired)
-          .MaximumLength(Constraints.COLOR_MAX_LENGTH);
+           .MaximumLength(Constraints.COLOR_MAX_LENGTH);
+
+        RuleFor(x => x.ConcurrentToken)
+           .GreaterThan(0);
     }
 }

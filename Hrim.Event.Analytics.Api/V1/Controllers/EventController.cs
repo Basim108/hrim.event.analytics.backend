@@ -1,7 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.Enums;
-using Hrim.Event.Analytics.Api.ModelBinders;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
@@ -27,11 +25,10 @@ public class EventController: EventAnalyticsApiController {
 
     /// <summary> Get user's events for a period </summary>
     [HttpGet]
-    public async Task<EventResponse> GetUserEventsAsync(DateOnly start,
-                                                        DateOnly end, 
-                                                        [FromQuery(Name = "owner_id")]
-                                                        Guid ownerId,
-                                                        CancellationToken cancellationToken) {
+    public async Task<EventResponse> GetUserEventsAsync(DateOnly                            start,
+                                                        DateOnly                            end,
+                                                        [FromQuery(Name = "owner_id")] Guid ownerId,
+                                                        CancellationToken                   cancellationToken) {
         var occurrences = await _mediator.Send(new GetUserOccurrencesForPeriod(start, end, ownerId, _requestAccessor.GetCorrelationId()),
                                                cancellationToken);
         var durations = await _mediator.Send(new GetUserDurationsForPeriod(start, end, ownerId, _requestAccessor.GetCorrelationId()),
@@ -44,7 +41,7 @@ public class EventController: EventAnalyticsApiController {
     public async Task<ActionResult<OccurrenceEvent>> CreateOccurrenceAsync(OccurrenceEvent occurrence, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new OccurrenceEventCreateCommand(occurrence, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
-        return ProcessCreateResult(cqrsResult);
+        return ProcessCqrsResult(cqrsResult);
     }
 
     /// <summary> Update a duration event </summary>
@@ -52,7 +49,7 @@ public class EventController: EventAnalyticsApiController {
     public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(OccurrenceEvent eventToUpdate, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(eventToUpdate, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
-        return ProcessUpdateResult(cqrsResult);
+        return ProcessCqrsResult(cqrsResult);
     }
 
     /// <summary> Create a duration event </summary>
@@ -60,7 +57,7 @@ public class EventController: EventAnalyticsApiController {
     public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEvent duration, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new DurationEventCreateCommand(duration, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
-        return ProcessCreateResult(cqrsResult);
+        return ProcessCqrsResult(cqrsResult);
     }
 
     /// <summary> Update a duration event </summary>
@@ -68,29 +65,24 @@ public class EventController: EventAnalyticsApiController {
     public async Task<ActionResult<DurationEvent>> UpdateDurationAsync(DurationEvent eventToUpdate, CancellationToken cancellationToken) {
         var cqrsResult = await _mediator.Send(new DurationEventUpdateCommand(eventToUpdate, SaveChanges: true, _requestAccessor.GetCorrelationId()),
                                               cancellationToken);
-        return ProcessUpdateResult(cqrsResult);
+        return ProcessCqrsResult(cqrsResult);
     }
 
     /// <summary> Get user event type by id </summary>
-    [HttpGet("{id}")]
-    public async Task<ActionResult<BaseEvent>> GetByIdAsync(Guid id,
-                                                            [FromQuery(Name = "eventType")] [ModelBinder(typeof(JsonModelBinder<EntityType>))]
-                                                            EntityType entityType,
-                                                            CancellationToken cancellationToken) {
-        var        correlationId = _requestAccessor.GetCorrelationId();
-        BaseEvent? eventInstance;
-        switch (entityType) {
-            case EntityType.OccurrenceEvent:
-                eventInstance = await _mediator.Send(new GetEventById<OccurrenceEvent>(id, IsNotTrackable: true, correlationId),
-                                                     cancellationToken);
-                break;
-            case EntityType.DurationEvent:
-                eventInstance = await _mediator.Send(new GetEventById<DurationEvent>(id, IsNotTrackable: true, correlationId),
-                                                     cancellationToken);
-                break;
-            default:
-                return BadRequest("Unsupported entity: " + entityType);
-        }
-        return ProcessGetByIdResult(eventInstance);
+    [HttpGet("occurrence/{id}")]
+    public async Task<ActionResult<OccurrenceEvent>> GetOccurrenceByIdAsync(Guid id, CancellationToken cancellationToken) {
+        var operationContext = _requestAccessor.GetOperationContext();
+        var occurrenceResult = await _mediator.Send(new GetEventById<OccurrenceEvent>(id, IsNotTrackable: true, operationContext),
+                                                    cancellationToken);
+        return ProcessCqrsResult(occurrenceResult);
+    }
+
+    /// <summary> Get user event type by id </summary>
+    [HttpGet("duration/{id}")]
+    public async Task<ActionResult<DurationEvent>> GetDurationByIdAsync(Guid id, CancellationToken cancellationToken) {
+        var operationContext = _requestAccessor.GetOperationContext();
+        var durationResult = await _mediator.Send(new GetEventById<DurationEvent>(id, IsNotTrackable: true, operationContext),
+                                                  cancellationToken);
+        return ProcessCqrsResult(durationResult);
     }
 }

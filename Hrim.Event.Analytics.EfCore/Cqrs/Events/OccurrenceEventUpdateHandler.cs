@@ -50,18 +50,25 @@ public class OccurrenceEventUpdateHandler: IRequestHandler<OccurrenceEventUpdate
             var conflictedEvent = _mapper.Map<OccurrenceEvent>(existed);
             return new CqrsResult<OccurrenceEvent?>(conflictedEvent, CqrsResultCode.Conflict);
         }
-        if (existed.OccurredOn != mappedEventInfo.OccurredOn)
+        var isChanged = false;
+        if (existed.OccurredOn != mappedEventInfo.OccurredOn) {
             existed.OccurredOn = mappedEventInfo.OccurredOn;
-        if (!existed.OccurredAt.IsTimeEquals(mappedEventInfo.OccurredAt))
+            isChanged          = true;
+        }
+        if (!existed.OccurredAt.IsTimeEquals(mappedEventInfo.OccurredAt)) {
             existed.OccurredAt = mappedEventInfo.OccurredAt;
-        
-        if (existed.EventTypeId != mappedEventInfo.EventTypeId)
+            isChanged          = true;
+        }
+        if (existed.EventTypeId != mappedEventInfo.EventTypeId) {
             existed.EventTypeId = request.EventInfo.EventTypeId;
-        
-        existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
-        existed.ConcurrentToken++;
-        if (request.SaveChanges) {
-            await _context.SaveChangesAsync(cancellationToken);
+            isChanged           = true;
+        }
+        if (isChanged) {
+            existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
+            existed.ConcurrentToken++;
+            if (request.SaveChanges) {
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
         var updatedEvent = _mapper.Map<OccurrenceEvent>(existed);
         return new CqrsResult<OccurrenceEvent?>(updatedEvent, CqrsResultCode.Ok);

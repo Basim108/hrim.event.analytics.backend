@@ -8,8 +8,8 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// </summary>
 /// <param name="Id">Id of a requested event type</param>
 /// <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-/// <param name="CorrelationId"><see cref="BaseRequest"/></param>
+/// <param name="Context"><see cref="OperationRequest"/></param>
 /// <returns>Null when entity is not found and an entity instance otherwise</returns>
 /// <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
-public record GetEventTypeById(Guid Id, bool IsNotTrackable, Guid CorrelationId)
-    : BaseRequest(CorrelationId), IRequest<UserEventType?>;
+public record GetEventTypeById(Guid Id, bool IsNotTrackable, OperationContext Context)
+    : OperationRequest(Context), IRequest<CqrsResult<UserEventType?>>;

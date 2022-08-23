@@ -165,17 +165,17 @@
             </summary>
             <param name="Id">Id of a requested event</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetEventById`1.#ctor(System.Guid,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetEventById`1.#ctor(System.Guid,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary>
             Returns a full information about a specific event by its identifier
             </summary>
             <param name="Id">Id of a requested event</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
@@ -315,17 +315,17 @@
             </summary>
             <param name="Id">Id of a requested event type</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetEventTypeById.#ctor(System.Guid,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetEventTypeById.#ctor(System.Guid,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary>
             Returns a full information about a specific event type by its identifier
             </summary>
             <param name="Id">Id of a requested event type</param>
             <param name="IsNotTrackable">If true then does not track changes of the entity properties</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>Null when entity is not found and an entity instance otherwise</returns>
             <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
         </member>
@@ -345,27 +345,23 @@
             <summary> Updates an instance of the system event type </summary>
             <param name="EventType">an instance with modified data that has to be stored</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
             Otherwise returns an updated instance with a new ConcurrentToken value (200).
             </returns>
-            <remarks>In case you need to set IsDeleted flag to false, use <see cref="!:RestoreEntityByIdCommand"/> CQRS command</remarks>
-            <seealso cref="!:DurationEventType"/>
-            <seealso cref="!:OccurrenceEventType"/>
+            <remarks>In case you need to set IsDeleted flag to false, use <see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1"/> CQRS command</remarks>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Updates an instance of the system event type </summary>
             <param name="EventType">an instance with modified data that has to be stored</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
             Otherwise returns an updated instance with a new ConcurrentToken value (200).
             </returns>
-            <remarks>In case you need to set IsDeleted flag to false, use <see cref="!:RestoreEntityByIdCommand"/> CQRS command</remarks>
-            <seealso cref="!:DurationEventType"/>
-            <seealso cref="!:OccurrenceEventType"/>
+            <remarks>In case you need to set IsDeleted flag to false, use <see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1"/> CQRS command</remarks>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand.EventType">
             <summary>an instance with modified data that has to be stored</summary>
@@ -477,11 +473,6 @@
             An owner who created this event_type could share it with other end-users
             </summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType.EventType">
-            <summary>
-            Specifies a type of events that will be registered: duration, occurrence, etc
-            </summary>
-        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.HrimEntity">
             <summary> Each entity own these properties </summary>
         </member>
@@ -538,6 +529,16 @@
             <summary>
             When it is important to register an event that has start time and end time this system_event_type can be used.
             <br/>This kind of events may occur several times a day and can cross each other.
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Enums.HrimOperations">
+            <summary>
+            Operations that are require a specific permission
+            </summary>
+        </member>
+        <member name="F:Hrim.Event.Analytics.Abstractions.Enums.HrimOperations.NotInitialized">
+            <summary>
+            To avoid uninitialized, default operation value
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Extensions.DateOnlyExtensions.CombineWithTime(System.DateOnly,System.DateTimeOffset)">
@@ -634,9 +635,37 @@
             An owner who created this event_type could share it with other end-users
             </summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest.EventType">
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest">
             <summary>
-            Specifies a type of events that will be registered: duration, occurrence, etc
+            Model for event type creation
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest.Id">
+            <summary> Event type id </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest.Name">
+            <summary>
+            Event type name, e.g. 'nice mood', 'headache', etc
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest.Description">
+            <summary>
+            Description given by user, when user_event_type based on this one will be created.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest.Color">
+            <summary>
+            A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest.IsPublic">
+            <summary>
+            An owner who created this event_type could share it with other end-users
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest.ConcurrentToken">
+            <summary>
+            Update is possible only when this token equals to the token in the storage
             </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.ViewEventType">
