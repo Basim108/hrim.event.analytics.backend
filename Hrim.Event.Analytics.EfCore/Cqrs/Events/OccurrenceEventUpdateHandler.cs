@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class OccurrenceEventUpdateHandler: IRequestHandler<OccurrenceEventUpdateCommand, CqrsResult<OccurrenceEvent?>> {
     private readonly ILogger<OccurrenceEventUpdateHandler> _logger;
     private readonly IMapper                               _mapper;
@@ -37,16 +39,16 @@ public class OccurrenceEventUpdateHandler: IRequestHandler<OccurrenceEventUpdate
                                     .FirstOrDefaultAsync(x => x.Id == mappedEventInfo.Id,
                                                          cancellationToken);
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, nameof(OccurrenceEvent));
+            _logger.LogDebug(EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, nameof(OccurrenceEvent));
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(OccurrenceEvent));
+            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(OccurrenceEvent));
             var deletedEvent = _mapper.Map<OccurrenceEvent>(existed);
             return new CqrsResult<OccurrenceEvent?>(deletedEvent, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventInfo.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(OccurrenceEvent));
+            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(OccurrenceEvent));
             var conflictedEvent = _mapper.Map<OccurrenceEvent>(existed);
             return new CqrsResult<OccurrenceEvent?>(conflictedEvent, CqrsResultCode.Conflict);
         }

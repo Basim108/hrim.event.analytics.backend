@@ -31,7 +31,7 @@ public class JsonModelBinder<TResult>: IModelBinder {
         catch (JsonSerializationException ex)
         {
             // "failed" result is set by default
-            _logger.LogError(ApiLogs.JsonModelBinderDeserializationError, bindingContext.ModelName, ex.Message, ex.StackTrace ?? "");
+            _logger.LogError(ApiLogs.JSON_MODEL_BINDER_DESERIALIZATION_ERROR, bindingContext.ModelName, ex.Message, ex.StackTrace ?? "");
         }
         return Task.CompletedTask;
     }

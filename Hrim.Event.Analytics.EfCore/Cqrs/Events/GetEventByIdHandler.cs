@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, CqrsResult<TEvent?>>
     where TEvent : BaseEvent, new() {
     private readonly EventAnalyticDbContext               _context;
@@ -26,13 +28,13 @@ public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, 
     }
 
     public Task<CqrsResult<TEvent?>> Handle(GetEventById<TEvent> request, CancellationToken cancellationToken) {
-        if (request.Id == default)
-            throw new ArgumentNullException(nameof(request.Id));
+        if (request.Id == Guid.Empty)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Id)}");
         return HandleAsync(request, cancellationToken);
     }
 
     private async Task<CqrsResult<TEvent?>> HandleAsync(GetEventById<TEvent> request, CancellationToken cancellationToken) {
-        using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.Id);
+        using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.Id);
         try {
             BaseEvent? db;
             switch (new TEvent()) {
@@ -66,7 +68,7 @@ public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, 
             return new CqrsResult<TEvent?>(result, CqrsResultCode.Ok);
         }
         catch (TimeoutException ex) {
-            _logger.LogWarning(ex.ToString());
+            _logger.LogWarning(EfCoreLogs.OPERATION_TIMEOUT, HrimOperations.Read, ex.Message);
             return new CqrsResult<TEvent?>(null, CqrsResultCode.Locked);
         }
     }

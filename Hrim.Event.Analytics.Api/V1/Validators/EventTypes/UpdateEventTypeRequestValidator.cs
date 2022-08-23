@@ -9,11 +9,11 @@ public class UpdateEventTypeRequestValidator: AbstractValidator<UpdateEventTypeR
     public UpdateEventTypeRequestValidator() {
         RuleFor(x => x.Id)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired);
+           .WithMessage(ValidationMessages.IS_REQUIRED);
         
         RuleFor(x => x.Name)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired)
+           .WithMessage(ValidationMessages.IS_REQUIRED)
            .MaximumLength(Constraints.NAME_MAX_LENGTH);
 
         RuleFor(x => x.Description)
@@ -21,12 +21,12 @@ public class UpdateEventTypeRequestValidator: AbstractValidator<UpdateEventTypeR
 
         RuleFor(x => x.Color)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired)
+           .WithMessage(ValidationMessages.IS_REQUIRED)
            .MaximumLength(Constraints.NAME_MAX_LENGTH);
 
         RuleFor(x => x.Color)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired)
+           .WithMessage(ValidationMessages.IS_REQUIRED)
            .MaximumLength(Constraints.COLOR_MAX_LENGTH);
 
         RuleFor(x => x.ConcurrentToken)

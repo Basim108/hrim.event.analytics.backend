@@ -9,7 +9,7 @@ public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeR
     public CreateEventTypeRequestValidator() {
         RuleFor(x => x.Name)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired)
+           .WithMessage(ValidationMessages.IS_REQUIRED)
            .MaximumLength(Constraints.NAME_MAX_LENGTH);
 
         RuleFor(x => x.Description)
@@ -17,12 +17,12 @@ public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeR
 
         RuleFor(x => x.Color)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired)
+           .WithMessage(ValidationMessages.IS_REQUIRED)
            .MaximumLength(Constraints.NAME_MAX_LENGTH);
 
         RuleFor(x => x.Color)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired)
+           .WithMessage(ValidationMessages.IS_REQUIRED)
           .MaximumLength(Constraints.COLOR_MAX_LENGTH);
     }
 }

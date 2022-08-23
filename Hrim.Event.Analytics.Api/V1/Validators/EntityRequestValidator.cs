@@ -11,6 +11,6 @@ public class EntityRequestValidator: AbstractValidator<EntityRequest> {
     public EntityRequestValidator() {
         RuleFor(x => x.Id)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired);
+           .WithMessage(ValidationMessages.IS_REQUIRED);
     }
 }

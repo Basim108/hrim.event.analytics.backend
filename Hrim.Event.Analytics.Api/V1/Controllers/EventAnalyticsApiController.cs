@@ -20,7 +20,7 @@ public class EventAnalyticsApiController: ControllerBase {
             case CqrsResultCode.Conflict:
                 return Conflict(cqrsResult.Result);
             case CqrsResultCode.Forbidden:
-                return Forbid(ApiLogs.ForbidAsNotEntityOwner);
+                return Forbid(ApiLogs.FORBID_AS_NOT_ENTITY_OWNER);
             case CqrsResultCode.Locked:
                 Response.StatusCode = (int)HttpStatusCode.Locked;
                 return new EmptyResult();

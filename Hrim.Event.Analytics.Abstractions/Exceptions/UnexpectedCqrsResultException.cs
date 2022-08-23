@@ -9,7 +9,7 @@ public class UnexpectedCqrsResultException<TResult>: Exception {
     public CqrsResult<TResult>? CqrsResult { get; }
 
     public UnexpectedCqrsResultException(CqrsResult<TResult> cqrsResult)
-        : base(CoreLogs.UnexpectedCqrsResult.Replace("{CqrsResult}", cqrsResult.ToString())) {
+        : base(CoreLogs.UNEXPECTED_CQRS_RESULT.Replace("{CqrsResult}", cqrsResult.ToString())) {
         CqrsResult = cqrsResult;
     }
 

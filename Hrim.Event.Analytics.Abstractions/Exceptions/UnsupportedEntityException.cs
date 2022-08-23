@@ -6,7 +6,7 @@ namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 [Serializable]
 public class UnsupportedEntityException: Exception {
     public UnsupportedEntityException(Type entityType)
-        : base(CoreLogs.UnsupportedEntity + entityType.FullName) {
+        : base(CoreLogs.UNSUPPORTED_ENTITY + entityType.FullName) {
         EntityType = entityType;
     }
 

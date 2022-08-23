@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
@@ -15,8 +16,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Entity;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDeleteEntityCommand<TEntity>, CqrsResult<TEntity?>>
-    where TEntity : Abstractions.Entities.HrimEntity, new() {
+    where TEntity : HrimEntity, new() {
     private readonly ILogger<SoftDeleteEntityCommandHandler<TEntity>> _logger;
     private readonly IMapper                                          _mapper;
     private readonly EventAnalyticDbContext                           _context;
@@ -32,16 +34,16 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
     public Task<CqrsResult<TEntity?>> Handle(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
-        if (request.Id == default)
-            throw new ArgumentNullException(nameof(request.Id));
+        if (request.Id == Guid.Empty)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Id)}");
 
         return HandleAsync(request, cancellationToken);
     }
 
     private async Task<CqrsResult<TEntity?>> HandleAsync(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
-        using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.Id);
-        Abstractions.Entities.HrimEntity? existed = new TEntity() switch {
-            UserEventType => await _context.UserEventTypes.FirstOrDefaultAsync(x => x.Id   == request.Id, cancellationToken),
+        using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.Id);
+        HrimEntity? existed = new TEntity() switch {
+            UserEventType   => await _context.UserEventTypes.FirstOrDefaultAsync(x => x.Id   == request.Id, cancellationToken),
             DurationEvent   => await _context.DurationEvents.FirstOrDefaultAsync(x => x.Id   == request.Id, cancellationToken),
             OccurrenceEvent => await _context.OccurrenceEvents.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken),
             HrimTag         => await _context.HrimTags.FirstOrDefaultAsync(x => x.Id         == request.Id, cancellationToken),
@@ -49,11 +51,11 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
             _               => throw new UnsupportedEntityException(typeof(TEntity))
         };
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, typeof(TEntity).Name);
+            _logger.LogDebug(EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, typeof(TEntity).Name);
             return new CqrsResult<TEntity?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogDebug(EfCoreLogs.CannotSoftDeleteEntityIsDeleted, existed.ConcurrentToken, existed.GetType().Name);
+            _logger.LogDebug(EfCoreLogs.CANNOT_SOFT_DELETE_ENTITY_IS_DELETED, existed.ConcurrentToken, existed.GetType().Name);
             var conflictEntity = _mapper.ProjectFromDb<TEntity>(existed);
             return new CqrsResult<TEntity?>(conflictEntity, CqrsResultCode.EntityIsDeleted);
         }

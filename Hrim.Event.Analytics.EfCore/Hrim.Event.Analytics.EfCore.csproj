@@ -21,21 +21,6 @@
     <ItemGroup>
         <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Update="EfCoreLogs.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>EfCoreLogs.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="EfCoreLogs.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>EfCoreLogs.resx</DependentUpon>
-        </Compile>
-    </ItemGroup>
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
             <Value>**/*.Designer.cs</Value>

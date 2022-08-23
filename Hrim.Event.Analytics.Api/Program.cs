@@ -28,11 +28,6 @@ if (!app.Environment.IsProduction()) {
 var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
 await dbContext.Database.MigrateAsync();
 
-if (builder.Environment.IsDevelopment()) {
-    app.UseCors(b => b.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader());
-}
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.Run();

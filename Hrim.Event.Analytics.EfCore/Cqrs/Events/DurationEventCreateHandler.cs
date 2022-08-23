@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateCommand, CqrsResult<DurationEvent?>> {
     private readonly ILogger<DurationEventCreateHandler> _logger;
     private readonly IMapper                             _mapper;
@@ -31,7 +33,6 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
     public Task<CqrsResult<DurationEvent?>> Handle(DurationEventCreateCommand request, CancellationToken cancellationToken) {
         if (request.EventInfo == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventInfo)}");
-
         return HandleAsync(request, cancellationToken);
     }
 
@@ -46,11 +47,11 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
                                                          cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
-                _logger.LogInformation(EfCoreLogs.CannotCreateIsDeleted, nameof(DurationEvent));
+                _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(DurationEvent));
                 var existedBusiness = _mapper.Map<DurationEvent>(existed);
                 return new CqrsResult<DurationEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
-            _logger.LogInformation(EfCoreLogs.CannotCreateIsAlreadyExisted + existed, nameof(DurationEvent));
+            _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(DurationEvent), existed.ToString());
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
         }
         // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info

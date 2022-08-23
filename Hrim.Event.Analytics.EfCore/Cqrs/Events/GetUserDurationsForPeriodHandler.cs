@@ -31,7 +31,7 @@ public class GetUserDurationsForPeriodHandler: IRequestHandler<GetUserDurationsF
                                        .ToListAsync(cancellationToken);
         var result = dbEntities.Select(x => new ViewDurationEvent(x.Id,
                                                                   x.StartedOn.CombineWithTime(x.StartedAt),
-                                                                  x.FinishedOn?.CombineWithTime(x.FinishedAt!.Value) ?? null,
+                                                                  x.FinishedOn?.CombineWithTime(x.FinishedAt!.Value),
                                                                   x.EventTypeId))
                                .ToList();
         return result;

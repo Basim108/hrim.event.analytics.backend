@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateCommand, CqrsResult<DurationEvent?>> {
     private readonly ILogger<DurationEventUpdateHandler> _logger;
     private readonly IMapper                             _mapper;
@@ -37,16 +39,16 @@ public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateComm
                                     .FirstOrDefaultAsync(x => x.Id == mappedEventInfo.Id,
                                                          cancellationToken);
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.EntityNotFoundById, nameof(DurationEvent));
+            _logger.LogDebug(EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, nameof(DurationEvent));
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(DurationEvent));
+            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(DurationEvent));
             var deletedEvent = _mapper.Map<DurationEvent>(existed);
             return new CqrsResult<DurationEvent?>(deletedEvent, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventInfo.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CannotUpdateEntityIsDeleted, existed.ConcurrentToken, nameof(DurationEvent));
+            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(DurationEvent));
             var conflictedEvent = _mapper.Map<DurationEvent>(existed);
             return new CqrsResult<DurationEvent?>(conflictedEvent, CqrsResultCode.Conflict);
         }

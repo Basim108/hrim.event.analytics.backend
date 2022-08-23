@@ -1,10 +1,12 @@
-﻿using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
+﻿using System.Diagnostics.CodeAnalysis;
+using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class GetViewEventTypesHandler: IRequestHandler<GetViewEventTypes, IList<ViewEventType>> {
     private readonly EventAnalyticDbContext _context;
 
@@ -14,11 +16,11 @@ public class GetViewEventTypesHandler: IRequestHandler<GetViewEventTypes, IList<
 
     public async Task<IList<ViewEventType>> Handle(GetViewEventTypes request, CancellationToken cancellationToken) {
         var query = _context.UserEventTypes.AsQueryable();
-        if (request.CreatedById != default) {
+        if (request.CreatedById != Guid.Empty) {
             query = query.Where(x => x.CreatedById == request.CreatedById);
         }
         if (request.IsPublic) {
-            query = query.Where(x => x.IsPublic == true);
+            query = query.Where(x => x.IsPublic);
         }
         if (!request.IncludeDeleted) {
             query = query.Where(x => x.IsDeleted != true);

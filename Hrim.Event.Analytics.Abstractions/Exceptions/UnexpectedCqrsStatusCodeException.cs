@@ -10,7 +10,7 @@ public class UnexpectedCqrsStatusCodeException: Exception {
     public CqrsResultCode? StatusCode { get; }
 
     public UnexpectedCqrsStatusCodeException(CqrsResultCode? statusCode)
-        : base(CoreLogs.UnexpectedCqrsResult) {
+        : base(CoreLogs.UNEXPECTED_CQRS_RESULT) {
         StatusCode = statusCode;
     }
 

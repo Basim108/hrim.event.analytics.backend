@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class GetEventTypeByIdHandler: IRequestHandler<GetEventTypeById, CqrsResult<UserEventType?>> {
     private readonly EventAnalyticDbContext           _context;
     private readonly ILogger<GetEventTypeByIdHandler> _logger;
@@ -20,14 +22,14 @@ public class GetEventTypeByIdHandler: IRequestHandler<GetEventTypeById, CqrsResu
     }
 
     public Task<CqrsResult<UserEventType?>> Handle(GetEventTypeById request, CancellationToken cancellationToken) {
-        if (request.Id == default)
-            throw new ArgumentNullException(nameof(request.Id));
+        if (request.Id == Guid.Empty)
+            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Id)}");
 
         return HandleAsync(request, cancellationToken);
     }
 
     private async Task<CqrsResult<UserEventType?>> HandleAsync(GetEventTypeById request, CancellationToken cancellationToken) {
-        using var entityIdScope = _logger.BeginScope(CoreLogs.HrimEntityId, request.Id);
+        using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.Id);
         var       query         = _context.UserEventTypes.AsQueryable();
         if (request.IsNotTrackable) {
             query = query.AsNoTracking();
@@ -46,7 +48,7 @@ public class GetEventTypeByIdHandler: IRequestHandler<GetEventTypeById, CqrsResu
             return new CqrsResult<UserEventType?>(result, CqrsResultCode.Ok);
         }
         catch (TimeoutException ex) {
-            _logger.LogWarning(ex.ToString());
+            _logger.LogWarning(EfCoreLogs.OPERATION_TIMEOUT, HrimOperations.Read, ex.Message);
             return new CqrsResult<UserEventType?>(null, CqrsResultCode.Locked);
         }
     }

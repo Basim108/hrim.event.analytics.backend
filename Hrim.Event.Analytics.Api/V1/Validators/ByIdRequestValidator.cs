@@ -11,6 +11,6 @@ public class ByIdRequestValidator: AbstractValidator<ByIdRequest> {
     public ByIdRequestValidator() {
         RuleFor(x => x.Id)
            .NotEmpty()
-           .WithMessage(ValidationMessages.IsRequired);
+           .WithMessage(ValidationMessages.IS_REQUIRED);
     }
 }
