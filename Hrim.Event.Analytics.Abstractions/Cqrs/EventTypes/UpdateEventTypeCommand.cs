@@ -1,9 +1,8 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
-using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
 using MediatR;
 
-namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes; 
+namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 
 /// <summary> Updates an instance of the system event type </summary>
 /// <param name="EventType">an instance with modified data that has to be stored</param>
@@ -14,6 +13,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// Otherwise returns an updated instance with a new ConcurrentToken value (200).
 /// </returns>
 /// <remarks>In case you need to set IsDeleted flag to false, use <see cref="RestoreEntityCommand{TEntity}"/> CQRS command</remarks>
-
-public record UpdateEventTypeCommand(UpdateEventTypeRequest EventType, bool SaveChanges, OperationContext Context)
+public record UpdateEventTypeCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
     : OperationRequest(Context), IRequest<CqrsResult<UserEventType?>>;

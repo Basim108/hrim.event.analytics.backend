@@ -1,4 +1,4 @@
-namespace Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 
 /// <summary>
 /// When the main importance is the fact that an event occurred.

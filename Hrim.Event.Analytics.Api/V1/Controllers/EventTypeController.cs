@@ -1,6 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
-using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
@@ -14,34 +14,31 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [ApiController]
 [Route("v1/event-type")]
 public class EventTypeController: EventAnalyticsApiController {
-    private readonly IApiRequestAccessor _requestAccessor;
-    private readonly IMediator           _mediator;
+    private readonly IMediator _mediator;
 
     /// <summary> </summary>
     public EventTypeController(IApiRequestAccessor requestAccessor,
-                               IMediator           mediator) {
-        _requestAccessor = requestAccessor;
-        _mediator        = mediator;
+                               IMediator           mediator): base(requestAccessor) {
+        _mediator = mediator;
     }
 
     /// <summary> Get all user event types </summary>
     [HttpGet]
     public Task<IList<ViewEventType>> GetAllAsync(CancellationToken cancellationToken)
-        => _mediator.Send(new GetViewEventTypes(_requestAccessor.GetCorrelationId()),
-                          cancellationToken);
+        => _mediator.Send(new GetViewEventTypes(OperationContext), cancellationToken);
 
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserEventType>> GetByIdAsync([FromRoute]ByIdRequest request, CancellationToken cancellationToken) {
-        var result = await _mediator.Send(new GetEventTypeById(request.Id, IsNotTrackable: true, _requestAccessor.GetOperationContext()),
-                                    cancellationToken);
+    public async Task<ActionResult<UserEventType>> GetByIdAsync([FromRoute] ByIdRequest request, CancellationToken cancellationToken) {
+        var result = await _mediator.Send(new GetEventTypeById(request.Id, IsNotTrackable: true, OperationContext),
+                                          cancellationToken);
         return ProcessCqrsResult(result);
     }
 
     /// <summary> Create a new event type </summary>
     [HttpPost]
     public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(request, SaveChanges: true, _requestAccessor.GetOperationContext()),
+        var cqrsResult = await _mediator.Send(new CreateUserEventTypeCommand(request, SaveChanges: true, OperationContext),
                                               cancellationToken);
         return ProcessCqrsResult(cqrsResult);
     }
@@ -49,7 +46,7 @@ public class EventTypeController: EventAnalyticsApiController {
     /// <summary> Update an event type </summary>
     [HttpPut]
     public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new UpdateEventTypeCommand(request, SaveChanges: true, _requestAccessor.GetOperationContext()),
+        var cqrsResult = await _mediator.Send(new UpdateEventTypeCommand(request, SaveChanges: true, OperationContext),
                                               cancellationToken);
         return ProcessCqrsResult(cqrsResult);
     }

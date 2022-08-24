@@ -40,9 +40,9 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
         var mappedEventInfo = _mapper.Map<DbDurationEvent>(request.EventInfo);
         var existed = await _context.DurationEvents
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == request.EventInfo.CreatedById &&
-                                                              x.StartedOn   == mappedEventInfo.StartedOn     &&
-                                                              x.StartedAt   == mappedEventInfo.StartedAt     &&
+                                    .FirstOrDefaultAsync(x => x.CreatedById == request.Context.UserId    &&
+                                                              x.StartedOn   == mappedEventInfo.StartedOn &&
+                                                              x.StartedAt   == mappedEventInfo.StartedAt &&
                                                               x.EventTypeId == mappedEventInfo.EventTypeId,
                                                          cancellationToken);
         if (existed != null) {
@@ -51,11 +51,12 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
                 var existedBusiness = _mapper.Map<DurationEvent>(existed);
                 return new CqrsResult<DurationEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
+            // TODO: return to the user a meaningful message that already exist 
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(DurationEvent), existed.ToString());
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
         }
         // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isUserExists = await _mediator.Send(new CheckUserExistence(request.EventInfo.CreatedById, request.CorrelationId),
+        var isUserExists = await _mediator.Send(new CheckUserExistence(request.Context.UserId, request.Context.CorrelationId),
                                                 cancellationToken);
         if (isUserExists.StatusCode != CqrsResultCode.Ok) {
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.BadRequest, "User who set as an owner of the event does not exist");
@@ -66,7 +67,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
             FinishedOn      = mappedEventInfo.FinishedOn,
             FinishedAt      = mappedEventInfo.FinishedAt,
             EventTypeId     = request.EventInfo.EventTypeId,
-            CreatedById     = request.EventInfo.CreatedById,
+            CreatedById     = request.Context.UserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };

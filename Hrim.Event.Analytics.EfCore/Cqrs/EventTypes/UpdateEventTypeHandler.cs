@@ -49,11 +49,15 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
             return new CqrsResult<UserEventType?>(existed, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventType.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(UserEventType));
+            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT, 
+                                   HrimOperations.Update, 
+                                   existed.ConcurrentToken, 
+                                   request.EventType.ConcurrentToken, 
+                                   nameof(UserEventType));
             return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Conflict);
         }
         if (existed.CreatedById != request.Context.UserId) {
-            _logger.LogInformation(EfCoreLogs.OPERATION_IS_FORBIDDEN_BY_USER_ID, existed.CreatedById, HrimOperations.Update, nameof(UserEventType));
+            _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(UserEventType));
             return new CqrsResult<UserEventType?>(null, CqrsResultCode.Forbidden);
         }
         var isChanged = false;

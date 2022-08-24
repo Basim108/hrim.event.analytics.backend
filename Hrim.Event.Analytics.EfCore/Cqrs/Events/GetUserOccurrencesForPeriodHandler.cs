@@ -1,6 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Extensions;
-using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +15,9 @@ public class GetUserOccurrencesForPeriodHandler: IRequestHandler<GetUserOccurren
 
     public async Task<IList<ViewOccurrenceEvent>> Handle(GetUserOccurrencesForPeriod request, CancellationToken cancellationToken) {
         var dbEntities = await _context.OccurrenceEvents
-                                       .Where(x => x.CreatedById == request.OwnerId &&
-                                                   x.OccurredOn  >= request.Start   &&
-                                                   x.OccurredOn  <= request.End     &&
+                                       .Where(x => x.CreatedById == request.Context.UserId &&
+                                                   x.OccurredOn  >= request.Start          &&
+                                                   x.OccurredOn  <= request.End            &&
                                                    x.IsDeleted   != true)
                                        .AsNoTracking()
                                        .Select(x => new {

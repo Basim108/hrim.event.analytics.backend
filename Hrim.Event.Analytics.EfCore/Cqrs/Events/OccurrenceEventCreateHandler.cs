@@ -41,9 +41,9 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
         var mappedEventInfo = _mapper.Map<DbOccurrenceEvent>(request.EventInfo);
         var existed = await _context.OccurrenceEvents
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == request.EventInfo.CreatedById &&
-                                                              x.OccurredOn  == mappedEventInfo.OccurredOn    &&
-                                                              x.OccurredAt  == mappedEventInfo.OccurredAt    &&
+                                    .FirstOrDefaultAsync(x => x.CreatedById == request.Context.UserId     &&
+                                                              x.OccurredOn  == mappedEventInfo.OccurredOn &&
+                                                              x.OccurredAt  == mappedEventInfo.OccurredAt &&
                                                               x.EventTypeId == mappedEventInfo.EventTypeId,
                                                          cancellationToken);
         if (existed != null) {
@@ -52,17 +52,18 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
                 var existedBusiness = _mapper.Map<OccurrenceEvent>(existed);
                 return new CqrsResult<OccurrenceEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
+            // TODO: return to the user a meaningful message that already exist
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(OccurrenceEvent), existed.ToString());
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict);
         }
         // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isUserExists = await _mediator.Send(new CheckUserExistence(request.EventInfo.CreatedById, request.CorrelationId),
+        var isUserExists = await _mediator.Send(new CheckUserExistence(request.Context.UserId, request.Context.CorrelationId),
                                                 cancellationToken);
         if (isUserExists.StatusCode != CqrsResultCode.Ok) {
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.BadRequest, "User who set as an owner of the event does not exist");
         }
         // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isEventTypeExists = await _mediator.Send(new CheckEventTypeExistence(request.EventInfo.EventTypeId, request.CorrelationId),
+        var isEventTypeExists = await _mediator.Send(new CheckEventTypeExistence(request.EventInfo.EventTypeId, request.Context.CorrelationId),
                                                      cancellationToken);
         if (isEventTypeExists.StatusCode != CqrsResultCode.Ok) {
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.BadRequest, "An event_type_id does not exist");
@@ -71,7 +72,7 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
             OccurredOn      = mappedEventInfo.OccurredOn,
             OccurredAt      = mappedEventInfo.OccurredAt,
             EventTypeId     = request.EventInfo.EventTypeId,
-            CreatedById     = request.EventInfo.CreatedById,
+            CreatedById     = request.Context.UserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };

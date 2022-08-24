@@ -1,4 +1,4 @@
-namespace Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 
 /// <summary>
 /// When it is important to register an event that has start time and end time this system_event_type can be used.

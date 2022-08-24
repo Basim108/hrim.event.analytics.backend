@@ -5,7 +5,7 @@ using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 namespace Hrim.Event.Analytics.EfCore.AutoMapper.Converters;
 
 public class DurationStartedOnValueResolver: IValueResolver<DbDurationEvent, DurationEvent, DateTimeOffset>,
-                                     IValueResolver<DurationEvent, DbDurationEvent, DateOnly> {
+                                             IValueResolver<DurationEvent, DbDurationEvent, DateOnly>{
     public DateTimeOffset Resolve(DbDurationEvent source, DurationEvent destination, DateTimeOffset destMember, ResolutionContext context)
         => new DateTimeOffset(source.StartedOn.Year, source.StartedOn.Month, source.StartedOn.Day,
                               source.StartedAt.Hour, source.StartedAt.Minute, source.StartedAt.Second,
@@ -19,7 +19,7 @@ public class DurationStartedOnValueResolver: IValueResolver<DbDurationEvent, Dur
 }
 
 public class DurationFinishedOnValueResolver: IValueResolver<DbDurationEvent, DurationEvent, DateTimeOffset?>,
-                                      IValueResolver<DurationEvent, DbDurationEvent, DateOnly?> {
+                                              IValueResolver<DurationEvent, DbDurationEvent, DateOnly?> {
     public DateTimeOffset? Resolve(DbDurationEvent source, DurationEvent destination, DateTimeOffset? destMember, ResolutionContext context)
         => source.FinishedOn == null || source.FinishedAt == null
                ? null
@@ -37,7 +37,7 @@ public class DurationFinishedOnValueResolver: IValueResolver<DbDurationEvent, Du
 }
 
 public class OccurrenceOnValueResolver: IValueResolver<DbOccurrenceEvent, OccurrenceEvent, DateTimeOffset>,
-                                        IValueResolver<OccurrenceEvent, DbOccurrenceEvent, DateOnly> {
+                                        IValueResolver<OccurrenceEvent, DbOccurrenceEvent, DateOnly>{
     public DateTimeOffset Resolve(DbOccurrenceEvent source, OccurrenceEvent destination, DateTimeOffset destMember, ResolutionContext context)
         => new DateTimeOffset(source.OccurredOn.Year, source.OccurredOn.Month, source.OccurredOn.Day,
                               source.OccurredAt.Hour, source.OccurredAt.Minute, source.OccurredAt.Second,
