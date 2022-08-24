@@ -31,7 +31,6 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
         _context = context;
     }
 
-    // TODO: add ConcurrentToken protection. will prevent repeatable delete
     public Task<CqrsResult<TEntity?>> Handle(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
         if (request == null)
             throw new ArgumentNullException(nameof(request));

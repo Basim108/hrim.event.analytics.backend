@@ -2,10 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
-using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
@@ -20,16 +18,13 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateCommand, CqrsResult<DurationEvent?>> {
     private readonly ILogger<DurationEventCreateHandler> _logger;
     private readonly IMapper                             _mapper;
-    private readonly IMediator                           _mediator;
     private readonly EventAnalyticDbContext              _context;
 
     public DurationEventCreateHandler(ILogger<DurationEventCreateHandler> logger,
                                       IMapper                             mapper,
-                                      IMediator                           mediator,
                                       EventAnalyticDbContext              context) {
         _logger   = logger;
         _mapper   = mapper;
-        _mediator = mediator;
         _context  = context;
     }
 
