@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 #pragma warning disable CS1591
 
@@ -32,7 +33,10 @@ public class EventAnalyticsApiController: ControllerBase {
                 Response.StatusCode = (int)HttpStatusCode.Gone;
                 return new EmptyResult();
             case CqrsResultCode.Conflict:
-                return Conflict(cqrsResult.Result);
+                Response.StatusCode = (int)HttpStatusCode.Conflict;
+                if (string.IsNullOrWhiteSpace(cqrsResult.Info))
+                    return new EmptyResult();
+                return new ObjectResult(JsonConvert.SerializeObject(cqrsResult.Info));
             case CqrsResultCode.Forbidden:
                 return Forbid(ApiLogs.FORBID_AS_NOT_ENTITY_OWNER);
             case CqrsResultCode.Locked:

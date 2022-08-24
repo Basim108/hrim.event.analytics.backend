@@ -1,9 +1,11 @@
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Swagger.Configuration;
+using Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
 using Hrim.Event.Analytics.Infrastructure.DependencyInjection;
 using Hrimsoft.StringCases;
@@ -26,12 +28,13 @@ public static class ApiServiceCollectionRegistrations {
         services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         services.AddApiSwagger();
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
-        
+
         services.AddHttpContextAccessor();
         services.AddTransient<IApiRequestAccessor, ApiRequestAccessor>();
-        
+        services.AddTransient<IValidator<DurationEvent>, EventAsyncValidator>();
+        services.AddTransient<IValidator<OccurrenceEvent>, EventAsyncValidator>();
+
         services.AddEventAnalyticsInfrastructure();
         services.AddEventAnalyticsStorage(appConfig, typeof(Program).Assembly.GetName().Name!);
     }
-
 }

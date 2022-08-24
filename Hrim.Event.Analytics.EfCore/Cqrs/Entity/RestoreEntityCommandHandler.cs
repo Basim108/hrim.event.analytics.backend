@@ -38,7 +38,6 @@ public class RestoreEntityCommandHandler<TEntity>: IRequestHandler<RestoreEntity
         return HandleAsync(request, cancellationToken);
     }
 
-    // TODO: add ConcurrentToken protection. will prevent repeatable restore
     private async Task<CqrsResult<TEntity?>> HandleAsync(RestoreEntityCommand<TEntity> request, CancellationToken cancellationToken) {
         using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.Id);
         HrimEntity? existed = new TEntity() switch {

@@ -1,12 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
-using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
+using Hrimsoft.StringCases;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,16 +18,13 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateCommand, CqrsResult<DurationEvent?>> {
     private readonly ILogger<DurationEventCreateHandler> _logger;
     private readonly IMapper                             _mapper;
-    private readonly IMediator                           _mediator;
     private readonly EventAnalyticDbContext              _context;
 
     public DurationEventCreateHandler(ILogger<DurationEventCreateHandler> logger,
                                       IMapper                             mapper,
-                                      IMediator                           mediator,
                                       EventAnalyticDbContext              context) {
         _logger   = logger;
         _mapper   = mapper;
-        _mediator = mediator;
         _context  = context;
     }
 
@@ -51,17 +49,13 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
                 var existedBusiness = _mapper.Map<DurationEvent>(existed);
                 return new CqrsResult<DurationEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
-            // TODO: return to the user a meaningful message that already exist 
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(DurationEvent), existed.ToString());
-            return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
+            var info = string.Format(CoreLogs.ENTITY_WITH_2_PROPERTIES_ALREADY_EXISTS,
+                                     nameof(DurationEvent.EventTypeId).ToSnakeCase(),
+                                     nameof(DurationEvent.StartedAt).ToSnakeCase());
+            return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict, info);
         }
-        // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isUserExists = await _mediator.Send(new CheckUserExistence(request.Context.UserId, request.Context.CorrelationId),
-                                                cancellationToken);
-        if (isUserExists.StatusCode != CqrsResultCode.Ok) {
-            return new CqrsResult<DurationEvent?>(null, CqrsResultCode.BadRequest, "User who set as an owner of the event does not exist");
-        }
-        var entityToCreate = new DbDurationEvent() {
+        var entityToCreate = new DbDurationEvent {
             StartedOn       = mappedEventInfo.StartedOn,
             StartedAt       = mappedEventInfo.StartedAt,
             FinishedOn      = mappedEventInfo.FinishedOn,
