@@ -71,14 +71,14 @@
             <summary> Restore any type of entity from soft deletion </summary>
             <param name="Id">Entity Id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1.#ctor(System.Guid,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Restore any type of entity from soft deletion </summary>
             <param name="Id">Entity Id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.RestoreEntityCommand`1.Id">
@@ -91,14 +91,14 @@
             <summary> Soft deletion an instance of any entity type </summary>
             <param name="Id">Entity id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.SoftDeleteEntityCommand`1.#ctor(System.Guid,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.SoftDeleteEntityCommand`1.#ctor(System.Guid,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Soft deletion an instance of any entity type </summary>
             <param name="Id">Entity id</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns> Code(404) NotFound; EntityIsDeleted; Ok </returns>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Entity.SoftDeleteEntityCommand`1.Id">
@@ -111,17 +111,17 @@
             <summary> Creates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventCreateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Creates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -137,17 +137,17 @@
             <summary> Updates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Updates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -189,15 +189,13 @@
             <summary> Get all user's occurrence events for a period </summary>
             <param name="Start">Includes events that equals to a start border </param>
             <param name="End">Includes events that equals to an end border </param>
-            <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.#ctor(System.DateOnly,System.DateOnly,System.Guid,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.#ctor(System.DateOnly,System.DateOnly,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Get all user's occurrence events for a period </summary>
             <param name="Start">Includes events that equals to a start border </param>
             <param name="End">Includes events that equals to an end border </param>
-            <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.Start">
             <summary>Includes events that equals to a start border </summary>
@@ -205,22 +203,17 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.End">
             <summary>Includes events that equals to an end border </summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserOccurrencesForPeriod.OwnerId">
-            <summary>Returns only those events that were created by this user id</summary>
-        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod">
             <summary> Get all user's durations events for a period </summary>
             <param name="Start">Includes durations that intersects start border </param>
             <param name="End">Includes durations that intersects end border </param>
-            <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.#ctor(System.DateOnly,System.DateOnly,System.Guid,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.#ctor(System.DateOnly,System.DateOnly,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Get all user's durations events for a period </summary>
             <param name="Start">Includes durations that intersects start border </param>
             <param name="End">Includes durations that intersects end border </param>
-            <param name="OwnerId">Returns only those events that were created by this user id</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
         </member>
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.Start">
             <summary>Includes durations that intersects start border </summary>
@@ -228,24 +221,21 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.End">
             <summary>Includes durations that intersects end border </summary>
         </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Events.GetUserDurationsForPeriod.OwnerId">
-            <summary>Returns only those events that were created by this user id</summary>
-        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventCreateCommand">
             <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventCreateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -261,17 +251,17 @@
             <summary> Updates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Boolean,System.Guid)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Updates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
-            <param name="CorrelationId"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.BaseRequest"/></param>
+            <param name="Context"><see cref="T:Hrim.Event.Analytics.Abstractions.Cqrs.OperationRequest"/></param>
             <returns>
             Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
@@ -338,7 +328,7 @@
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewEventTypes">
             <summary> Returns a union of event types </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewEventTypes.#ctor(System.Guid,System.Boolean,System.Boolean,System.Nullable{System.Guid})">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.GetViewEventTypes.#ctor(Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext,System.Boolean,System.Boolean)">
             <summary> Returns a union of event types </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes.UpdateEventTypeCommand">
@@ -549,6 +539,92 @@
         <member name="M:Hrim.Event.Analytics.Abstractions.Extensions.DateOnlyExtensions.CombineWithTime(System.Nullable{System.DateOnly},System.Nullable{System.DateTimeOffset})">
             <summary>
             Combines date from DateOnly and time with timezone from DateTimeOffset
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventCreateRequest">
+            <summary>
+            Model for occurrence event creation
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventCreateRequest.EventTypeId">
+            <summary>
+            Event type id on which current event is based.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventCreateRequest.StartedAt">
+            <summary>
+            Date and time with end-user timezone when an event starts
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventCreateRequest.FinishedAt">
+            <summary>
+            Date and time with end-user timezone when an event finishes
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest">
+            <summary>
+            Model for occurrence event creation
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest.Id">
+            <summary> Event id </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest.EventTypeId">
+            <summary>
+            Event type id on which current event is based.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest.StartedAt">
+            <summary>
+            Date and time with end-user timezone when an event starts
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest.FinishedAt">
+            <summary>
+            Date and time with end-user timezone when an event finishes
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest.ConcurrentToken">
+            <summary>
+            Update is possible only when this token equals to the token in the storage
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventCreateRequest">
+            <summary>
+            Model for occurrence event creation
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventCreateRequest.EventTypeId">
+            <summary>
+            Event type id on which current event is based.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventCreateRequest.OccurredAt">
+            <summary>
+            Date and time with end-user timezone when an event occurred
+            </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest">
+            <summary>
+            Model for occurrence event creation
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest.Id">
+            <summary> Event id </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest.EventTypeId">
+            <summary>
+            Event type id on which current event is based.
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest.OccurredAt">
+            <summary>
+            Date and time with end-user timezone when an event occurred
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest.ConcurrentToken">
+            <summary>
+            Update is possible only when this token equals to the token in the storage
             </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent">

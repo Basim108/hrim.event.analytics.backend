@@ -63,6 +63,7 @@ public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, 
                 return new CqrsResult<TEvent?>(result, CqrsResultCode.EntityIsDeleted);
             }
             if (result.CreatedById != request.Context.UserId) {
+                _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, typeof(TEvent).Name);
                 return new CqrsResult<TEvent?>(result, CqrsResultCode.Forbidden);
             }
             return new CqrsResult<TEvent?>(result, CqrsResultCode.Ok);

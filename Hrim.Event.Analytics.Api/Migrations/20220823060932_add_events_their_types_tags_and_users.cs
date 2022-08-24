@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
+#pragma warning disable CS1591
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     public partial class add_events_their_types_tags_and_users : Migration

@@ -48,9 +48,18 @@ public class OccurrenceEventUpdateHandler: IRequestHandler<OccurrenceEventUpdate
             return new CqrsResult<OccurrenceEvent?>(deletedEvent, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventInfo.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(OccurrenceEvent));
+            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT, 
+                                   HrimOperations.Update, 
+                                   existed.ConcurrentToken, 
+                                   request.EventInfo.ConcurrentToken, 
+                                   nameof(OccurrenceEvent));
             var conflictedEvent = _mapper.Map<OccurrenceEvent>(existed);
             return new CqrsResult<OccurrenceEvent?>(conflictedEvent, CqrsResultCode.Conflict);
+        }
+        if(existed.CreatedById != request.Context.UserId) {
+            _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(OccurrenceEvent));
+            var conflictedEvent = _mapper.Map<OccurrenceEvent>(existed);
+            return new CqrsResult<OccurrenceEvent?>(conflictedEvent, CqrsResultCode.Forbidden);
         }
         var isChanged = false;
         if (existed.OccurredOn != mappedEventInfo.OccurredOn) {

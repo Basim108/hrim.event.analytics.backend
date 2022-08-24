@@ -48,9 +48,18 @@ public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateComm
             return new CqrsResult<DurationEvent?>(deletedEvent, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventInfo.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(DurationEvent));
+            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT, 
+                                   HrimOperations.Update, 
+                                   existed.ConcurrentToken, 
+                                   request.EventInfo.ConcurrentToken, 
+                                   nameof(DurationEvent));
             var conflictedEvent = _mapper.Map<DurationEvent>(existed);
             return new CqrsResult<DurationEvent?>(conflictedEvent, CqrsResultCode.Conflict);
+        }
+        if(existed.CreatedById != request.Context.UserId) {
+            _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(DurationEvent));
+            var conflictedEvent = _mapper.Map<DurationEvent>(existed);
+            return new CqrsResult<DurationEvent?>(conflictedEvent, CqrsResultCode.Forbidden);
         }
         var isChanged = false;
         if (existed.StartedOn != mappedEventInfo.StartedOn) {

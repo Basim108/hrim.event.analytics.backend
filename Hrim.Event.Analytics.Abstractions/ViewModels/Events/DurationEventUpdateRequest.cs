@@ -3,7 +3,7 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Events;
 /// <summary>
 /// Model for occurrence event creation
 /// </summary>
-public class OccurrenceEventUpdateRequest {
+public class DurationEventUpdateRequest {
     /// <summary> Event id </summary>
     public Guid Id { get; set; }
     
@@ -13,9 +13,14 @@ public class OccurrenceEventUpdateRequest {
     public Guid EventTypeId { get; set; }
     
     /// <summary>
-    /// Date and time with end-user timezone when an event occurred
+    /// Date and time with end-user timezone when an event starts
     /// </summary>
-    public DateTimeOffset OccurredAt { get; set; }
+    public DateTimeOffset StartedAt { get; set; }
+    
+    /// <summary>
+    /// Date and time with end-user timezone when an event finishes
+    /// </summary>
+    public DateTimeOffset? FinishedAt { get; set; }
     
     /// <summary>
     /// Update is possible only when this token equals to the token in the storage

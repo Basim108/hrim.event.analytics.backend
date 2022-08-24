@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
 using MediatR;
 
 namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events; 
@@ -11,6 +12,6 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 /// Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
 /// Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
 /// </returns>
-public record DurationEventUpdateCommand(DurationEvent EventInfo, bool SaveChanges, OperationContext Context)
+public record DurationEventUpdateCommand(DurationEventUpdateRequest EventInfo, bool SaveChanges, OperationContext Context)
     : OperationRequest(Context), IRequest<CqrsResult<DurationEvent?>>;
     

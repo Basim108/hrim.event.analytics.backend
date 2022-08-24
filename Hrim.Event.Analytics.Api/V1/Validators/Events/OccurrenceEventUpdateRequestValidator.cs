@@ -4,9 +4,9 @@ using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
 namespace Hrim.Event.Analytics.Api.V1.Validators.Events;
 
 /// <inheritdoc />
-public class UpdateOccurrenceEventRequestValidator: AbstractValidator<UpdateOccurrenceEventRequest> {
+public class OccurrenceEventUpdateRequestValidator: AbstractValidator<OccurrenceEventUpdateRequest> {
     /// <summary> </summary>
-    public UpdateOccurrenceEventRequestValidator() {
+    public OccurrenceEventUpdateRequestValidator() {
         RuleFor(x => x.Id)
            .NotEmpty()
            .WithMessage(ValidationMessages.IS_REQUIRED);

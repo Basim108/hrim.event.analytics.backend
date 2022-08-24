@@ -31,8 +31,8 @@ public class EventOccurrenceController: EventAnalyticsApiController {
 
     /// <summary> Update a duration event </summary>
     [HttpPut]
-    public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(UpdateOccurrenceEventRequest eventToUpdate, CancellationToken cancellationToken) {
-        var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(eventToUpdate, SaveChanges: true, OperationContext),
+    public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(OccurrenceEventUpdateRequest eventToOccurrenceEventUpdate, CancellationToken cancellationToken) {
+        var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(eventToOccurrenceEventUpdate, SaveChanges: true, OperationContext),
                                               cancellationToken);
         return ProcessCqrsResult(cqrsResult);
     }
