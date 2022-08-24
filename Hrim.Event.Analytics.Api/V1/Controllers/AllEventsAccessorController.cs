@@ -6,16 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
-/// <summary>
-/// Manage user event types with this crud controller
-/// </summary>
+/// <summary> Get access to events of all types at once </summary>
 [ApiController]
 [Route("v1/event")]
-public class EventController: EventAnalyticsApiController {
+public class AllEventsAccessorController: EventAnalyticsApiController {
     private readonly IMediator _mediator;
 
     /// <summary> </summary>
-    public EventController(IApiRequestAccessor requestAccessor,
+    public AllEventsAccessorController(IApiRequestAccessor requestAccessor,
                            IMediator           mediator): base(requestAccessor) {
         _mediator = mediator;
     }

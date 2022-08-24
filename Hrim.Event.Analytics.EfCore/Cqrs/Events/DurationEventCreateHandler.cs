@@ -60,13 +60,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
                                      nameof(DurationEvent.StartedAt).ToSnakeCase());
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict, info);
         }
-        // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isUserExists = await _mediator.Send(new CheckUserExistence(request.Context.UserId, request.Context.CorrelationId),
-                                                cancellationToken);
-        if (isUserExists.StatusCode != CqrsResultCode.Ok) {
-            return new CqrsResult<DurationEvent?>(null, CqrsResultCode.BadRequest, "User who set as an owner of the event does not exist");
-        }
-        var entityToCreate = new DbDurationEvent() {
+        var entityToCreate = new DbDurationEvent {
             StartedOn       = mappedEventInfo.StartedOn,
             StartedAt       = mappedEventInfo.StartedAt,
             FinishedOn      = mappedEventInfo.FinishedOn,

@@ -12,6 +12,17 @@
             Register <see cref="T:Hrim.Event.Analytics.Api.Middleware.CorrelationMiddleware"/> so correlation id header will be processed
             </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Api.Extensions.ModelStateExtensions">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.Extensions.ModelStateExtensions.AddFluentErrors(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary,FluentValidation.Results.ValidationResult)">
+            <summary>
+            Adds fluent validation errors to the ControllerBase's ModelState 
+            </summary>
+            <param name="modelState"></param>
+            <param name="validationResult"></param>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.Extensions.MvcBuilderExtensions">
             <summary> </summary>
         </member>
@@ -41,6 +52,15 @@
             A single point to get a Json serializer settings
             </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.AllEventsAccessorController">
+            <summary> Get access to events of all types at once </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AllEventsAccessorController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+            <summary> </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AllEventsAccessorController.GetUserEventsAsync(System.DateOnly,System.DateOnly,System.Threading.CancellationToken)">
+            <summary> Get user's events for a period </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EntityController">
             <summary> Manage any entity type </summary>
         </member>
@@ -69,23 +89,29 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventAnalyticsApiController.ProcessCqrsResult``1(Hrim.Event.Analytics.Abstractions.Cqrs.CqrsResult{``0})">
             <summary> Process CQRS result for update endpoints </summary>
         </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventController">
+        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventBaseController`1">
             <summary>
-            Manage user event types with this crud controller
+            Controller for all types of user events
             </summary>
+            <typeparam name="TEvent"></typeparam>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventBaseController`1.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,FluentValidation.IValidator{`0},MediatR.IMediator)">
             <summary> </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventController.GetUserEventsAsync(System.DateOnly,System.DateOnly,System.Threading.CancellationToken)">
-            <summary> Get user's events for a period </summary>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventBaseController`1.ValidateRequestAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Provide async validation for any kind of events
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventBaseController`1.GetEventByIdAsync(System.Guid,System.Threading.CancellationToken)">
+            <summary> Get user event by id </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController">
             <summary>
             Manage user event types with this crud controller
             </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,FluentValidation.IValidator{Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent},MediatR.IMediator)">
             <summary> </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.CreateDurationAsync(Hrim.Event.Analytics.Api.V1.Models.DurationEventCreateRequest,System.Threading.CancellationToken)">
@@ -94,15 +120,12 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.UpdateDurationAsync(Hrim.Event.Analytics.Api.V1.Models.DurationEventUpdateRequest,System.Threading.CancellationToken)">
             <summary> Update a duration event </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.GetDurationByIdAsync(System.Guid,System.Threading.CancellationToken)">
-            <summary> Get user event type by id </summary>
-        </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController">
             <summary>
             Manage user event types with this crud controller
             </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,FluentValidation.IValidator{Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent},MediatR.IMediator)">
             <summary> </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.CreateOccurrenceAsync(Hrim.Event.Analytics.Api.V1.Models.OccurrenceEventCreateRequest,System.Threading.CancellationToken)">
@@ -110,9 +133,6 @@
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.UpdateOccurrenceAsync(Hrim.Event.Analytics.Api.V1.Models.OccurrenceEventUpdateRequest,System.Threading.CancellationToken)">
             <summary> Update a duration event </summary>
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.GetOccurrenceByIdAsync(System.Guid,System.Threading.CancellationToken)">
-            <summary> Get user event type by id </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController">
             <summary>
@@ -213,6 +233,14 @@
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.DurationEventUpdateRequestValidator.#ctor">
             <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.EventAsyncValidator">
+            <summary>
+            Checks event lookups
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.EventAsyncValidator.#ctor(MediatR.IMediator,Hrim.Event.Analytics.Api.Services.IApiRequestAccessor)">
+            <inheritdoc />
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.EventValidatorExtensions">
             <summary>

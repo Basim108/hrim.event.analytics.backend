@@ -60,18 +60,6 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
                                      nameof(OccurrenceEvent.OccurredAt).ToSnakeCase());
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict, info);
         }
-        // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isUserExists = await _mediator.Send(new CheckUserExistence(request.Context.UserId, request.Context.CorrelationId),
-                                                cancellationToken);
-        if (isUserExists.StatusCode != CqrsResultCode.Ok) {
-            return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.BadRequest, "User who set as an owner of the event does not exist");
-        }
-        // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
-        var isEventTypeExists = await _mediator.Send(new CheckEventTypeExistence(request.EventInfo.EventTypeId, request.Context.CorrelationId),
-                                                     cancellationToken);
-        if (isEventTypeExists.StatusCode != CqrsResultCode.Ok) {
-            return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.BadRequest, "An event_type_id does not exist");
-        }
         var entityToCreate = new DbOccurrenceEvent {
             OccurredOn      = mappedEventInfo.OccurredOn,
             OccurredAt      = mappedEventInfo.OccurredAt,
