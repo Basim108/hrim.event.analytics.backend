@@ -12,6 +12,6 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 /// Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
 /// Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
 /// </returns>
-public record OccurrenceEventCreateCommand(OccurrenceEventCreateRequest EventInfo, bool SaveChanges, OperationContext Context)
+public record OccurrenceEventCreateCommand(OccurrenceEvent EventInfo, bool SaveChanges, OperationContext Context)
     : OperationRequest(Context), IRequest<CqrsResult<OccurrenceEvent?>>;
     

@@ -44,6 +44,7 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
                 _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(UserEventType));
                 return new CqrsResult<UserEventType?>(existed, CqrsResultCode.EntityIsDeleted);
             }
+            // TODO: return to the user a meaningful message that already exist
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(UserEventType), existed.ToString());
             return new CqrsResult<UserEventType?>(null, CqrsResultCode.Conflict);
         }

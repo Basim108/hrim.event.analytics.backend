@@ -117,7 +117,7 @@
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventCreateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Creates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
@@ -143,7 +143,7 @@
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventUpdateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.DurationEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.DurationEvent,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Updates an instance of duration event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
@@ -231,7 +231,7 @@
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventCreateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventCreateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Creates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be created</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
@@ -257,7 +257,7 @@
             Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
             </returns>
         </member>
-        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventUpdateRequest,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Events.OccurrenceEventUpdateCommand.#ctor(Hrim.Event.Analytics.Abstractions.Entities.Events.OccurrenceEvent,System.Boolean,Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext)">
             <summary> Updates an instance of occurrence event </summary>
             <param name="EventInfo">an instance that has to be updated</param>
             <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
@@ -552,72 +552,6 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EntityUpdateRequest.ConcurrentToken">
             <summary>
             Update is possible only when this token equals to the token in the storage
-            </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.BaseEventCreateRequest">
-            <summary> </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.BaseEventCreateRequest.EventTypeId">
-            <summary>
-            Event type id on which current event is based.
-            </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.BaseEventUpdateRequest">
-            <summary> </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.BaseEventUpdateRequest.EventTypeId">
-            <summary>
-            Event type id on which current event is based.
-            </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventCreateRequest">
-            <summary>
-            Model for occurrence event creation
-            </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventCreateRequest.StartedAt">
-            <summary>
-            Date and time with end-user timezone when an event starts
-            </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventCreateRequest.FinishedAt">
-            <summary>
-            Date and time with end-user timezone when an event finishes
-            </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventUpdateRequest">
-            <summary>
-            Model for occurrence event creation
-            </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventUpdateRequest.StartedAt">
-            <summary>
-            Date and time with end-user timezone when an event starts
-            </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventUpdateRequest.FinishedAt">
-            <summary>
-            Date and time with end-user timezone when an event finishes
-            </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventCreateRequest">
-            <summary>
-            Model for occurrence event creation
-            </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventCreateRequest.OccurredAt">
-            <summary>
-            Date and time with end-user timezone when an event occurred
-            </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventUpdateRequest">
-            <summary>
-            Model for occurrence event creation
-            </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventUpdateRequest.OccurredAt">
-            <summary>
-            Date and time with end-user timezone when an event occurred
             </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.ViewDurationEvent">

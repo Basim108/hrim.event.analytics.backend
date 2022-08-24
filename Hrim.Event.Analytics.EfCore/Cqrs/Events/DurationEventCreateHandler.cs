@@ -51,6 +51,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
                 var existedBusiness = _mapper.Map<DurationEvent>(existed);
                 return new CqrsResult<DurationEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
+            // TODO: return to the user a meaningful message that already exist 
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(DurationEvent), existed.ToString());
             return new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
         }

@@ -52,6 +52,7 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
                 var existedBusiness = _mapper.Map<OccurrenceEvent>(existed);
                 return new CqrsResult<OccurrenceEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
+            // TODO: return to the user a meaningful message that already exist
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(OccurrenceEvent), existed.ToString());
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict);
         }
