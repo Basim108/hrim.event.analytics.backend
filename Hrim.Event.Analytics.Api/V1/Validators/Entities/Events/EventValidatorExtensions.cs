@@ -5,11 +5,11 @@ using Hrimsoft.StringCases;
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 
 /// <summary>
-/// Rules for Duration Event related validators
+/// Rules for event related validators
 /// </summary>
 public static class EventValidatorExtensions {
     /// <summary>
-    /// Adds rules to update and create duration event requests
+    /// Adds rules to update and create base event requests
     /// </summary>
     public static void AddRulesForBaseEvent<TRequest>(this AbstractValidator<TRequest> validator)
         where TRequest : BaseEvent {

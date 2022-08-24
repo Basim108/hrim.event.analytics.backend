@@ -48,7 +48,7 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(UserEventType), existed.ToString());
             return new CqrsResult<UserEventType?>(null, CqrsResultCode.Conflict);
         }
-        var entityToCreate = new UserEventType() {
+        var entityToCreate = new UserEventType {
             Name = request.EventType.Name,
             Description = string.IsNullOrWhiteSpace(request.EventType.Description)
                               ? null

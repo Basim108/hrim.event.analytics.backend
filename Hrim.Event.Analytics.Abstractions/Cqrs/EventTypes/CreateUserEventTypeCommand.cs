@@ -1,5 +1,4 @@
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
-using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using MediatR;
 
 namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes; 
@@ -12,6 +11,6 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
 /// Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
 /// </returns>
-public record CreateUserEventTypeCommand(CreateEventTypeRequest EventType, bool SaveChanges, OperationContext Context)
+public record CreateUserEventTypeCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
     : OperationRequest(Context), IRequest<CqrsResult<UserEventType?>>;
     

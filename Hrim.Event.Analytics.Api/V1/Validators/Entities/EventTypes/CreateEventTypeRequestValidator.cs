@@ -1,5 +1,5 @@
 using FluentValidation;
-using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
+using Hrim.Event.Analytics.Api.V1.Models;
 
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
 
@@ -7,22 +7,7 @@ namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
 public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeRequest> {
     /// <summary> </summary>
     public CreateEventTypeRequestValidator() {
-        RuleFor(x => x.Name)
-           .NotEmpty()
-           .WithMessage(ValidationMessages.IS_REQUIRED)
-           .MaximumLength(Constraints.NAME_MAX_LENGTH);
-
-        RuleFor(x => x.Description)
-           .MaximumLength(Constraints.DESCRIPTION_MAX_LENGTH);
-
-        RuleFor(x => x.Color)
-           .NotEmpty()
-           .WithMessage(ValidationMessages.IS_REQUIRED)
-           .MaximumLength(Constraints.NAME_MAX_LENGTH);
-
-        RuleFor(x => x.Color)
-           .NotEmpty()
-           .WithMessage(ValidationMessages.IS_REQUIRED)
-          .MaximumLength(Constraints.COLOR_MAX_LENGTH);
+       this.AddRulesForEntityCreateRequests();
+       this.AddRulesForEventType();
     }
 }
