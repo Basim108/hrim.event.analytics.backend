@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
@@ -7,6 +8,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
+using Hrimsoft.StringCases;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -52,9 +54,11 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
                 var existedBusiness = _mapper.Map<OccurrenceEvent>(existed);
                 return new CqrsResult<OccurrenceEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
             }
-            // TODO: return to the user a meaningful message that already exist
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(OccurrenceEvent), existed.ToString());
-            return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict);
+            var info = string.Format(CoreLogs.ENTITY_WITH_2_PROPERTIES_ALREADY_EXISTS,
+                                     nameof(OccurrenceEvent.EventTypeId).ToSnakeCase(),
+                                     nameof(OccurrenceEvent.OccurredAt).ToSnakeCase());
+            return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict, info);
         }
         // TODO: [refactoring]: move check to fluent validation so it'll return wrong field_name and info
         var isUserExists = await _mediator.Send(new CheckUserExistence(request.Context.UserId, request.Context.CorrelationId),

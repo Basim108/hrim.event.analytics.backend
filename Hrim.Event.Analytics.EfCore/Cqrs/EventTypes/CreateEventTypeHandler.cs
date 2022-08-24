@@ -1,9 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrimsoft.Core.Extensions;
+using Hrimsoft.StringCases;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -44,9 +46,10 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
                 _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(UserEventType));
                 return new CqrsResult<UserEventType?>(existed, CqrsResultCode.EntityIsDeleted);
             }
-            // TODO: return to the user a meaningful message that already exist
             _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(UserEventType), existed.ToString());
-            return new CqrsResult<UserEventType?>(null, CqrsResultCode.Conflict);
+            var info = string.Format(CoreLogs.ENTITY_WITH_PROPERTY_ALREADY_EXISTS,
+                                     nameof(UserEventType.Name).ToSnakeCase());
+            return new CqrsResult<UserEventType?>(null, CqrsResultCode.Conflict, info);
         }
         var entityToCreate = new UserEventType {
             Name = request.EventType.Name,

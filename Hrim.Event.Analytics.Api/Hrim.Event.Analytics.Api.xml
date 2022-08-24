@@ -128,10 +128,10 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetByIdAsync(Hrim.Event.Analytics.Api.V1.Models.ByIdRequest,System.Threading.CancellationToken)">
             <summary> Get user event type by id </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes.CreateEventTypeRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Api.V1.Models.CreateEventTypeRequest,System.Threading.CancellationToken)">
             <summary> Create a new event type </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes.UpdateEventTypeRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Api.V1.Models.UpdateEventTypeRequest,System.Threading.CancellationToken)">
             <summary> Update an event type </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Models.OccurrenceEventCreateRequest">
@@ -183,6 +183,12 @@
         <member name="P:Hrim.Event.Analytics.Api.V1.Models.GetEventsForPeriodRequest.End">
             <summary>Includes durations that intersects end border </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Models.CreateEventTypeRequest">
+            <inheritdoc />
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Models.UpdateEventTypeRequest">
+            <inheritdoc />
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Validators.ByIdRequestValidator">
             <summary>
             Validates requests for entity controller
@@ -210,12 +216,12 @@
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.EventValidatorExtensions">
             <summary>
-            Rules for Duration Event related validators
+            Rules for event related validators
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.EventValidatorExtensions.AddRulesForBaseEvent``1(FluentValidation.AbstractValidator{``0})">
             <summary>
-            Adds rules to update and create duration event requests
+            Adds rules to update and create base event requests
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.EventValidatorExtensions.AddRulesForDurationEvent``1(FluentValidation.AbstractValidator{``0})">
@@ -245,6 +251,16 @@
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.CreateEventTypeRequestValidator.#ctor">
             <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.EventTypeValidatorExtensions">
+            <summary>
+            Rules for event type related validators
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.EventTypeValidatorExtensions.AddRulesForEventType``1(FluentValidation.AbstractValidator{``0})">
+            <summary>
+            Adds rules to update and create event_type requests
+            </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.UpdateEventTypeRequestValidator">
             <inheritdoc />
