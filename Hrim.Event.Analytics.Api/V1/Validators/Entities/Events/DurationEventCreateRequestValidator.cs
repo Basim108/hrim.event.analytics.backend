@@ -1,18 +1,14 @@
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 using Hrimsoft.StringCases;
 
-namespace Hrim.Event.Analytics.Api.V1.Validators.Events;
+namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 
 /// <inheritdoc />
-public class DurationEventCreateRequestValidator: AbstractValidator<DurationEventCreateRequest> {
+public class DurationEventCreateRequestValidator: BaseEventCreateRequestValidator<DurationEventCreateRequest> {
     /// <summary> </summary>
     public DurationEventCreateRequestValidator() {
-        RuleFor(x => x.EventTypeId)
-           .NotEmpty()
-           .WithMessage(ValidationMessages.IS_REQUIRED);
-
         RuleFor(x => x.StartedAt)
            .GreaterThan(DateTimeOffset.MinValue)
            .WithMessage(ValidationMessages.IS_REQUIRED);

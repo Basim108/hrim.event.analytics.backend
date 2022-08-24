@@ -1,11 +1,12 @@
-using Hrim.Event.Analytics.Abstractions.Enums;
-
-namespace Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes; 
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes; 
 
 /// <summary>
 /// Model for event type creation
 /// </summary>
-public class CreateEventTypeRequest {
+public class UpdateEventTypeRequest {
+    /// <summary> Event type id </summary>
+    public Guid Id { get; set; }
+    
     /// <summary>
     /// Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>
@@ -25,4 +26,9 @@ public class CreateEventTypeRequest {
     /// An owner who created this event_type could share it with other end-users
     /// </summary>
     public bool IsPublic { get; set; }
+
+    /// <summary>
+    /// Update is possible only when this token equals to the token in the storage
+    /// </summary>
+    public long ConcurrentToken { get; set; }
 }

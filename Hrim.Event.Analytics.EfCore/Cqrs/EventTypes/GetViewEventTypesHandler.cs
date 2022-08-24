@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
-using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

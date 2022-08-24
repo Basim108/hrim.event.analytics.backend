@@ -1,7 +1,7 @@
 using FluentValidation;
-using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 
-namespace Hrim.Event.Analytics.Api.V1.Validators.EventTypes;
+namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
 
 /// <inheritdoc />
 public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeRequest> {

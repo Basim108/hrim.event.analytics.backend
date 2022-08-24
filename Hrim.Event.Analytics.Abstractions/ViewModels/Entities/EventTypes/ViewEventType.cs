@@ -1,4 +1,4 @@
-namespace Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 
 /// <summary>
 /// Model to present base properties of any derived event type.

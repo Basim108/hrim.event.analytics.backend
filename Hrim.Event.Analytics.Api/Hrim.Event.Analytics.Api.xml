@@ -88,10 +88,10 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
             <summary> </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.CreateDurationAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventCreateRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.CreateDurationAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventCreateRequest,System.Threading.CancellationToken)">
             <summary> Create a duration event </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.UpdateDurationAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Events.DurationEventUpdateRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.UpdateDurationAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.DurationEventUpdateRequest,System.Threading.CancellationToken)">
             <summary> Update a duration event </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventDurationController.GetDurationByIdAsync(System.Guid,System.Threading.CancellationToken)">
@@ -105,10 +105,10 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.#ctor(Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
             <summary> </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.CreateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventCreateRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.CreateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventCreateRequest,System.Threading.CancellationToken)">
             <summary> Create an occurrence event </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.UpdateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Events.OccurrenceEventUpdateRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.UpdateOccurrenceAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.OccurrenceEventUpdateRequest,System.Threading.CancellationToken)">
             <summary> Update a duration event </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventOccurrenceController.GetOccurrenceByIdAsync(System.Guid,System.Threading.CancellationToken)">
@@ -128,10 +128,10 @@
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.GetByIdAsync(Hrim.Event.Analytics.Api.V1.Models.ByIdRequest,System.Threading.CancellationToken)">
             <summary> Get user event type by id </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.CreateEventTypeRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.CreateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes.CreateEventTypeRequest,System.Threading.CancellationToken)">
             <summary> Create a new event type </summary>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes.UpdateEventTypeRequest,System.Threading.CancellationToken)">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.EventTypeController.UpdateAsync(Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes.UpdateEventTypeRequest,System.Threading.CancellationToken)">
             <summary> Update an event type </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Models.EventsForPeriodResponse">
@@ -140,7 +140,7 @@
             <param name="Occurrences">occurrence events that satisfy a request</param>
             <param name="Durations">duration events that satisfy a request</param>
         </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Models.EventsForPeriodResponse.#ctor(Hrim.Event.Analytics.Api.V1.Models.GetEventsForPeriodRequest,System.Collections.Generic.IList{Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewOccurrenceEvent},System.Collections.Generic.IList{Hrim.Event.Analytics.Abstractions.ViewModels.Events.ViewDurationEvent})">
+        <member name="M:Hrim.Event.Analytics.Api.V1.Models.EventsForPeriodResponse.#ctor(Hrim.Event.Analytics.Api.V1.Models.GetEventsForPeriodRequest,System.Collections.Generic.IList{Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.ViewOccurrenceEvent},System.Collections.Generic.IList{Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events.ViewDurationEvent})">
             <summary> Response for a period request </summary>
             <param name="Request">A request for with this response</param>
             <param name="Occurrences">occurrence events that satisfy a request</param>
@@ -184,48 +184,48 @@
             Validation limits
             </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.DurationEventCreateRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.DurationEventCreateRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.DurationEventUpdateRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.DurationEventUpdateRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.OccurrenceEventCreateRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.OccurrenceEventCreateRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.OccurrenceEventUpdateRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.Events.OccurrenceEventUpdateRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.CreateEventTypeRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.CreateEventTypeRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.UpdateEventTypeRequestValidator">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes.UpdateEventTypeRequestValidator.#ctor">
+            <summary> </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Validators.EntityRequestValidator">
             <summary>
             Validates requests for entity controller
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Validators.EntityRequestValidator.#ctor">
-            <summary> </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Events.DurationEventCreateRequestValidator">
-            <inheritdoc />
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Events.DurationEventCreateRequestValidator.#ctor">
-            <summary> </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Events.DurationEventUpdateRequestValidator">
-            <inheritdoc />
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Events.DurationEventUpdateRequestValidator.#ctor">
-            <summary> </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Events.OccurrenceEventCreateRequestValidator">
-            <inheritdoc />
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Events.OccurrenceEventCreateRequestValidator.#ctor">
-            <summary> </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.Events.OccurrenceEventUpdateRequestValidator">
-            <inheritdoc />
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.Events.OccurrenceEventUpdateRequestValidator.#ctor">
-            <summary> </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.EventTypes.CreateEventTypeRequestValidator">
-            <inheritdoc />
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.EventTypes.CreateEventTypeRequestValidator.#ctor">
-            <summary> </summary>
-        </member>
-        <member name="T:Hrim.Event.Analytics.Api.V1.Validators.EventTypes.UpdateEventTypeRequestValidator">
-            <inheritdoc />
-        </member>
-        <member name="M:Hrim.Event.Analytics.Api.V1.Validators.EventTypes.UpdateEventTypeRequestValidator.#ctor">
             <summary> </summary>
         </member>
     </members>

@@ -1,14 +1,9 @@
-namespace Hrim.Event.Analytics.Abstractions.ViewModels.Events; 
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events; 
 
 /// <summary>
 /// Model for occurrence event creation
 /// </summary>
-public class DurationEventCreateRequest {
-    /// <summary>
-    /// Event type id on which current event is based.
-    /// </summary>
-    public Guid EventTypeId { get; set; }
-    
+public class DurationEventCreateRequest: BaseEventCreateRequest {
     /// <summary>
     /// Date and time with end-user timezone when an event starts
     /// </summary>

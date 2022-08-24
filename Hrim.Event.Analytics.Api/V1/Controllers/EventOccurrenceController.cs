@@ -1,6 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 using Hrim.Event.Analytics.Api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

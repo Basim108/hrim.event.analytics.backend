@@ -1,4 +1,4 @@
-using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 
 namespace Hrim.Event.Analytics.Api.V1.Models;
 

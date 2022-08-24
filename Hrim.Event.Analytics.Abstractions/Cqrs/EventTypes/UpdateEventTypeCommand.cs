@@ -1,6 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
-using Hrim.Event.Analytics.Abstractions.ViewModels.EventTypes;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using MediatR;
 
 namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes; 

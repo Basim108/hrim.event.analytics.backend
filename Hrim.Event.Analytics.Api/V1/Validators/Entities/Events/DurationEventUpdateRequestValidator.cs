@@ -1,22 +1,14 @@
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.ViewModels.Events;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 using Hrimsoft.StringCases;
 
-namespace Hrim.Event.Analytics.Api.V1.Validators.Events;
+namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 
 /// <inheritdoc />
-public class DurationEventUpdateRequestValidator: AbstractValidator<DurationEventUpdateRequest> {
+public class DurationEventUpdateRequestValidator: BaseEventUpdateRequestValidator<DurationEventUpdateRequest> {
     /// <summary> </summary>
     public DurationEventUpdateRequestValidator() {
-       RuleFor(x => x.Id)
-         .NotEmpty()
-         .WithMessage(ValidationMessages.IS_REQUIRED);
-       
-        RuleFor(x => x.EventTypeId)
-           .NotEmpty()
-           .WithMessage(ValidationMessages.IS_REQUIRED);
-
         RuleFor(x => x.StartedAt)
           .GreaterThan(DateTimeOffset.MinValue)
           .WithMessage(ValidationMessages.IS_REQUIRED);
@@ -31,8 +23,5 @@ public class DurationEventUpdateRequestValidator: AbstractValidator<DurationEven
           .WithMessage(ValidationMessages.GREATER_THAN_PROPERTY
                                          .Replace(ValidationMessages.PROPERTY_NAME_TEMPLATE,
                                                   nameof(DurationEvent.StartedAt).ToSnakeCase()));
-        
-        RuleFor(x => x.ConcurrentToken)
-           .GreaterThan(0);
     }
 }
