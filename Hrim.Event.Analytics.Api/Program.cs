@@ -11,12 +11,18 @@ builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console()
                                        .ReadFrom.Configuration(ctx.Configuration));
 
 builder.Services.AddEventAnalyticsServices(builder.Configuration);
+builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseHttpsRedirection();
 
 app.UseSerilogRequestLogging();
 app.UseCorrelationId();
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (!app.Environment.IsProduction()) {
     app.UseSwagger();

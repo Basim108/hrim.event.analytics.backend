@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-#pragma warning disable CS1591
+
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     public partial class add_events_their_types_tags_and_users : Migration
@@ -21,7 +21,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    email = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: true),
@@ -63,6 +62,39 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 },
                 comment: "User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
+
+            migrationBuilder.CreateTable(
+                name: "external_user_profiles",
+                schema: "hrim_analytics",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    HrimUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    external_user_id = table.Column<string>(type: "text", nullable: false, comment: "A user id in external identity provider"),
+                    idp = table.Column<string>(type: "text", nullable: false, comment: "Identity provider that provided this profile"),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    last_login = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, comment: "If null then profile was linked but never used as a login"),
+                    full_name = table.Column<string>(type: "text", nullable: true),
+                    first_name = table.Column<string>(type: "text", nullable: true),
+                    last_name = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
+                    updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: true),
+                    concurrent_token = table.Column<long>(type: "bigint", nullable: false, comment: "Update is possible only when this token equals to the token in the storage")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_external_user_profiles", x => x.id);
+                    table.CheckConstraint("CK_external_user_profiles_concurrent_token", "concurrent_token > 0");
+                    table.ForeignKey(
+                        name: "FK_external_user_profiles_hrim_users_HrimUserId",
+                        column: x => x.HrimUserId,
+                        principalSchema: "hrim_analytics",
+                        principalTable: "hrim_users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "user profiles from a specific idp such as Google, Facebook, etc");
 
             migrationBuilder.CreateTable(
                 name: "hrim_tags",
@@ -186,6 +218,12 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_external_user_profiles_HrimUserId",
+                schema: "hrim_analytics",
+                table: "external_user_profiles",
+                column: "HrimUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_hrim_tags_created_by",
                 schema: "hrim_analytics",
                 table: "hrim_tags",
@@ -210,6 +248,10 @@ namespace Hrim.Event.Analytics.Api.Migrations
         {
             migrationBuilder.DropTable(
                 name: "duration_events",
+                schema: "hrim_analytics");
+
+            migrationBuilder.DropTable(
+                name: "external_user_profiles",
                 schema: "hrim_analytics");
 
             migrationBuilder.DropTable(

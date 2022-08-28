@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
-#pragma warning disable CS1591
+
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20220823060932_add_events_their_types_tags_and_users")]
+    [Migration("20220828185834_add_events_their_types_tags_and_users")]
     partial class add_events_their_types_tags_and_users
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,119 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<long>("ConcurrentToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("concurrent_token")
+                        .HasComment("Update is possible only when this token equals to the token in the storage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at")
+                        .HasComment("Date and UTC time of entity instance creation");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<string>("ExternalUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("external_user_id")
+                        .HasComment("A user id in external identity provider");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text")
+                        .HasColumnName("full_name");
+
+                    b.Property<Guid>("HrimUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Idp")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("idp")
+                        .HasComment("Identity provider that provided this profile");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_login")
+                        .HasComment("If null then profile was linked but never used as a login");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at")
+                        .HasComment("Date and UTC time of entity instance last update ");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HrimUserId");
+
+                    b.ToTable("external_user_profiles", "hrim_analytics");
+
+                    b.HasComment("user profiles from a specific idp such as Google, Facebook, etc");
+
+                    b.HasCheckConstraint("CK_external_user_profiles_concurrent_token", "concurrent_token > 0");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<long>("ConcurrentToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("concurrent_token")
+                        .HasComment("Update is possible only when this token equals to the token in the storage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at")
+                        .HasComment("Date and UTC time of entity instance creation");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at")
+                        .HasComment("Date and UTC time of entity instance last update ");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("hrim_users", "hrim_analytics");
+
+                    b.HasComment("An authorized user");
+
+                    b.HasCheckConstraint("CK_hrim_users_concurrent_token", "concurrent_token > 0");
+                });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
                 {
@@ -142,48 +255,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.HasComment("A tag that could be linked to an instance of any entity");
 
                     b.HasCheckConstraint("CK_hrim_tags_concurrent_token", "concurrent_token > 0");
-                });
-
-            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<long>("ConcurrentToken")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint")
-                        .HasColumnName("concurrent_token")
-                        .HasComment("Update is possible only when this token equals to the token in the storage");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at")
-                        .HasComment("Date and UTC time of entity instance creation");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("updated_at")
-                        .HasComment("Date and UTC time of entity instance last update ");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("hrim_users", "hrim_analytics");
-
-                    b.HasComment("An authorized user");
-
-                    b.HasCheckConstraint("CK_hrim_users_concurrent_token", "concurrent_token > 0");
                 });
 
             modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
@@ -322,9 +393,20 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.HasCheckConstraint("CK_db_occurrence_events_concurrent_token", "concurrent_token > 0");
                 });
 
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile", b =>
+                {
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "HrimUser")
+                        .WithMany("ExternalProfiles")
+                        .HasForeignKey("HrimUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HrimUser");
+                });
+
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
                 {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -335,7 +417,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.HrimTag", b =>
                 {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -346,7 +428,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
                 {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -365,7 +447,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
                 {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.HrimUser", "CreatedBy")
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -380,6 +462,11 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("EventType");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", b =>
+                {
+                    b.Navigation("ExternalProfiles");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,3 +1,5 @@
+using Hrim.Event.Analytics.Abstractions.Entities.Account;
+
 namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary> A tag that could be linked to an instance of any entity</summary>

@@ -4,6 +4,15 @@
         <name>Hrim.Event.Analytics.Api</name>
     </assembly>
     <members>
+        <member name="T:Hrim.Event.Analytics.Api.Authentication.EventAnalyticsOAuthEvents">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.Authentication.EventAnalyticsOAuthEvents.#ctor(Microsoft.Extensions.Logging.ILogger{Hrim.Event.Analytics.Api.Authentication.EventAnalyticsOAuthEvents},Hrim.Event.Analytics.Api.Services.IApiRequestAccessor,MediatR.IMediator)">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.Authentication.EventAnalyticsOAuthEvents.CreatingTicket(Microsoft.AspNetCore.Authentication.OAuth.OAuthCreatingTicketContext)">
+            <inheritdoc />
+        </member>
         <member name="T:Hrim.Event.Analytics.Api.Extensions.MiddlewareExtensions">
             <summary> </summary>
         </member>
@@ -60,6 +69,23 @@
         </member>
         <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AllEventsAccessorController.GetUserEventsAsync(System.DateOnly,System.DateOnly,System.Threading.CancellationToken)">
             <summary> Get user's events for a period </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.AuthController">
+            <summary>
+            Provides control over authentication sessions for event analytics web applications 
+            </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AuthController.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+            <inheritdoc />
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AuthController.FacebookLogin">
+            <summary> Authenticate with the Facebook </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AuthController.GoogleLogin">
+            <summary> Authenticate with Google </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Api.V1.Controllers.AuthController.FacebookLogout(System.String)">
+            <summary> Invoke server logout </summary>
         </member>
         <member name="T:Hrim.Event.Analytics.Api.V1.Controllers.EntityController">
             <summary> Manage any entity type </summary>

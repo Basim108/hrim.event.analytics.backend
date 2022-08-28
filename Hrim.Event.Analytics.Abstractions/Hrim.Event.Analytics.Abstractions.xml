@@ -375,6 +375,83 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.OperationContext.CorrelationId">
             <summary>Id that will be passed through the whole sequence of commands, queries, jobs, etc</summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Users.ExternalUserProfileBuild">
+            <summary>
+            Maps user claim to an external user profile instance
+            </summary>
+            <param name="Idp">For which idp profile should be build</param>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Users.ExternalUserProfileBuild.#ctor(System.Guid,System.Collections.Generic.IDictionary{System.String,System.String},Hrim.Event.Analytics.Abstractions.Enums.ExternalIdp)">
+            <summary>
+            Maps user claim to an external user profile instance
+            </summary>
+            <param name="Idp">For which idp profile should be build</param>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Cqrs.Users.ExternalUserProfileBuild.Idp">
+            <summary>For which idp profile should be build</summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Users.ExternalUserProfileRegistration">
+            <summary>Registers an external user</summary>
+            <returns>a profile that was registered with a created or linked hrim user</returns>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Users.ExternalUserProfileRegistration.#ctor(System.Guid,Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile)">
+            <summary>Registers an external user</summary>
+            <returns>a profile that was registered with a created or linked hrim user</returns>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Users.HrimUserCreateCommand">
+            <summary> Creates a hrim user instance </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Users.HrimUserCreateCommand.#ctor(System.Guid,System.Boolean)">
+            <summary> Creates a hrim user instance </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile">
+            <summary>
+            Entity present a user from a specific identity provider such as Google, Facebook, etc
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.HrimUserId">
+            <summary>
+            An id of event analytics user
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.HrimUser">
+            <summary> Event analytics user that associated with this external user profile </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.ExternalUserId">
+            <summary>
+            A user id in external identity provider
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.Idp">
+            <summary>
+            Identity provider that provided this profile
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.Email">
+            <summary> A user email </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.LastLogin">
+            <summary>
+            If null then profile was linked but never used as a login
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.FullName">
+            <summary> </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.FirstName">
+            <summary> </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile.LastName">
+            <summary> </summary>
+        </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser">
+            <summary> Authorized user </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser.ExternalProfiles">
+            <summary>
+            All external identity provider profiles linked to this user
+            </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Events.BaseEvent">
             <summary>
             Properties shared with all types of events
@@ -495,12 +572,6 @@
         <member name="P:Hrim.Event.Analytics.Abstractions.Entities.HrimTag.CreatedBy">
             <summary> A user who created a tag </summary>
         </member>
-        <member name="T:Hrim.Event.Analytics.Abstractions.Entities.HrimUser">
-            <summary> Authorized user </summary>
-        </member>
-        <member name="P:Hrim.Event.Analytics.Abstractions.Entities.HrimUser.Email">
-            <summary> A user email </summary>
-        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Enums.EntityType">
             <summary>
             Enumeration of all types of entties 
@@ -521,6 +592,11 @@
             <br/>This kind of events may occur several times a day and can cross each other.
             </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Enums.ExternalIdp">
+            <summary>
+            Identity providers such as Google, Facebook, etc
+            </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Enums.HrimOperations">
             <summary>
             Operations that are require a specific permission
@@ -529,6 +605,11 @@
         <member name="F:Hrim.Event.Analytics.Abstractions.Enums.HrimOperations.NotInitialized">
             <summary>
             To avoid uninitialized, default operation value
+            </summary>
+        </member>
+        <member name="P:Hrim.Event.Analytics.Abstractions.Exceptions.UnsupportedAuthTypeException.AuthenticationType">
+            <summary>
+            Name of the unsupported authentication type
             </summary>
         </member>
         <member name="M:Hrim.Event.Analytics.Abstractions.Extensions.DateOnlyExtensions.CombineWithTime(System.DateOnly,System.DateTimeOffset)">

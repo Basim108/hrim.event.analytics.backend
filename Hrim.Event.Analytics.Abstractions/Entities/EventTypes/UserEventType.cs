@@ -1,3 +1,5 @@
+using Hrim.Event.Analytics.Abstractions.Entities.Account;
+
 namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 
 /// <summary>
