@@ -404,6 +404,12 @@
         <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Users.HrimUserCreateCommand.#ctor(System.Guid,System.Boolean)">
             <summary> Creates a hrim user instance </summary>
         </member>
+        <member name="T:Hrim.Event.Analytics.Abstractions.Cqrs.Users.HrimUserView">
+            <summary> User information for UI </summary>
+        </member>
+        <member name="M:Hrim.Event.Analytics.Abstractions.Cqrs.Users.HrimUserView.#ctor(System.String,System.String,System.String)">
+            <summary> User information for UI </summary>
+        </member>
         <member name="T:Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile">
             <summary>
             Entity present a user from a specific identity provider such as Google, Facebook, etc

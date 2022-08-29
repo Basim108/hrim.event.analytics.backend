@@ -10,7 +10,7 @@
         <PackageReference Include="AutoMapper" Version="11.0.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="Hrimsoft.Core" Version="0.0.11" />
-        <PackageReference Include="Hrimsoft.Data.PostgreSql" Version="0.2.2" />
+        <PackageReference Include="Hrimsoft.Data.PostgreSql" Version="0.2.3" />
         <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />

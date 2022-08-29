@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
-using Hrim.Event.Analytics.Api.Authentication;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -25,14 +22,14 @@ public class AuthController: ControllerBase {
     /// <summary> Authenticate with the Facebook </summary>
     [HttpGet("facebook/login")]
     [Authorize(AuthenticationSchemes = FacebookDefaults.AuthenticationScheme)]
-    public Task<HrimUserView> FacebookLogin() => Task.FromResult(BuildUserFromClaims());
+    public ActionResult FacebookLogin(string returnUri) => Redirect(returnUri);
 
     /// <summary> Authenticate with Google </summary>
     [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
     [HttpGet("google/login")]
-    public Task<HrimUserView> GoogleLogin() => Task.FromResult(BuildUserFromClaims());
+    public ActionResult GoogleLogin(string returnUri) => Redirect(returnUri);
 
-    /// <summary> Invoke server logout </summary>
+    /// <summary> Invoke user logout </summary>
     [HttpGet("logout")]
     [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
     [Authorize(AuthenticationSchemes = FacebookDefaults.AuthenticationScheme)]
@@ -41,25 +38,5 @@ public class AuthController: ControllerBase {
         if (httpContext != null)
             await httpContext.SignOutAsync();
         return Redirect(returnUri);
-    }
-
-    private HrimUserView BuildUserFromClaims() {
-        var userId     = "";
-        var fullName   = "";
-        var pictureUri = "";
-        foreach (var claim in User.Claims) {
-            switch (claim.Type) {
-                case ClaimTypes.Name:
-                    fullName = claim.Value;
-                    break;
-                case HrimClaims.PICTURE:
-                    pictureUri = claim.Value;
-                    break;
-                case HrimClaims.HRIM_USER_ID:
-                    userId = claim.Value;
-                    break;
-            }
-        }
-        return new HrimUserView(userId, fullName, pictureUri);
     }
 }
