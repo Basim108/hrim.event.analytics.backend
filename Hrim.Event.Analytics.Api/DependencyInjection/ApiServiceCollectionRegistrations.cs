@@ -1,4 +1,3 @@
-using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
@@ -16,6 +15,7 @@ namespace Hrim.Event.Analytics.Api.DependencyInjection;
 
 public static class ApiServiceCollectionRegistrations {
     public static void AddEventAnalyticsServices(this IServiceCollection services, IConfiguration appConfig) {
+        services.AddCors();
         services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
                 .AddHrimsoftJsonOptions();
         services.AddFluentValidationAutoValidation(_ => {

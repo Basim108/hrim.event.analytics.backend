@@ -1,6 +1,5 @@
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
-using Hrim.Event.Analytics.Api.Swagger.Configuration;
 using Hrim.Event.Analytics.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -16,6 +15,7 @@ builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseEventAnalyticsCors(builder.Configuration);
 
 app.UseSerilogRequestLogging();
 app.UseCorrelationId();
@@ -24,13 +24,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-if (!app.Environment.IsProduction()) {
-    app.UseSwagger();
-    app.UseSwaggerUI(c => {
-        var cfg = SwaggerConfig.MakeEventAnalytics();
-        c.SwaggerEndpoint($"{cfg.Version}/swagger.json", cfg.Title);
-    });
-}
+app.UseEventAnalyticsSwagger();
+
 var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
 await dbContext.Database.MigrateAsync();
 
