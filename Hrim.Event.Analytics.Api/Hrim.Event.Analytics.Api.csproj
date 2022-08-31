@@ -18,6 +18,8 @@
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
         <PackageReference Include="Hrimsoft.Core" Version="0.0.11" />
         <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
@@ -47,9 +49,14 @@
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
             <Value>
-                **/20220821113927_add_events_their_types_tags_and_users.cs, 
+                **/20220828185834_add_events_their_types_tags_and_users.cs, 
                 **/*.Designer.cs, 
                 **/EventAnalyticDbContextModelSnapshot.cs</Value>
         </SonarQubeSetting>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Update="appsettings.Development.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
     </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities;
+using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrimsoft.StringCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,9 +12,8 @@ public class HrimUserDbConfig: IEntityTypeConfiguration<HrimUser> {
                .HasComment("An authorized user");
         
         builder.AddEntityProperties();
-        
-        builder.Property(p => p.Email)
-               .HasColumnName(nameof(HrimUser.Email).ToSnakeCase())
-               .IsRequired();
+
+        builder.HasMany(x => x.ExternalProfiles)
+               .WithOne(x => x.HrimUser);
     }
 }

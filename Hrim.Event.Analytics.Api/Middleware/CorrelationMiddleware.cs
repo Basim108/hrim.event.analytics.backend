@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Hrim.Event.Analytics.Abstractions;
+using Newtonsoft.Json;
 
 #pragma warning disable CS1591
 
