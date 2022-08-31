@@ -54,14 +54,15 @@ public class AuthController: ControllerBase {
         if (string.IsNullOrWhiteSpace(userReturnUri))
             return Ok();
         try {
-            var allowedOrigins = _appConfig["AllowedOrigins"];
-            if (!string.IsNullOrEmpty(allowedOrigins)) {
+            var whiteList = _appConfig["AllowedOrigins"];
+            if (!string.IsNullOrEmpty(whiteList)) {
                 var returnUri = new Uri(userReturnUri);
-                var isAllowed = allowedOrigins.Split(";", StringSplitOptions.RemoveEmptyEntries)
-                                              .Select(str => new Uri(str))
-                                              .Any(allowedOrigin => allowedOrigin.Host == returnUri.Host);
+                var isAllowed = whiteList.Split(";", StringSplitOptions.RemoveEmptyEntries)
+                                         .Select(str => new Uri(str))
+                                         .Any(allowedOrigin => allowedOrigin.Host == returnUri.Host &&
+                                                               allowedOrigin.Port == returnUri.Port);
                 if (isAllowed)
-                    return Redirect(userReturnUri);
+                    return Redirect(returnUri.ToString());
             }
         }
         catch (UriFormatException ex) {
