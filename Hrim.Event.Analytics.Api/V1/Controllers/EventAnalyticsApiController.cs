@@ -36,9 +36,9 @@ public class EventAnalyticsApiController: ControllerBase {
                 Response.StatusCode = (int)HttpStatusCode.Conflict;
                 if (string.IsNullOrWhiteSpace(cqrsResult.Info))
                     return new EmptyResult();
-                return new ObjectResult(JsonConvert.SerializeObject(cqrsResult.Info));
+                return StatusCode((int)HttpStatusCode.Conflict, JsonConvert.SerializeObject(cqrsResult.Info));
             case CqrsResultCode.Forbidden:
-                return Forbid(ApiLogs.FORBID_AS_NOT_ENTITY_OWNER);
+                return StatusCode((int)HttpStatusCode.Forbidden, ApiLogs.FORBID_AS_NOT_ENTITY_OWNER);
             case CqrsResultCode.Locked:
                 Response.StatusCode = (int)HttpStatusCode.Locked;
                 return new EmptyResult();

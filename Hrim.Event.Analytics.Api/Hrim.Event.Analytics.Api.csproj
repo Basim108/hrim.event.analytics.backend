@@ -47,6 +47,9 @@
       <Folder Include="Migrations" />
     </ItemGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />
+    </ItemGroup>
+    <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
             <Value>
                 **/20220828185834_add_events_their_types_tags_and_users.cs, 

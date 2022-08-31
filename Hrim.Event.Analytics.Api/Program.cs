@@ -18,8 +18,7 @@ app.UseHttpsRedirection();
 app.UseEventAnalyticsCors(builder.Configuration);
 
 app.UseSerilogRequestLogging();
-app.Use(async (context, next) =>
-{
+app.Use(async (context, next) => {
     context.Request.EnableBuffering();
     await next();
 });
@@ -33,7 +32,12 @@ app.UseAuthorization();
 app.UseEventAnalyticsSwagger();
 
 var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-await dbContext.Database.MigrateAsync();
+if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory") {
+    await dbContext.Database.MigrateAsync();
+}
 
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.Run();
+
+/// <summary> for integration tests </summary>
+public partial class Program { }

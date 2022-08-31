@@ -5,7 +5,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
+    <ItemGroup>
+        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />
+    </ItemGroup>
     <PropertyGroup>
         <DocumentationFile>Hrim.Event.Analytics.Abstractions.xml</DocumentationFile>
     </PropertyGroup>

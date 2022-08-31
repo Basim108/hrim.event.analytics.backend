@@ -18,12 +18,12 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [ApiController]
 [Route("v1/entity")]
 public class EntityController: EventAnalyticsApiController {
-    private readonly IMediator           _mediator;
+    private readonly IMediator _mediator;
 
     /// <summary> </summary>
     public EntityController(IApiRequestAccessor requestAccessor,
                             IMediator           mediator): base(requestAccessor) {
-        _mediator        = mediator;
+        _mediator = mediator;
     }
 
     /// <summary> Restore a soft deleted instance of any entity</summary>
@@ -56,6 +56,8 @@ public class EntityController: EventAnalyticsApiController {
                 return BadRequest("Unsupported entity: " + entityRequest.EntityType);
         }
         return resultCode switch {
+            CqrsResultCode.Forbidden => StatusCode((int)HttpStatusCode.Forbidden,
+                                                   ApiLogs.FORBID_AS_NOT_ENTITY_OWNER),
             CqrsResultCode.EntityIsNotDeleted => Ok(result),
             CqrsResultCode.NotFound           => NotFound(),
             CqrsResultCode.Ok                 => Ok(result),
@@ -93,6 +95,8 @@ public class EntityController: EventAnalyticsApiController {
                 return BadRequest("Unsupported entity: " + request.EntityType);
         }
         switch (resultCode) {
+            case CqrsResultCode.Forbidden:
+                return StatusCode((int)HttpStatusCode.Forbidden, ApiLogs.FORBID_AS_NOT_ENTITY_OWNER);
             case CqrsResultCode.EntityIsDeleted:
                 Response.StatusCode = (int)HttpStatusCode.Gone;
                 return new EmptyResult();

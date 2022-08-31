@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 
@@ -23,10 +24,10 @@ public static class EventTypeValidatorExtensions {
         validator.RuleFor(x => x.Color)
                  .NotEmpty()
                  .WithMessage(ValidationMessages.IS_REQUIRED)
-                 .MaximumLength(Constraints.NAME_MAX_LENGTH);
-
+                 .MaximumLength(Constraints.COLOR_MAX_LENGTH);
+        
         validator.RuleFor(x => x.Color)
-                 .NotEmpty()
+                 .Matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", RegexOptions.IgnoreCase)
                  .WithMessage(ValidationMessages.IS_REQUIRED)
                  .MaximumLength(Constraints.COLOR_MAX_LENGTH);
     }
