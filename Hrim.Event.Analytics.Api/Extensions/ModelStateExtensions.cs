@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Hrim.Event.Analytics.Api.Extensions;
 
-/// <summary> </summary>
+/// <summary> Transforming manual async validation results to a model state </summary>
 public static class ModelStateExtensions {
     /// <summary>
     /// Adds fluent validation errors to the ControllerBase's ModelState 

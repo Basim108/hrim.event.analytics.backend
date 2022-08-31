@@ -4,7 +4,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Hrim.Event.Analytics.Api.Extensions;
 
-/// <summary> </summary>
+/// <summary> Mvc customizations </summary>
 public static class MvcBuilderExtensions
 {
     /// <summary> Set json serialization settings </summary>

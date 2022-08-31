@@ -3,6 +3,9 @@ using Hrim.Event.Analytics.Api.Swagger.Configuration;
 #pragma warning disable CS1591
 namespace Hrim.Event.Analytics.Api.Extensions;
 
+/// <summary>
+/// Web application customizations
+/// </summary>
 public static class WebApplicationExtensions {
     /// <summary> Setups CORS </summary>
     public static void UseEventAnalyticsCors(this WebApplication app, IConfiguration appConfig) {
