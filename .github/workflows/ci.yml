@@ -21,9 +21,21 @@ jobs:
     - name: 'Build project'
       run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
       
-    - name: 'Unit tests'
-      run: dotnet test ${{ env.TESTS_PROJECT_PATH }}
-      
+  test:
+    runs-on: ubuntu-latest
+    name: 'Tests'
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Install dotnet'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: 'Unit tests'
+        run: dotnet test ${{ env.TESTS_PROJECT_PATH }} --configuration Release
+        
   sonarlint:
     name: SonarLint
     runs-on: windows-latest
