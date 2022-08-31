@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
@@ -12,31 +13,65 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class AuthController: ControllerBase {
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor    _httpContextAccessor;
+    private readonly ILogger<AuthController> _logger;
+    private readonly IConfiguration          _appConfig;
 
     /// <inheritdoc />
-    public AuthController(IHttpContextAccessor httpContextAccessor) {
+    public AuthController(IHttpContextAccessor    httpContextAccessor,
+                          ILogger<AuthController> logger,
+                          IConfiguration          appConfig) {
         _httpContextAccessor = httpContextAccessor;
+        _logger              = logger;
+        _appConfig           = appConfig;
     }
 
     /// <summary> Authenticate with the Facebook </summary>
     [HttpGet("facebook/login")]
     [Authorize(AuthenticationSchemes = FacebookDefaults.AuthenticationScheme)]
-    public ActionResult FacebookLogin(string returnUri) => Redirect(returnUri);
+    public Task<ActionResult> FacebookLoginAsync(string returnUri) => ProcessRedirectToReturnUriAsync(returnUri);
 
     /// <summary> Authenticate with Google </summary>
     [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
     [HttpGet("google/login")]
-    public ActionResult GoogleLogin(string returnUri) => Redirect(returnUri);
+    public Task<ActionResult> GoogleLoginAsync(string returnUri) => ProcessRedirectToReturnUriAsync(returnUri);
 
     /// <summary> Invoke user logout </summary>
     [HttpGet("logout")]
-    [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
-    [Authorize(AuthenticationSchemes = FacebookDefaults.AuthenticationScheme)]
-    public async Task<ActionResult> FacebookLogout(string returnUri) {
+    [Authorize]
+    public async Task<ActionResult> LogoutAsync(string returnUri) {
+        await LogoutAsync();
+        return await ProcessRedirectToReturnUriAsync(returnUri);
+    }
+
+    private async Task LogoutAsync() {
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext != null)
             await httpContext.SignOutAsync();
-        return Redirect(returnUri);
+    }
+
+    private async Task<ActionResult> ProcessRedirectToReturnUriAsync(string userReturnUri) {
+        if (string.IsNullOrWhiteSpace(userReturnUri))
+            return Ok();
+        try {
+            var allowedOrigins = _appConfig["AllowedOrigins"];
+            if (!string.IsNullOrEmpty(allowedOrigins)) {
+                var returnUri = new Uri(userReturnUri);
+                var isAllowed = allowedOrigins.Split(";", StringSplitOptions.RemoveEmptyEntries)
+                                              .Select(str => new Uri(str))
+                                              .Any(allowedOrigin => allowedOrigin.Host == returnUri.Host);
+                if (isAllowed)
+                    return Redirect(userReturnUri);
+            }
+        }
+        catch (UriFormatException ex) {
+            _logger.LogError(ApiLogs.RETURN_URI_IS_IN_WRONG_FORMAT, ex.ToString());
+        }
+        catch (Exception ex) {
+            _logger.LogError(ApiLogs.RETURN_URI_PROCESSING_ERROR, ex.ToString());
+        }
+        if (User.Identity?.IsAuthenticated ?? false)
+            await LogoutAsync();
+        return StatusCode((int)HttpStatusCode.Forbidden, ApiLogs.RETURN_URI_IS_NOT_ALLOWED);
     }
 }

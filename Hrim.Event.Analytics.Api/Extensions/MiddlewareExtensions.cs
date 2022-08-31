@@ -2,7 +2,7 @@ using Hrim.Event.Analytics.Api.Middleware;
 
 namespace Hrim.Event.Analytics.Api.Extensions; 
 
-/// <summary> </summary>
+/// <summary> Extensions to register custom middlewares </summary>
 public static class MiddlewareExtensions {
     /// <summary>
     /// Register <see cref="CorrelationMiddleware"/> so correlation id header will be processed

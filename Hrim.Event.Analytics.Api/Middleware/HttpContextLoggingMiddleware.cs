@@ -17,13 +17,15 @@ public class HttpContextLoggingMiddleware {
     private readonly bool            _isDevelopment;
     private readonly bool            _isStaging;
 
-    public HttpContextLoggingMiddleware(RequestDelegate     next,
-                                        IWebHostEnvironment environment,
-                                        ILoggerFactory      loggerFactory) {
+    private const int MAX_BODY_LENGTH = 32_000;
+
+    public HttpContextLoggingMiddleware(RequestDelegate                       next,
+                                        IWebHostEnvironment                   environment,
+                                        ILogger<HttpContextLoggingMiddleware> logger) {
         _next          = next;
         _isDevelopment = environment.IsDevelopment();
         _isStaging     = environment.IsStaging();
-        _logger        = loggerFactory.CreateLogger<HttpContextLoggingMiddleware>();
+        _logger        = logger;
     }
 
     public async Task InvokeAsync(HttpContext context) {
@@ -47,9 +49,12 @@ public class HttpContextLoggingMiddleware {
 
     private async Task LogRequestAsync(HttpContext context) {
         var requestHeaders = JsonConvert.SerializeObject(context.Request.Headers);
-        var requestBody    = await GetBodyAsync(context);
         _logger.LogInformation(ApiLogs.REQUEST_HEADERS, requestHeaders);
-        _logger.LogInformation(ApiLogs.REQUEST_BODY,    requestBody);
+
+        var requestBody = await GetBodyAsync(context);
+        if (requestBody.Length > MAX_BODY_LENGTH)
+            requestBody = requestBody.Substring(0, MAX_BODY_LENGTH);
+        _logger.LogInformation(ApiLogs.REQUEST_BODY, requestBody);
     }
 
     private void LogError(HttpContext context) {
@@ -60,7 +65,7 @@ public class HttpContextLoggingMiddleware {
             _logger.LogError(ApiLogs.UNHANDLED_EXCEPTION, ex.ToString());
     }
 
-    private async Task<string> GetBodyAsync(HttpContext context) {
+    private static async Task<string> GetBodyAsync(HttpContext context) {
         context.Request.EnableBuffering();
         context.Request.Body.Position = 0;
         var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync()

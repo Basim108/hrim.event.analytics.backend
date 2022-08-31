@@ -9,10 +9,11 @@ public static class ApiLogs {
     public const string AUTH_TYPE                     = "AuthenticationType={AuthenticationType}";
     public const string REQUEST_HEADERS               = "RequestHeaders={RequestHeaders}";
     public const string REQUEST_BODY                  = "RequestBody={RequestBody}";
-    public const string RESPONSE_HEADERS              = "ResponseHeaders={ResponseHeaders}";
-    public const string RESPONSE_BODY                 = "ResponseBody={ResponseBody}";
     public const string UNHANDLED_EXCEPTION           = "UnhandledException={UnhandledException}";
     public const string RESPONSE_STATUS_CODE          = "ResponseStatusCode={ResponseStatusCode}";
+    public const string RETURN_URI_IS_NOT_ALLOWED     = "Provided return uri is not allowed";
+    public const string RETURN_URI_IS_IN_WRONG_FORMAT = "Provided return uri has wrong format. ErrorMessage={ErrorMessage}";
+    public const string RETURN_URI_PROCESSING_ERROR   = "Error while processing return uri. ErrorMessage={ErrorMessage}";
 
     public const string JSON_MODEL_BINDER_DESERIALIZATION_ERROR =
         "Json deserialization of PropertyName={PropertyName},  ExceptionMessage={ExceptionMessage}, StackTrace={StackTrace}";
