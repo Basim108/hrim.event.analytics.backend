@@ -18,7 +18,13 @@ app.UseHttpsRedirection();
 app.UseEventAnalyticsCors(builder.Configuration);
 
 app.UseSerilogRequestLogging();
+app.Use(async (context, next) =>
+{
+    context.Request.EnableBuffering();
+    await next();
+});
 app.UseCorrelationId();
+app.UseHttpContextLogging();
 app.UseRouting();
 
 app.UseAuthentication();
@@ -30,5 +36,4 @@ var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<Ev
 await dbContext.Database.MigrateAsync();
 
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
 app.Run();

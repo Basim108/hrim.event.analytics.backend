@@ -26,10 +26,6 @@ public class CorrelationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        _logger.LogDebug(context.Request.Path);
-        _logger.LogDebug(JsonConvert.SerializeObject(context.Request.QueryString));
-        _logger.LogDebug(JsonConvert.SerializeObject(context.Request.Headers));
-        
         var correlationHeader = context.Request.Headers[CORRELATION_ID_HEADER];
         var correlationId     = GetCorrelationId(correlationHeader);
 

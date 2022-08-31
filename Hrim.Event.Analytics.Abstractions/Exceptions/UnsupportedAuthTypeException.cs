@@ -11,9 +11,12 @@ public class UnsupportedAuthTypeException: Exception {
     public string? AuthenticationType { get; }
 
     public UnsupportedAuthTypeException(string? authType)
-        : base(CoreLogs.UNSUPPORTED_AUTH_TYPE + (authType ?? "null")) {
-        AuthenticationType = authType;
+        : base(CoreLogs.UNSUPPORTED_AUTH_TYPE + authType) {
+        AuthenticationType = Sanitize(authType);
     }
+    
+    private static string Sanitize(string? authType) 
+        => string.IsNullOrWhiteSpace(authType) ? "null or white space" : authType;
 
     protected UnsupportedAuthTypeException(SerializationInfo info, StreamingContext context)
         : base(info, context) {

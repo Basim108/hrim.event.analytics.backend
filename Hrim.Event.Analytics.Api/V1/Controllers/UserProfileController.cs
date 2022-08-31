@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 using Hrim.Event.Analytics.Api.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ public class UserProfileController: ControllerBase {
     /// Access to user profile built for a user from authorization context
     /// </summary>
     [HttpGet("me")]
-    public HrimUserView GetMeAsync() {
+    public ViewHrimUser GetMeAsync() {
         var fullName   = "";
         var pictureUri = "";
         foreach (var claim in User.Claims) {
@@ -29,6 +30,6 @@ public class UserProfileController: ControllerBase {
                     break;
             }
         }
-        return new HrimUserView(fullName, pictureUri);
+        return new ViewHrimUser(fullName, pictureUri);
     }
 }

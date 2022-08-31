@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrimsoft.Core.Extensions;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUserProfileRegistration, ExternalUserProfile> {
     private readonly EventAnalyticDbContext _context;
     private readonly IMediator              _mediator;

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
@@ -6,6 +7,7 @@ using MediatR;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
 
+[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class ExternalUserProfileBuildHandler: IRequestHandler<ExternalUserProfileBuild, ExternalUserProfile> {
     public Task<ExternalUserProfile> Handle(ExternalUserProfileBuild request, CancellationToken cancellationToken) {
         if (request == null)

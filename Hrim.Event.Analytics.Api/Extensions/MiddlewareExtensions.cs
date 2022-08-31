@@ -9,4 +9,10 @@ public static class MiddlewareExtensions {
     /// </summary>
     public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder builder)
         => builder.UseMiddleware<CorrelationMiddleware>();    
+    
+    /// <summary>
+    /// Logging unhandled exceptions and http request & response headers & body.
+    /// </summary>
+    public static IApplicationBuilder UseHttpContextLogging(this IApplicationBuilder builder)
+        => builder.UseMiddleware<HttpContextLoggingMiddleware>();
 }
