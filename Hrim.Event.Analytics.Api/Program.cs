@@ -39,5 +39,8 @@ if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.Run();
 
-/// <summary> for integration tests </summary>
-public partial class Program { }
+// add for sonar lint issue
+namespace Hrim.Event.Analytics.Api {
+    /// <summary> for integration tests </summary>
+    public class Program { }
+}
