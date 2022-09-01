@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Api.Services;
@@ -8,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure; 
 
+[ExcludeFromCodeCoverage]
 public static class TestUtils {
     /// <summary>
     /// Cleans up previous registrations of a type

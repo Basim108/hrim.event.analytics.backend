@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -13,6 +14,7 @@ using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Api.Tests.Controllers.EventType;
 
+[ExcludeFromCodeCoverage]
 public class EventTypeControllerIntegrationTests: IClassFixture<WebAppFactory<Program>> {
     private readonly EventAnalyticDbContext _context;
     private readonly HttpClient             _client;

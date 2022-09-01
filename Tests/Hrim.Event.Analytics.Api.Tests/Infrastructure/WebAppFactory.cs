@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.EfCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
+[ExcludeFromCodeCoverage]
 public class WebAppFactory<TProgram>
     : WebApplicationFactory<TProgram> where TProgram : class {
     protected override void ConfigureWebHost(IWebHostBuilder builder) {

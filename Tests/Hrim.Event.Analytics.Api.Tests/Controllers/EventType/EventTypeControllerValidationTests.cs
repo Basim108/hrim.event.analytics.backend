@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
@@ -9,11 +10,12 @@ using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Api.Tests.Controllers.EventType;
 
+[ExcludeFromCodeCoverage]
 public class EventTypeControllerValidationTests: BaseEntityControllerTests<UserEventType> {
     private readonly HttpClient _client; 
     public EventTypeControllerValidationTests(WebAppFactory<Program> factory)
         : base(factory) {
-        _client = GetClient("/v1/event-type/");
+        _client = GetClient("https://localhost:7151/v1/event-type/");
     }
 
     protected override UserEventType GetCreateRequestEntity() => new CreateEventTypeRequest() {

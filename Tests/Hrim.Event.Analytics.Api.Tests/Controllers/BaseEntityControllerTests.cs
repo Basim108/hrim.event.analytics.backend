@@ -14,6 +14,7 @@ namespace Hrim.Event.Analytics.Api.Tests.Controllers;
 /// <summary>
 /// Tests entity properties and common endpoints validation
 /// </summary>
+[ExcludeFromCodeCoverage]
 [SuppressMessage("Usage",
                  "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public abstract class BaseEntityControllerTests<TEntity>: IClassFixture<WebAppFactory<Program>>
