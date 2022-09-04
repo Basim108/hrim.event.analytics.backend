@@ -14,6 +14,11 @@ public class ExternalUserProfileDbConfig: IEntityTypeConfiguration<ExternalUserP
 
         builder.AddEntityProperties();
 
+        builder.Property(p => p.HrimUserId)
+               .HasColumnName("user_id")
+               .HasComment("A user id in current system to which this profile is linked to")
+               .IsRequired();
+        
         builder.Property(p => p.ExternalUserId)
                .HasColumnName(nameof(ExternalUserProfile.ExternalUserId).ToSnakeCase())
                .HasComment("A user id in external identity provider")

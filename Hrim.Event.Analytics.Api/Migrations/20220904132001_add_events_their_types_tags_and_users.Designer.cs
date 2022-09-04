@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
-#pragma warning disable CS1591
+#pragma warning disable CS1591, CS1570
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20220828185834_add_events_their_types_tags_and_users")]
+    [Migration("20220904132001_add_events_their_types_tags_and_users")]
     partial class add_events_their_types_tags_and_users
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,7 +65,9 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("full_name");
 
                     b.Property<Guid>("HrimUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id")
+                        .HasComment("A user id in current system to which this profile is linked to");
 
                     b.Property<string>("Idp")
                         .IsRequired()

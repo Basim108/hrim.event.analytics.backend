@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
-#pragma warning disable CS1591
+#pragma warning disable CS1591, CS1570
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
@@ -63,7 +63,9 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("full_name");
 
                     b.Property<Guid>("HrimUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id")
+                        .HasComment("A user id in current system to which this profile is linked to");
 
                     b.Property<string>("Idp")
                         .IsRequired()

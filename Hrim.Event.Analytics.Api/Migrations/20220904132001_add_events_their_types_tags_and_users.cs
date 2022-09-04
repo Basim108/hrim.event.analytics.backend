@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-#pragma warning disable CS1591
+#pragma warning disable CS1591, CS1570
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     public partial class add_events_their_types_tags_and_users : Migration
@@ -69,7 +69,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    HrimUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false, comment: "A user id in current system to which this profile is linked to"),
                     external_user_id = table.Column<string>(type: "text", nullable: false, comment: "A user id in external identity provider"),
                     idp = table.Column<string>(type: "text", nullable: false, comment: "Identity provider that provided this profile"),
                     email = table.Column<string>(type: "text", nullable: false),
@@ -87,8 +87,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     table.PrimaryKey("PK_external_user_profiles", x => x.id);
                     table.CheckConstraint("CK_external_user_profiles_concurrent_token", "concurrent_token > 0");
                     table.ForeignKey(
-                        name: "FK_external_user_profiles_hrim_users_HrimUserId",
-                        column: x => x.HrimUserId,
+                        name: "FK_external_user_profiles_hrim_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "hrim_analytics",
                         principalTable: "hrim_users",
                         principalColumn: "id",
@@ -218,10 +218,10 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_external_user_profiles_HrimUserId",
+                name: "IX_external_user_profiles_user_id",
                 schema: "hrim_analytics",
                 table: "external_user_profiles",
-                column: "HrimUserId");
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_hrim_tags_created_by",
