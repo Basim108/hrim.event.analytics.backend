@@ -1,19 +1,15 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
-using Hrim.Event.Analytics.Api.V1.Models;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
+[ExcludeFromCodeCoverage]
 public class TestData {
     private readonly EventAnalyticDbContext _context;
-
-    public TestData() {
-        _context = DbUtils.GetDbContext();
-    }
 
     public TestData(EventAnalyticDbContext context) {
         _context = context;
