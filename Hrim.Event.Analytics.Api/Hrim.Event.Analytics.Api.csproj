@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>93711994-8f9b-4dc9-b4b5-bce7ba5f0c28</UserSecretsId>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -61,7 +62,7 @@
       <Content Update="appsettings.Development.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
-      <Content Update="appsettings.tests.json">
+      <Content Update="appsettings.Tests.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
     </ItemGroup>

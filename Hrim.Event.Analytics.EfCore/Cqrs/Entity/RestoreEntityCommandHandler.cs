@@ -53,6 +53,10 @@ public class RestoreEntityCommandHandler<TEntity>: IRequestHandler<RestoreEntity
             _logger.LogDebug(EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, typeof(TEntity).Name);
             return new CqrsResult<TEntity?>(null, CqrsResultCode.NotFound);
         }
+        if (existed is IHasOwner existedOwn && existedOwn.CreatedById != request.Context.UserId) {
+            _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Restore, existedOwn.CreatedById, typeof(TEntity).Name);
+            return new CqrsResult<TEntity?>(null, CqrsResultCode.Forbidden);
+        }
         if (existed.IsDeleted != true) {
             _logger.LogDebug(EfCoreLogs.CANNOT_RESTORE_ENTITY_IS_NOT_DELETED, existed.ConcurrentToken, existed.GetType().Name);
             var conflictEntity = _mapper.ProjectFromDb<TEntity>(existed);

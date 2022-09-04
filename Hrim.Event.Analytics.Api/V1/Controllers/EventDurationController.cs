@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
@@ -12,6 +13,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 /// Manage user event types with this crud controller
 /// </summary>
 [ApiController]
+[Authorize]
 [Route("v1/event/duration")]
 public class EventDurationController: EventBaseController<DurationEvent> {
     private readonly IMediator                 _mediator;

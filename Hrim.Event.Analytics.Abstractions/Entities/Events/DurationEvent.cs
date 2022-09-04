@@ -13,4 +13,11 @@ public class DurationEvent: BaseEvent {
     /// Date and time with end-user timezone when an event finishes
     /// </summary>
     public DateTimeOffset? FinishedAt { get; set; }
+    
+    /// <summary> copy all entity properties to the another entity </summary>
+    public void CopyTo(DurationEvent another) {
+        base.CopyTo(another);
+        another.StartedAt   = StartedAt;
+        another.FinishedAt  = FinishedAt;
+    }
 }

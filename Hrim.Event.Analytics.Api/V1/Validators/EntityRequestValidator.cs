@@ -12,5 +12,10 @@ public class EntityRequestValidator: AbstractValidator<EntityRequest> {
         RuleFor(x => x.Id)
            .NotEmpty()
            .WithMessage(ValidationMessages.IS_REQUIRED);
+
+        RuleFor(x => x.EntityType)
+           .NotNull()
+           .WithMessage(ValidationMessages.IS_REQUIRED)
+           .IsInEnum();
     }
 }

@@ -40,4 +40,18 @@ public class ExternalUserProfile: HrimEntity {
 
     /// <summary> </summary>
     public string? LastName { get; set; }
+
+    /// <summary> copy all entity properties to the another entity </summary>
+    public void CopyTo(ExternalUserProfile another) {
+        base.CopyTo(another);
+        another.LastName       = LastName;
+        another.FirstName      = FirstName;
+        another.FullName       = FullName;
+        another.LastLogin      = LastLogin;
+        another.Email          = Email;
+        another.Idp            = Idp;
+        another.ExternalUserId = ExternalUserId;
+        another.HrimUserId     = HrimUserId;
+        another.HrimUser       = HrimUser;
+    }
 }

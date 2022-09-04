@@ -10,13 +10,15 @@ using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Manage any entity type </summary>
 [ApiController]
-[Route("v1/entity")]
+[Authorize]
+[Route("v1/entity/{id}")]
 public class EntityController: EventAnalyticsApiController {
     private readonly IMediator _mediator;
 
@@ -27,7 +29,7 @@ public class EntityController: EventAnalyticsApiController {
     }
 
     /// <summary> Restore a soft deleted instance of any entity</summary>
-    [HttpPatch("{id}")]
+    [HttpPatch]
     public async Task<ActionResult<HrimEntity>> RestoreAsync([FromRoute] EntityRequest entityRequest, CancellationToken cancellationToken) {
         CqrsResultCode? resultCode;
         HrimEntity?     result;
@@ -66,7 +68,7 @@ public class EntityController: EventAnalyticsApiController {
     }
 
     /// <summary> Soft-delete an instance of any entity</summary>
-    [HttpDelete("{id}")]
+    [HttpDelete]
     public async Task<ActionResult<HrimEntity>> SoftDeleteAsync([FromRoute] EntityRequest request, CancellationToken cancellationToken) {
         CqrsResultCode? resultCode;
         HrimEntity?     result;
@@ -104,8 +106,9 @@ public class EntityController: EventAnalyticsApiController {
                 return NotFound();
             case CqrsResultCode.Ok:
                 return Ok(result);
+            default:
+                throw new UnexpectedCqrsStatusCodeException(resultCode);
         }
-        throw new UnexpectedCqrsStatusCodeException(resultCode);
     }
 
     private async Task<(CqrsResultCode ResultCode, HrimEntity? result)> InvokeDeletionAsync<TCommand, TEntity>(TCommand          command,

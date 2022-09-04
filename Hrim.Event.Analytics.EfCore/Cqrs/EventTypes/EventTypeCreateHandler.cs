@@ -13,17 +13,17 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand, CqrsResult<UserEventType?>> {
-    private readonly ILogger<CreateEventTypeHandler> _logger;
+public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, CqrsResult<UserEventType?>> {
+    private readonly ILogger<EventTypeCreateHandler> _logger;
     private readonly EventAnalyticDbContext          _context;
 
-    public CreateEventTypeHandler(ILogger<CreateEventTypeHandler> logger,
+    public EventTypeCreateHandler(ILogger<EventTypeCreateHandler> logger,
                                   EventAnalyticDbContext          context) {
         _logger  = logger;
         _context = context;
     }
 
-    public Task<CqrsResult<UserEventType?>> Handle(CreateUserEventTypeCommand request, CancellationToken cancellationToken) {
+    public Task<CqrsResult<UserEventType?>> Handle(EventTypeCreateCommand request, CancellationToken cancellationToken) {
         if (request.EventType == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventType)}");
         if (request.Context == null)
@@ -34,7 +34,7 @@ public class CreateEventTypeHandler: IRequestHandler<CreateUserEventTypeCommand,
         return HandleAsync(request, cancellationToken);
     }
 
-    private async Task<CqrsResult<UserEventType?>> HandleAsync(CreateUserEventTypeCommand request, CancellationToken cancellationToken) {
+    private async Task<CqrsResult<UserEventType?>> HandleAsync(EventTypeCreateCommand request, CancellationToken cancellationToken) {
         using var eventTypeNameScope = _logger.BeginScope("EventTypeName={EventTypeName}", request.EventType.Name);
         var existed = await _context.UserEventTypes
                                     .AsNoTracking()

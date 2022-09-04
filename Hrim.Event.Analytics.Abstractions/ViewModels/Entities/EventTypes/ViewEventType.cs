@@ -1,7 +1,7 @@
 namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 
 /// <summary>
-/// Model to present base properties of any derived event type.
+/// user event type view model.
 /// <br/>https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
 /// </summary>
 /// <param name="Name">User event type name, e.g. 'nice mood', 'headache', etc</param>

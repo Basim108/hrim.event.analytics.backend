@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hrim.Event.Analytics.Api.V1.Models;
 
 public class EntityRequest: ByIdRequest {
-    [FromQuery(Name = "entityType")]
+    [FromQuery(Name = "entity_type")]
     [ModelBinder(typeof(JsonModelBinder<EntityType>))]
-    public EntityType EntityType { get; set; }
+    public EntityType? EntityType { get; set; }
 }
