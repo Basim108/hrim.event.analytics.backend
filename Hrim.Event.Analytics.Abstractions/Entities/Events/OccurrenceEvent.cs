@@ -9,4 +9,10 @@ public class OccurrenceEvent: BaseEvent {
     /// Date and time with end-user timezone when an event occurred
     /// </summary>
     public DateTimeOffset OccurredAt { get; set; }
+    
+    /// <summary> copy all entity properties to the another entity </summary>
+    public void CopyTo(OccurrenceEvent another) {
+        base.CopyTo(another);
+        another.OccurredAt = OccurredAt;
+    }
 }

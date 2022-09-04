@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <UserSecretsId>93711994-8f9b-4dc9-b4b5-bce7ba5f0c28</UserSecretsId>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -47,6 +48,9 @@
       <Folder Include="Migrations" />
     </ItemGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />
+    </ItemGroup>
+    <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
             <Value>
                 **/20220828185834_add_events_their_types_tags_and_users.cs, 
@@ -56,6 +60,9 @@
     </ItemGroup>
     <ItemGroup>
       <Content Update="appsettings.Development.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+      <Content Update="appsettings.Tests.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
     </ItemGroup>

@@ -18,4 +18,13 @@ public abstract class HrimEntity {
     /// Update is possible only when this token equals to the token in the storage
     /// </summary>
     public long ConcurrentToken { get; set; }
+
+    /// <summary> copy all entity properties to the another entity </summary>
+    public void CopyTo(HrimEntity another) {
+        another.Id              = Id;
+        another.CreatedAt       = CreatedAt;
+        another.UpdatedAt       = UpdatedAt;
+        another.IsDeleted       = IsDeleted;
+        another.ConcurrentToken = ConcurrentToken;
+    }
 }

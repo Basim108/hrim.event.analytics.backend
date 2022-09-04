@@ -38,8 +38,8 @@ public static class AuthorizationRegistrations {
                      if (string.IsNullOrWhiteSpace(appSecret))
                          throw new ConfigurationException(null, "FACEBOOK_APP_SECRET");
                      opt.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                     opt.AppId     = appId;
-                     opt.AppSecret = appSecret;
+                     opt.AppId        = appId;
+                     opt.AppSecret    = appSecret;
                      opt.SaveTokens   = true;
                      opt.Fields.Add("picture");
                      opt.EventsType = typeof(EventAnalyticsOAuthEvents);

@@ -7,14 +7,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class GetViewEventTypesHandler: IRequestHandler<GetViewEventTypes, IList<ViewEventType>> {
+public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, IList<ViewEventType>> {
     private readonly EventAnalyticDbContext _context;
 
-    public GetViewEventTypesHandler(EventAnalyticDbContext context) {
+    public EventTypesGetAllMineHandler(EventAnalyticDbContext context) {
         _context = context;
     }
 
-    public Task<IList<ViewEventType>> Handle(GetViewEventTypes request, CancellationToken cancellationToken) {
+    public Task<IList<ViewEventType>> Handle(EventTypeGetAllMine request, CancellationToken cancellationToken) {
         if (request.Context == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
         if (request.Context.UserId == Guid.Empty)
@@ -23,7 +23,7 @@ public class GetViewEventTypesHandler: IRequestHandler<GetViewEventTypes, IList<
         return HandleAsync(request, cancellationToken);
     }
     
-    private async Task<IList<ViewEventType>> HandleAsync(GetViewEventTypes request, CancellationToken cancellationToken) {
+    private async Task<IList<ViewEventType>> HandleAsync(EventTypeGetAllMine request, CancellationToken cancellationToken) {
         var query = _context.UserEventTypes
                             .Where(x => x.CreatedById == request.Context.UserId);
         if (request.IsPublic) {

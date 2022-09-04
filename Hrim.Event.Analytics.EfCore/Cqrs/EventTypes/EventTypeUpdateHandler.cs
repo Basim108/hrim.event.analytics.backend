@@ -12,17 +12,17 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, CqrsResult<UserEventType?>> {
-    private readonly ILogger<UpdateEventTypeHandler> _logger;
+public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, CqrsResult<UserEventType?>> {
+    private readonly ILogger<EventTypeUpdateHandler> _logger;
     private readonly EventAnalyticDbContext          _context;
 
-    public UpdateEventTypeHandler(ILogger<UpdateEventTypeHandler> logger,
+    public EventTypeUpdateHandler(ILogger<EventTypeUpdateHandler> logger,
                                   EventAnalyticDbContext          context) {
         _logger  = logger;
         _context = context;
     }
 
-    public Task<CqrsResult<UserEventType?>> Handle(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
+    public Task<CqrsResult<UserEventType?>> Handle(EventTypeUpdateCommand request, CancellationToken cancellationToken) {
         if (request.EventType == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventType)}");
         if (request.EventType.Id == Guid.Empty)
@@ -35,7 +35,7 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
         return HandleAsync(request, cancellationToken);
     }
 
-    private async Task<CqrsResult<UserEventType?>> HandleAsync(UpdateEventTypeCommand request, CancellationToken cancellationToken) {
+    private async Task<CqrsResult<UserEventType?>> HandleAsync(EventTypeUpdateCommand request, CancellationToken cancellationToken) {
         using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.EventType.Id);
         var existed = await _context.UserEventTypes
                                     .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
@@ -49,10 +49,10 @@ public class UpdateEventTypeHandler: IRequestHandler<UpdateEventTypeCommand, Cqr
             return new CqrsResult<UserEventType?>(existed, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventType.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT, 
-                                   HrimOperations.Update, 
-                                   existed.ConcurrentToken, 
-                                   request.EventType.ConcurrentToken, 
+            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT,
+                                   HrimOperations.Update,
+                                   existed.ConcurrentToken,
+                                   request.EventType.ConcurrentToken,
                                    nameof(UserEventType));
             return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Conflict);
         }

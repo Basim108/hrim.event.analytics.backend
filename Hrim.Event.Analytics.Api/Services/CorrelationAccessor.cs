@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs;
+using Hrim.Event.Analytics.Api.Authentication;
 using Hrim.Event.Analytics.Api.Middleware;
 
 #pragma warning disable CS1591
@@ -6,8 +7,7 @@ using Hrim.Event.Analytics.Api.Middleware;
 namespace Hrim.Event.Analytics.Api.Services;
 
 public interface IApiRequestAccessor {
-    string GetStringCorrelationId();
-
+    Guid GetAuthorizedUserId();
     Guid GetCorrelationId();
 
     OperationContext GetOperationContext();
@@ -20,14 +20,27 @@ public class ApiRequestAccessor: IApiRequestAccessor {
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public Guid GetAuthorizedUserId() {
+        var isNotAuthorized = !(_httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false);
+        if (isNotAuthorized)
+            return Guid.Empty;
+        var userIdClaim = _httpContextAccessor.HttpContext!
+                                              .User
+                                              .Claims
+                                              .FirstOrDefault(x => x.Type == HrimClaims.HRIM_USER_ID);
+        return userIdClaim == null
+                   ? Guid.Empty
+                   : Guid.Parse(userIdClaim.Value);
+    }
+
     public string GetStringCorrelationId()
         => _httpContextAccessor.HttpContext?
                                .Response
-                               .Headers[CorrelationMiddleware.CORRELATION_ID_HEADER]
-        ?? Guid.Empty.ToString();
+                               .Headers[CorrelationMiddleware.CORRELATION_ID_HEADER] ?? Guid.Empty.ToString();
 
-    public Guid GetCorrelationId() => Guid.Parse(GetStringCorrelationId());
+    public Guid GetCorrelationId() {
+        return Guid.Parse(GetStringCorrelationId());
+    }
 
-    public OperationContext GetOperationContext() => new(Guid.Parse("4e8712b8-1bdb-4bad-9047-9fc90251973e"),
-                                                         GetCorrelationId());
+    public OperationContext GetOperationContext() => new(GetAuthorizedUserId(), GetCorrelationId());
 }

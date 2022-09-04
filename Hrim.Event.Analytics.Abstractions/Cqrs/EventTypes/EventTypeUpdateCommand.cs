@@ -13,5 +13,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// Otherwise returns an updated instance with a new ConcurrentToken value (200).
 /// </returns>
 /// <remarks>In case you need to set IsDeleted flag to false, use <see cref="RestoreEntityCommand{TEntity}"/> CQRS command</remarks>
-public record UpdateEventTypeCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
+public record EventTypeUpdateCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
     : OperationRequest(Context), IRequest<CqrsResult<UserEventType?>>;
