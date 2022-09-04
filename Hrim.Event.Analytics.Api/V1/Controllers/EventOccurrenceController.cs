@@ -13,7 +13,9 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 /// Manage user event types with this crud controller
 /// </summary>
 [ApiController]
+#if RELEASE
 [Authorize]
+#endif
 [Route("v1/event/occurrence")]
 public class EventOccurrenceController: EventBaseController<OccurrenceEvent> {
     private readonly IMediator _mediator;

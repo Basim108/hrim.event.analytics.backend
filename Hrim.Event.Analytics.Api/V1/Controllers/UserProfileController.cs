@@ -9,7 +9,9 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Hrim user profile endpoints </summary>
 [ApiController]
+#if RELEASE
 [Authorize]
+#endif
 [Route("v1/user-profile")]
 public class UserProfileController: ControllerBase {
     

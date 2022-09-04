@@ -3,6 +3,7 @@ using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
+using Hrim.Event.Analytics.Api.V1.Models;
 
 namespace Hrim.Event.Analytics.Api.Tests.Cqrs.EventTypes;
 
@@ -11,8 +12,16 @@ public class EventTypeCreateTests: BaseCqrsTests {
     private readonly EventTypeCreateCommand _createCommand;
 
     public EventTypeCreateTests() {
-        _createCommand = new EventTypeCreateCommand(TestData.CreateEventTypeRequest, SaveChanges: true, OperatorContext);
+        _createCommand = new EventTypeCreateCommand(_createEventTypeRequest, SaveChanges: true, OperatorContext);
     }
+
+    /// <summary> Correct create event type request  </summary>
+    private readonly CreateEventTypeRequest _createEventTypeRequest = new() {
+        Name        = "Headache",
+        Color       = "#ff0000",
+        Description = "times when I had a headache",
+        IsPublic    = true
+    };
 
     [Fact]
     public async Task Create_EventType() {
@@ -29,16 +38,16 @@ public class EventTypeCreateTests: BaseCqrsTests {
         resultEventType.IsDeleted.Should().BeNull();
         resultEventType.ConcurrentToken.Should().Be(1);
 
-        resultEventType.Name.Should().Be(TestData.CreateEventTypeRequest.Name);
-        resultEventType.Color.Should().Be(TestData.CreateEventTypeRequest.Color);
-        resultEventType.Description.Should().Be(TestData.CreateEventTypeRequest.Description);
-        resultEventType.IsPublic.Should().Be(TestData.CreateEventTypeRequest.IsPublic);
+        resultEventType.Name.Should().Be(_createEventTypeRequest.Name);
+        resultEventType.Color.Should().Be(_createEventTypeRequest.Color);
+        resultEventType.Description.Should().Be(_createEventTypeRequest.Description);
+        resultEventType.IsPublic.Should().Be(_createEventTypeRequest.IsPublic);
     }
 
     [Fact]
     public async Task Create_EventType_With_Same_Name() {
         var createdEntities = TestData.CreateManyEventTypes(1, OperatorContext.UserId);
-        TestData.CreateEventTypeRequest.Name = createdEntities.First().Value.Name;
+        _createEventTypeRequest.Name = createdEntities.First().Value.Name;
 
         var cqrsResult = await Mediator.Send(_createCommand);
         cqrsResult.Should().NotBeNull();
@@ -48,7 +57,7 @@ public class EventTypeCreateTests: BaseCqrsTests {
     [Fact]
     public async Task Create_Already_Deleted_Entity() {
         var createdEntities = TestData.CreateManyEventTypes(1, OperatorContext.UserId, isDeleted: true);
-        TestData.CreateEventTypeRequest.Name = createdEntities.First().Value.Name;
+        _createEventTypeRequest.Name = createdEntities.First().Value.Name;
 
         var cqrsResult = await Mediator.Send(_createCommand);
         cqrsResult.Should().NotBeNull();
@@ -56,7 +65,7 @@ public class EventTypeCreateTests: BaseCqrsTests {
         cqrsResult.Info.Should().BeNull();
 
         cqrsResult.Result.Should().NotBeNull();
-        cqrsResult.Result!.Name.Should().Be(TestData.CreateEventTypeRequest.Name);
+        cqrsResult.Result!.Name.Should().Be(_createEventTypeRequest.Name);
         cqrsResult.Result!.IsDeleted.Should().BeTrue();
     }
 }

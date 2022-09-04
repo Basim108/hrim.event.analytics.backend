@@ -4,11 +4,22 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
+using Hrim.Event.Analytics.Api.V1.Models;
 
 namespace Hrim.Event.Analytics.Api.Tests.Cqrs.EventTypes;
 
 [ExcludeFromCodeCoverage]
 public class EventTypeCqrsTests: BaseCqrsTests {
+    /// <summary> Correct update event type request  </summary>
+    private readonly UpdateEventTypeRequest _updateEventTypeRequest = new() {
+        Id              = Guid.NewGuid(),
+        ConcurrentToken = 1,
+        Name            = "Headache",
+        Color           = "#ff0000",
+        Description     = "times when I had a headache",
+        IsPublic        = true
+    };
+
     [Fact]
     public async Task Update_EventType() {
         var createdEntities = TestData.CreateManyEventTypes(1, OperatorContext.UserId);
@@ -41,8 +52,8 @@ public class EventTypeCqrsTests: BaseCqrsTests {
     public async Task Update_NotFound_EventType() {
         var cqrsResult = await Mediator.Send(new EventTypeUpdateCommand(new UserEventType() {
             Id    = Guid.NewGuid(),
-            Color = TestData.UpdateEventTypeRequest.Color,
-            Name  = TestData.UpdateEventTypeRequest.Name
+            Color = _updateEventTypeRequest.Color,
+            Name  = _updateEventTypeRequest.Name
         }, SaveChanges: true, OperatorContext));
         cqrsResult.Should().NotBeNull();
         cqrsResult.StatusCode.Should().Be(CqrsResultCode.NotFound);

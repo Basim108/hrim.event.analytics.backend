@@ -9,14 +9,15 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Get access to events of all types at once </summary>
 [ApiController]
+#if RELEASE
 [Authorize]
+#endif
 [Route("v1/event")]
 public class AllEventsAccessorController: EventAnalyticsApiController {
     private readonly IMediator _mediator;
 
     /// <summary> </summary>
-    public AllEventsAccessorController(IApiRequestAccessor requestAccessor,
-                           IMediator           mediator): base(requestAccessor) {
+    public AllEventsAccessorController(IApiRequestAccessor requestAccessor, IMediator mediator): base(requestAccessor) {
         _mediator = mediator;
     }
 

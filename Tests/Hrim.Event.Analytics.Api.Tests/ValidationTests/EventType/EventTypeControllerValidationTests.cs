@@ -10,15 +10,13 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.EventType;
 
 [ExcludeFromCodeCoverage]
 public class EventTypeControllerValidationTests: BaseEntityControllerTests {
-    private readonly TestData _testData = new();
-
     public EventTypeControllerValidationTests(WebAppFactory<Program> factory) {
         Client = factory.GetClient("v1/event-type/");
     }
 
     [Fact]
     public async Task Create_Given_Empty_Name_Returns_BadRequest() {
-        var createRequest = _testData.CreateEventTypeRequest;
+        var createRequest = CreateEventTypeRequest;
         createRequest.Name = "";
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -33,7 +31,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Create_Given_Color_In_Wrong_Format_Returns_BadRequest() {
-        var createRequest = _testData.CreateEventTypeRequest;
+        var createRequest = CreateEventTypeRequest;
         createRequest.Color = "123456789";
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -48,7 +46,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Create_Given_Color_In_Correct_Long_Hex_Format() {
-        var createRequest = _testData.CreateEventTypeRequest;
+        var createRequest = CreateEventTypeRequest;
         createRequest.Name = "";
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -63,7 +61,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Create_Given_Color_In_Correct_Short_Hex_Format() {
-        var createRequest = _testData.CreateEventTypeRequest;
+        var createRequest = CreateEventTypeRequest;
         createRequest.Color = "#f00";
         createRequest.Name  = "";
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
@@ -79,7 +77,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Update_Given_Color_In_Correct_Long_Hex_Format() {
-        var updateRequest = _testData.UpdateEventTypeRequest;
+        var updateRequest = UpdateEventTypeRequest;
         updateRequest.Name = "";
         var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -94,7 +92,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Update_Given_Color_In_Correct_Short_Hex_Format() {
-        var updateRequest = _testData.UpdateEventTypeRequest;
+        var updateRequest = UpdateEventTypeRequest;
         updateRequest.Color = "#f00";
         updateRequest.Name  = "";
         var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
@@ -110,7 +108,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Update_Given_Empty_Name_Returns_BadRequest() {
-        var updateRequest = _testData.UpdateEventTypeRequest;
+        var updateRequest = UpdateEventTypeRequest;
         updateRequest.Name = "";
         var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -125,7 +123,7 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
 
     [Fact]
     public async Task Update_Given_Color_In_Wrong_Format_Returns_BadRequest() {
-        var updateRequest = _testData.UpdateEventTypeRequest;
+        var updateRequest = UpdateEventTypeRequest;
         updateRequest.Color = "123456789";
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(updateRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

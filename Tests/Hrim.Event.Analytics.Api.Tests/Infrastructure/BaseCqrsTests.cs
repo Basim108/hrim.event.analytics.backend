@@ -12,20 +12,19 @@ namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
 public class BaseCqrsTests {
     protected IMediator              Mediator        { get; }
-    protected IConfiguration         AppConfig       { get; }
     protected IServiceProvider       ServiceProvider { get; }
     protected EventAnalyticDbContext DbContext       { get; }
     protected TestData               TestData        { get; }
     protected OperationContext       OperatorContext { get; }
 
     public BaseCqrsTests() {
-        AppConfig = new ConfigurationBuilder()
-                   // .AddInMemoryCollection(new Dictionary<string, string>() { })
-                   .AddJsonFile("appsettings.Tests.json")
-                   .Build();
+        var appConfig = new ConfigurationBuilder()
+                        // .AddInMemoryCollection(new Dictionary<string, string>() { })
+                       .AddJsonFile("appsettings.Tests.json")
+                       .Build();
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddEventAnalyticsServices(AppConfig);
+        services.AddEventAnalyticsServices(appConfig);
 
         services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));
         services.AddDbContext<EventAnalyticDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
@@ -33,8 +32,8 @@ public class BaseCqrsTests {
         services.CleanUpCurrentRegistrations(typeof(IApiRequestAccessor));
         services.AddScoped(_ => {
             var apiRequestAccessor = Substitute.For<IApiRequestAccessor>();
-            var operatorId = Guid.NewGuid();
-            var correlationId = Guid.NewGuid();
+            var operatorId         = Guid.NewGuid();
+            var correlationId      = Guid.NewGuid();
             apiRequestAccessor.GetAuthorizedUserId()
                               .Returns(operatorId);
             apiRequestAccessor.GetCorrelationId()
