@@ -28,7 +28,7 @@ public abstract class BaseEvent: HrimEntity, IHasOwner {
     public UserEventType? EventType { get; set; } = null!;
 
     /// <summary> copy all entity properties to the another entity </summary>
-    protected void CopyTo(BaseEvent another) {
+    public void CopyTo(BaseEvent another) {
         base.CopyTo(another);
         another.EventTypeId = EventTypeId;
         another.EventType   = EventType;

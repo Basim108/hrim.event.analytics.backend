@@ -2,9 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
-using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
-namespace Hrim.Event.Analytics.Api.Tests.Cqrs.EventTypes;
+namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
 
 [ExcludeFromCodeCoverage]
 public class EventTypeGetByIdTests: BaseCqrsTests {

@@ -1,6 +1,8 @@
+using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Services;
+using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.EfCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,9 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 
-namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
+namespace Hrim.Event.Analytics.Api.Tests.CqrsTests;
 
 public class BaseCqrsTests {
+    protected IMapper                Mapper          { get; }
     protected IMediator              Mediator        { get; }
     protected IServiceProvider       ServiceProvider { get; }
     protected EventAnalyticDbContext DbContext       { get; }
@@ -44,6 +47,7 @@ public class BaseCqrsTests {
         });
         ServiceProvider = services.BuildServiceProvider().CreateScope().ServiceProvider;
 
+        Mapper    = ServiceProvider.GetRequiredService<IMapper>();
         Mediator  = ServiceProvider.GetRequiredService<IMediator>();
         DbContext = ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
         TestData  = new TestData(DbContext);

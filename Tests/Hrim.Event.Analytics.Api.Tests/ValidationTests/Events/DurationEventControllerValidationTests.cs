@@ -4,6 +4,7 @@ using System.Text;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
+using Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 using Hrim.Event.Analytics.Api.V1.Models;
 using Hrimsoft.Core.Extensions;
 using Hrimsoft.StringCases;

@@ -56,6 +56,7 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
                                      nameof(OccurrenceEvent.OccurredAt).ToSnakeCase());
             return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict, info);
         }
+        // TODO: check that event_type is_public or has the same owner as this event and share this or maybe all checks with all types of events
         var entityToCreate = new DbOccurrenceEvent {
             OccurredOn      = mappedEventInfo.OccurredOn,
             OccurredAt      = mappedEventInfo.OccurredAt,

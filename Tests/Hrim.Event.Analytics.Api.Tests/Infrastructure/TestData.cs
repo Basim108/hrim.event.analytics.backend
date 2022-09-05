@@ -54,25 +54,40 @@ public class TestData {
         return entity;
     }
 
-    public DbDurationEvent CreateDurationEvent(Guid userId, Guid eventTypeId, bool isDeleted = false) {
+    public DbDurationEvent CreateDurationEvent(Guid            userId,
+                                               Guid            eventTypeId,
+                                               bool            isDeleted  = false,
+                                               DateTimeOffset? startedAt  = null,
+                                               DateTimeOffset? finishedAt = null) {
         var entity = new DbDurationEvent {
             CreatedById     = userId,
             EventTypeId     = eventTypeId,
             StartedOn       = new DateOnly(2020, 09, 1),
-            StartedAt       = new DateTimeOffset(2020, 09, 1, 15, 0, 0, TimeSpan.Zero),
+            StartedAt       = new DateTimeOffset(2020, 09, 1, 15, 0, 0, TimeSpan.FromHours(4)),
             FinishedOn      = new DateOnly(2020, 09, 1),
-            FinishedAt      = new DateTimeOffset(2020, 09, 1, 16, 0, 0, TimeSpan.Zero),
+            FinishedAt      = new DateTimeOffset(2020, 09, 1, 16, 0, 0, TimeSpan.FromHours(4)),
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
         if (isDeleted)
             entity.IsDeleted = true;
+        if (startedAt.HasValue) {
+            entity.StartedAt = startedAt.Value;
+            entity.StartedOn = new DateOnly(startedAt.Value.Year, startedAt.Value.Month, startedAt.Value.Day);
+        }
+        if (finishedAt.HasValue) {
+            entity.FinishedAt = finishedAt.Value;
+            entity.FinishedOn = new DateOnly(finishedAt.Value.Year, finishedAt.Value.Month, finishedAt.Value.Day);
+        }
         _context.DurationEvents.Add(entity);
         _context.SaveChanges();
         return entity;
     }
 
-    public DbOccurrenceEvent CreateOccurrenceEvent(Guid userId, Guid eventTypeId, bool isDeleted = false) {
+    public DbOccurrenceEvent CreateOccurrenceEvent(Guid            userId,
+                                                   Guid            eventTypeId,
+                                                   bool            isDeleted  = false,
+                                                   DateTimeOffset? occurredAt = null) {
         var entity = new DbOccurrenceEvent() {
             CreatedById     = userId,
             EventTypeId     = eventTypeId,
@@ -83,6 +98,12 @@ public class TestData {
         };
         if (isDeleted)
             entity.IsDeleted = true;
+        if (occurredAt.HasValue) {
+            entity.OccurredAt = occurredAt.Value.TruncateToMilliseconds();
+            entity.OccurredOn = new DateOnly(occurredAt.Value.Year,
+                                             occurredAt.Value.Month,
+                                             occurredAt.Value.Day);
+        }
         _context.OccurrenceEvents.Add(entity);
         _context.SaveChanges();
         return entity;

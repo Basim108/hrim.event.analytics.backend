@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using FluentAssertions;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
+using Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 using Hrimsoft.StringCases;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

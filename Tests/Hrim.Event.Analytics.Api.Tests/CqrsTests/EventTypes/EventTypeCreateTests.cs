@@ -1,11 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
-using Hrim.Event.Analytics.Abstractions.Enums;
-using Hrim.Event.Analytics.Api.Tests.Infrastructure;
+using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
 using Hrim.Event.Analytics.Api.V1.Models;
 
-namespace Hrim.Event.Analytics.Api.Tests.Cqrs.EventTypes;
+namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
 
 [ExcludeFromCodeCoverage]
 public class EventTypeCreateTests: BaseCqrsTests {
@@ -27,21 +26,13 @@ public class EventTypeCreateTests: BaseCqrsTests {
     public async Task Create_EventType() {
         var beforeSend = DateTime.UtcNow;
         var cqrsResult = await Mediator.Send(_createCommand);
-        cqrsResult.Should().NotBeNull();
-        cqrsResult.StatusCode.Should().Be(CqrsResultCode.Created);
-        var resultEventType = cqrsResult.Result;
-        resultEventType.Should().NotBeNull();
-        resultEventType!.Id.Should().NotBeEmpty();
-        resultEventType.CreatedById.Should().Be(OperatorContext.UserId);
-        resultEventType.CreatedAt.Should().BeAfter(beforeSend);
-        resultEventType.UpdatedAt.Should().BeNull();
-        resultEventType.IsDeleted.Should().BeNull();
-        resultEventType.ConcurrentToken.Should().Be(1);
 
-        resultEventType.Name.Should().Be(_createEventTypeRequest.Name);
-        resultEventType.Color.Should().Be(_createEventTypeRequest.Color);
-        resultEventType.Description.Should().Be(_createEventTypeRequest.Description);
-        resultEventType.IsPublic.Should().Be(_createEventTypeRequest.IsPublic);
+        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorContext.UserId, beforeSend);
+
+        cqrsResult.Result!.Name.Should().Be(_createEventTypeRequest.Name);
+        cqrsResult.Result.Color.Should().Be(_createEventTypeRequest.Color);
+        cqrsResult.Result.Description.Should().Be(_createEventTypeRequest.Description);
+        cqrsResult.Result.IsPublic.Should().Be(_createEventTypeRequest.IsPublic);
     }
 
     [Fact]
@@ -50,8 +41,8 @@ public class EventTypeCreateTests: BaseCqrsTests {
         _createEventTypeRequest.Name = createdEntities.First().Value.Name;
 
         var cqrsResult = await Mediator.Send(_createCommand);
-        cqrsResult.Should().NotBeNull();
-        cqrsResult.StatusCode.Should().Be(CqrsResultCode.Conflict);
+        
+        cqrsResult.CheckCreationOfSameEntity();
     }
 
     [Fact]
@@ -60,12 +51,8 @@ public class EventTypeCreateTests: BaseCqrsTests {
         _createEventTypeRequest.Name = createdEntities.First().Value.Name;
 
         var cqrsResult = await Mediator.Send(_createCommand);
-        cqrsResult.Should().NotBeNull();
-        cqrsResult.StatusCode.Should().Be(CqrsResultCode.EntityIsDeleted);
-        cqrsResult.Info.Should().BeNull();
-
-        cqrsResult.Result.Should().NotBeNull();
+        
+        cqrsResult.CheckUpdateOrCreationOfSoftDeletedEntity();
         cqrsResult.Result!.Name.Should().Be(_createEventTypeRequest.Name);
-        cqrsResult.Result!.IsDeleted.Should().BeTrue();
     }
 }
