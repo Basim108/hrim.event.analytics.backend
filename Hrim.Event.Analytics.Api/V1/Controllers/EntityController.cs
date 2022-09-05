@@ -10,8 +10,11 @@ using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
@@ -21,39 +24,42 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Authorize]
 #endif
 [Route("v1/entity/{id}")]
-public class EntityController: EventAnalyticsApiController {
-    private readonly IMediator _mediator;
+public class EntityController: ControllerBase {
+    private readonly IApiRequestAccessor _requestAccessor;
+    private readonly IMediator           _mediator;
 
     /// <summary> </summary>
     public EntityController(IApiRequestAccessor requestAccessor,
-                            IMediator           mediator): base(requestAccessor) {
-        _mediator = mediator;
+                            IMediator           mediator) {
+        _requestAccessor = requestAccessor;
+        _mediator        = mediator;
     }
 
     /// <summary> Restore a soft deleted instance of any entity</summary>
     [HttpPatch]
     public async Task<ActionResult<HrimEntity>> RestoreAsync([FromRoute] EntityRequest entityRequest, CancellationToken cancellationToken) {
+        var             operationContext = _requestAccessor.GetOperationContext();
         CqrsResultCode? resultCode;
         HrimEntity?     result;
         switch (entityRequest.EntityType) {
             case EntityType.EventType:
-                var restoreEventType = new RestoreEntityCommand<UserEventType>(entityRequest.Id, SaveChanges: true, OperationContext);
+                var restoreEventType = new RestoreEntityCommand<UserEventType>(entityRequest.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<UserEventType>, UserEventType>(restoreEventType, cancellationToken);
                 break;
             case EntityType.OccurrenceEvent:
-                var restoreOccurrence = new RestoreEntityCommand<OccurrenceEvent>(entityRequest.Id, SaveChanges: true, OperationContext);
+                var restoreOccurrence = new RestoreEntityCommand<OccurrenceEvent>(entityRequest.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<OccurrenceEvent>, OccurrenceEvent>(restoreOccurrence, cancellationToken);
                 break;
             case EntityType.DurationEvent:
-                var restoreDuration = new RestoreEntityCommand<DurationEvent>(entityRequest.Id, SaveChanges: true, OperationContext);
+                var restoreDuration = new RestoreEntityCommand<DurationEvent>(entityRequest.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<DurationEvent>, DurationEvent>(restoreDuration, cancellationToken);
                 break;
             case EntityType.HrimUser:
-                var restoreUser = new RestoreEntityCommand<HrimUser>(entityRequest.Id, SaveChanges: true, OperationContext);
+                var restoreUser = new RestoreEntityCommand<HrimUser>(entityRequest.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<HrimUser>, HrimUser>(restoreUser, cancellationToken);
                 break;
             case EntityType.HrimTag:
-                var restoreTag = new RestoreEntityCommand<HrimTag>(entityRequest.Id, SaveChanges: true, OperationContext);
+                var restoreTag = new RestoreEntityCommand<HrimTag>(entityRequest.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<RestoreEntityCommand<HrimTag>, HrimTag>(restoreTag, cancellationToken);
                 break;
             default:
@@ -72,27 +78,29 @@ public class EntityController: EventAnalyticsApiController {
     /// <summary> Soft-delete an instance of any entity</summary>
     [HttpDelete]
     public async Task<ActionResult<HrimEntity>> SoftDeleteAsync([FromRoute] EntityRequest request, CancellationToken cancellationToken) {
+        var operationContext = _requestAccessor.GetOperationContext();
+
         CqrsResultCode? resultCode;
         HrimEntity?     result;
         switch (request.EntityType) {
             case EntityType.EventType:
-                var deleteEventType = new SoftDeleteEntityCommand<UserEventType>(request.Id, SaveChanges: true, OperationContext);
+                var deleteEventType = new SoftDeleteEntityCommand<UserEventType>(request.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<UserEventType>, UserEventType>(deleteEventType, cancellationToken);
                 break;
             case EntityType.OccurrenceEvent:
-                var deleteOccurrence = new SoftDeleteEntityCommand<OccurrenceEvent>(request.Id, SaveChanges: true, OperationContext);
+                var deleteOccurrence = new SoftDeleteEntityCommand<OccurrenceEvent>(request.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<OccurrenceEvent>, OccurrenceEvent>(deleteOccurrence, cancellationToken);
                 break;
             case EntityType.DurationEvent:
-                var deleteDuration = new SoftDeleteEntityCommand<DurationEvent>(request.Id, SaveChanges: true, OperationContext);
+                var deleteDuration = new SoftDeleteEntityCommand<DurationEvent>(request.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<DurationEvent>, DurationEvent>(deleteDuration, cancellationToken);
                 break;
             case EntityType.HrimUser:
-                var deleteUser = new SoftDeleteEntityCommand<HrimUser>(request.Id, SaveChanges: true, OperationContext);
+                var deleteUser = new SoftDeleteEntityCommand<HrimUser>(request.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<HrimUser>, HrimUser>(deleteUser, cancellationToken);
                 break;
             case EntityType.HrimTag:
-                var deleteTag = new SoftDeleteEntityCommand<HrimTag>(request.Id, SaveChanges: true, OperationContext);
+                var deleteTag = new SoftDeleteEntityCommand<HrimTag>(request.Id, SaveChanges: true, operationContext);
                 (resultCode, result) = await InvokeDeletionAsync<SoftDeleteEntityCommand<HrimTag>, HrimTag>(deleteTag, cancellationToken);
                 break;
             default:

@@ -14,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
 [ExcludeFromCodeCoverage]
 public class OccurrenceEventControllerValidationTests: BaseEventControllerValidationTests {
-    public OccurrenceEventControllerValidationTests(WebAppFactory<Program> factory) {
+    public OccurrenceEventControllerValidationTests(WebAppFactory<Program> factory):base(factory) {
         Client = factory.GetClient("v1/event/occurrence/");
     }
 

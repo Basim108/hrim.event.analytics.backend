@@ -111,7 +111,7 @@ public class RestoreEntityTests: BaseCqrsTests {
         var command    = new RestoreEntityCommand<HrimUser>(entityId, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
-        CheckRestoredEntity(entityId, cqrsResult, DbContext.HrimUsers);
+        CheckRestoredEntity(entityId, cqrsResult, TestData.DbContext.HrimUsers);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class RestoreEntityTests: BaseCqrsTests {
         var command    = new RestoreEntityCommand<UserEventType>(headache.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
-        CheckRestoredEntity(headache.Id, cqrsResult, DbContext.UserEventTypes);
+        CheckRestoredEntity(headache.Id, cqrsResult, TestData.DbContext.UserEventTypes);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class RestoreEntityTests: BaseCqrsTests {
 
         var dbEntity     = _mapper.Map<DbDurationEvent>(cqrsResult.Result);
         var dbCqrsResult = new CqrsResult<DbDurationEvent?>(dbEntity, cqrsResult.StatusCode, cqrsResult.Info);
-        CheckRestoredEntity(durationEvent.Id, dbCqrsResult, DbContext.DurationEvents);
+        CheckRestoredEntity(durationEvent.Id, dbCqrsResult, TestData.DbContext.DurationEvents);
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public class RestoreEntityTests: BaseCqrsTests {
 
         var dbEntity     = _mapper.Map<DbOccurrenceEvent>(cqrsResult.Result);
         var dbCqrsResult = new CqrsResult<DbOccurrenceEvent?>(dbEntity, cqrsResult.StatusCode, cqrsResult.Info);
-        CheckRestoredEntity(nicePracticeEvent.Id, dbCqrsResult, DbContext.OccurrenceEvents);
+        CheckRestoredEntity(nicePracticeEvent.Id, dbCqrsResult, TestData.DbContext.OccurrenceEvents);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 using System.Net;
+using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
@@ -13,21 +14,24 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 /// <summary>
 /// Base controller for all event analytics api controllers
 /// </summary>
-public class EventAnalyticsApiController: ControllerBase {
+public class EventAnalyticsApiController<TEntity>: ControllerBase {
     private readonly IApiRequestAccessor _requestAccessor;
+    private readonly IValidator<TEntity> _validator;
 
     /// <summary> </summary>
-    public EventAnalyticsApiController(IApiRequestAccessor requestAccessor) {
+    public EventAnalyticsApiController(IApiRequestAccessor requestAccessor,
+                                       IValidator<TEntity> validator) {
         _requestAccessor = requestAccessor;
+        _validator       = validator;
     }
 
     /// <summary>
     /// Context data about authorized user, correlation info, etc.
     /// </summary>
-    public OperationContext OperationContext => _requestAccessor.GetOperationContext();
+    protected OperationContext OperationContext => _requestAccessor.GetOperationContext();
 
     /// <summary> Process CQRS result for update endpoints </summary>
-    protected ActionResult<TEntity> ProcessCqrsResult<TEntity>(CqrsResult<TEntity?> cqrsResult) {
+    protected ActionResult<TEntity> ProcessCqrsResult(CqrsResult<TEntity?> cqrsResult) {
         switch (cqrsResult.StatusCode) {
             case CqrsResultCode.EntityIsDeleted:
                 return StatusCode((int)HttpStatusCode.Gone);
@@ -46,5 +50,17 @@ public class EventAnalyticsApiController: ControllerBase {
                 return Ok(cqrsResult.Result);
         }
         throw new UnexpectedCqrsResultException<TEntity?>(cqrsResult);
+    }
+
+    /// <summary>
+    /// Provide async validation for any kind of events
+    /// </summary>
+    protected async Task ValidateRequestAsync(TEntity request, CancellationToken cancellationToken) {
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        if (validationResult.IsValid)
+            return;
+        foreach (var error in validationResult.Errors) {
+            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+        }
     }
 }
