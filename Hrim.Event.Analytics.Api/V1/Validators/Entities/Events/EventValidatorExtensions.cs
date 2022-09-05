@@ -16,6 +16,9 @@ public static class EventValidatorExtensions {
         validator.RuleFor(x => x.EventTypeId)
                  .NotEmpty()
                  .WithMessage(ValidationMessages.IS_REQUIRED);
+        validator.RuleFor(x => x.CreatedById)
+                 .NotEmpty()
+                 .WithMessage(ValidationMessages.IS_REQUIRED);
     }
 
     /// <summary>

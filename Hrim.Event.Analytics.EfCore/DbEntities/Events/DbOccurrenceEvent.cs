@@ -16,4 +16,12 @@ public class DbOccurrenceEvent: BaseEvent {
     /// Time with end-user timezone when an event occurred
     /// </summary>
     public DateTimeOffset OccurredAt { get; set; }
+    
+    /// <summary> copy all entity properties to the another entity </summary>
+    public void CopyTo(OccurrenceEvent another) {
+        base.CopyTo(another);
+        another.OccurredAt = new DateTimeOffset(OccurredOn.Year, OccurredOn.Month, OccurredOn.Day,
+                                                OccurredAt.Hour, OccurredAt.Minute, OccurredAt.Second, OccurredAt.Millisecond,
+                                                OccurredAt.Offset);
+    }
 }

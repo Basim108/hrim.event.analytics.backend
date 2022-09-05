@@ -1,4 +1,3 @@
-using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 
 namespace Hrim.Event.Analytics.EfCore.DbEntities.Events;
@@ -27,4 +26,18 @@ public class DbDurationEvent: BaseEvent {
     /// Time with end-user timezone when an event finished
     /// </summary>
     public DateTimeOffset? FinishedAt { get; set; }
+
+    /// <summary> copy all entity properties to the another entity </summary>
+    public void CopyTo(DurationEvent another) {
+        base.CopyTo(another);
+        another.StartedAt = new DateTimeOffset(StartedOn.Year, StartedOn.Month, StartedOn.Day,
+                                               StartedAt.Hour, StartedAt.Minute, StartedAt.Second, StartedAt.Millisecond,
+                                               StartedAt.Offset);
+
+        another.FinishedAt = FinishedOn.HasValue
+                                 ? new DateTimeOffset(FinishedOn.Value.Year, FinishedOn.Value.Month, FinishedOn.Value.Day,
+                                                      FinishedAt!.Value.Hour, FinishedAt.Value.Minute, FinishedAt.Value.Second,
+                                                      FinishedAt.Value.Millisecond, FinishedAt.Value.Offset)
+                                 : null;
+    }
 }

@@ -30,18 +30,15 @@ public class EventAnalyticsApiController: ControllerBase {
     protected ActionResult<TEntity> ProcessCqrsResult<TEntity>(CqrsResult<TEntity?> cqrsResult) {
         switch (cqrsResult.StatusCode) {
             case CqrsResultCode.EntityIsDeleted:
-                Response.StatusCode = (int)HttpStatusCode.Gone;
-                return new EmptyResult();
+                return StatusCode((int)HttpStatusCode.Gone);
             case CqrsResultCode.Conflict:
-                Response.StatusCode = (int)HttpStatusCode.Conflict;
                 if (string.IsNullOrWhiteSpace(cqrsResult.Info))
-                    return new EmptyResult();
+                    return StatusCode((int)HttpStatusCode.Conflict);
                 return StatusCode((int)HttpStatusCode.Conflict, JsonConvert.SerializeObject(cqrsResult.Info));
             case CqrsResultCode.Forbidden:
                 return StatusCode((int)HttpStatusCode.Forbidden, ApiLogs.FORBID_AS_NOT_ENTITY_OWNER);
             case CqrsResultCode.Locked:
-                Response.StatusCode = (int)HttpStatusCode.Locked;
-                return new EmptyResult();
+                return StatusCode((int)HttpStatusCode.Locked);
             case CqrsResultCode.NotFound:
                 return NotFound();
             case CqrsResultCode.Created:

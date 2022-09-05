@@ -5,8 +5,8 @@ using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 
 namespace Hrim.Event.Analytics.EfCore.AutoMapper; 
 
-public class DurationEventTypeProfile: Profile {
-    public DurationEventTypeProfile() {
+public class DbDurationEventProfile: Profile {
+    public DbDurationEventProfile() {
         CreateMap<DbDurationEvent, DurationEvent>()
            .ForMember(business => business.StartedAt,  x => x.MapFrom<DurationStartedOnValueResolver>())
            .ForMember(business => business.FinishedAt, x => x.MapFrom<DurationFinishedOnValueResolver>())

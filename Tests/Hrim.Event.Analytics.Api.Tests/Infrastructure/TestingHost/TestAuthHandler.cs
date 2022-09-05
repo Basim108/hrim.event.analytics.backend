@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Hrim.Event.Analytics.Api.Tests.Infrastructure
+namespace Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost
 {
     [ExcludeFromCodeCoverage]
     public class TestAuthHandler: AuthenticationHandler<AuthenticationSchemeOptions>

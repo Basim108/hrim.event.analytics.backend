@@ -2,6 +2,7 @@ using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Api.Services;
+using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,8 +39,8 @@ public class EventBaseController<TEvent>: EventAnalyticsApiController
 
     /// <summary> Get user event by id </summary>
     [HttpGet("{id}")]
-    public async Task<ActionResult<TEvent>> GetEventByIdAsync(Guid id, CancellationToken cancellationToken) {
-        var occurrenceResult = await _mediator.Send(new GetEventById<TEvent>(id, IsNotTrackable: true, OperationContext),
+    public async Task<ActionResult<TEvent>> GetEventByIdAsync([FromRoute]ByIdRequest request, CancellationToken cancellationToken) {
+        var occurrenceResult = await _mediator.Send(new GetEventById<TEvent>(request.Id, IsNotTrackable: true, OperationContext),
                                                     cancellationToken);
         return ProcessCqrsResult(occurrenceResult);
     }

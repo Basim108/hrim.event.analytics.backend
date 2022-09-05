@@ -38,8 +38,8 @@ public static class EfCoreServiceRegistration {
         services.AddTransient<IRequestHandler<CheckUserExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
         services.AddTransient<IRequestHandler<CheckEventTypeExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
 
-        services.AddAutoMapper(typeof(DurationEventTypeProfile),
-                               typeof(OccurrenceEventTypeProfile));
+        services.AddAutoMapper(typeof(DbDurationEventProfile),
+                               typeof(DbOccurrenceEventProfile));
         services.AddNpgsqlContext<EventAnalyticDbContext>(appConfig, migrationAssembly);
     }
 }

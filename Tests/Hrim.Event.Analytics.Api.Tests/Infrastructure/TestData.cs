@@ -1,47 +1,19 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
-using Hrim.Event.Analytics.Api.V1.Models;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
+[ExcludeFromCodeCoverage]
 public class TestData {
     private readonly EventAnalyticDbContext _context;
-
-    private readonly Guid _userId = Guid.Parse("4e8712b8-1bdb-4bad-9047-9fc90251973e");
-
-    public TestData() {
-        _context = DbUtils.GetDbContext();
-    }
 
     public TestData(EventAnalyticDbContext context) {
         _context = context;
     }
-
-    /// <summary>
-    /// Correct create event type request 
-    /// </summary>
-    public readonly CreateEventTypeRequest CreateEventTypeRequest = new() {
-        Name        = "Headache",
-        Color       = "#ff0000",
-        Description = "times when I had a headache",
-        IsPublic    = true
-    };
-
-    /// <summary>
-    /// Correct update event type request 
-    /// </summary>
-    public readonly UpdateEventTypeRequest UpdateEventTypeRequest = new() {
-        Id              = Guid.NewGuid(),
-        ConcurrentToken = 1,
-        Name            = "Headache",
-        Color           = "#ff0000",
-        Description     = "times when I had a headache",
-        IsPublic        = true
-    };
 
     public HrimUser CreateUser(Guid id, bool isDeleted = false) {
         lock (_context) {
@@ -82,25 +54,40 @@ public class TestData {
         return entity;
     }
 
-    public DbDurationEvent CreateDurationEvent(Guid userId, Guid eventTypeId, bool isDeleted = false) {
+    public DbDurationEvent CreateDurationEvent(Guid            userId,
+                                               Guid            eventTypeId,
+                                               bool            isDeleted  = false,
+                                               DateTimeOffset? startedAt  = null,
+                                               DateTimeOffset? finishedAt = null) {
         var entity = new DbDurationEvent {
             CreatedById     = userId,
             EventTypeId     = eventTypeId,
             StartedOn       = new DateOnly(2020, 09, 1),
-            StartedAt       = new DateTimeOffset(2020, 09, 1, 15, 0, 0, TimeSpan.Zero),
+            StartedAt       = new DateTimeOffset(2020, 09, 1, 15, 0, 0, TimeSpan.FromHours(4)),
             FinishedOn      = new DateOnly(2020, 09, 1),
-            FinishedAt      = new DateTimeOffset(2020, 09, 1, 16, 0, 0, TimeSpan.Zero),
+            FinishedAt      = new DateTimeOffset(2020, 09, 1, 16, 0, 0, TimeSpan.FromHours(4)),
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
         if (isDeleted)
             entity.IsDeleted = true;
+        if (startedAt.HasValue) {
+            entity.StartedAt = startedAt.Value;
+            entity.StartedOn = new DateOnly(startedAt.Value.Year, startedAt.Value.Month, startedAt.Value.Day);
+        }
+        if (finishedAt.HasValue) {
+            entity.FinishedAt = finishedAt.Value;
+            entity.FinishedOn = new DateOnly(finishedAt.Value.Year, finishedAt.Value.Month, finishedAt.Value.Day);
+        }
         _context.DurationEvents.Add(entity);
         _context.SaveChanges();
         return entity;
     }
 
-    public DbOccurrenceEvent CreateOccurrenceEvent(Guid userId, Guid eventTypeId, bool isDeleted = false) {
+    public DbOccurrenceEvent CreateOccurrenceEvent(Guid            userId,
+                                                   Guid            eventTypeId,
+                                                   bool            isDeleted  = false,
+                                                   DateTimeOffset? occurredAt = null) {
         var entity = new DbOccurrenceEvent() {
             CreatedById     = userId,
             EventTypeId     = eventTypeId,
@@ -111,19 +98,17 @@ public class TestData {
         };
         if (isDeleted)
             entity.IsDeleted = true;
+        if (occurredAt.HasValue) {
+            entity.OccurredAt = occurredAt.Value.TruncateToMilliseconds();
+            entity.OccurredOn = new DateOnly(occurredAt.Value.Year,
+                                             occurredAt.Value.Month,
+                                             occurredAt.Value.Day);
+        }
         _context.OccurrenceEvents.Add(entity);
         _context.SaveChanges();
         return entity;
     }
 
-    public void DeleteUser(Guid userId) {
-        var user = _context.HrimUsers.FirstOrDefault(x => x.Id == userId);
-        if (user != null) {
-            _context.HrimUsers.Remove(user);
-            _context.SaveChanges();
-        }
-    }
-    
     /// <summary> Creates number of event types </summary>
     /// <param name="count">the number of entities that has to be created</param>
     /// <param name="userId">an owner</param>
@@ -146,15 +131,5 @@ public class TestData {
             result.Add(entity.Id, entity);
         }
         return result;
-    }
-
-    public void DeleteEventTypes(IEnumerable<Guid> entityIds) {
-        foreach (var id in entityIds) {
-            var db = _context.UserEventTypes.FirstOrDefault(x => x.Id == id);
-            if(db != null) {
-                _context.UserEventTypes.Remove(db);
-                _context.SaveChanges();
-            }
-        }
     }
 }
