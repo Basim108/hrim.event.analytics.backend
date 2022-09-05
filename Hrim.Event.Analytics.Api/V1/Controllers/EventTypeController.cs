@@ -1,11 +1,15 @@
+using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
@@ -17,12 +21,13 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Authorize]
 #endif
 [Route("v1/event-type")]
-public class EventTypeController: EventAnalyticsApiController {
+public class EventTypeController: EventAnalyticsApiController<UserEventType> {
     private readonly IMediator _mediator;
 
     /// <summary> </summary>
-    public EventTypeController(IApiRequestAccessor requestAccessor,
-                               IMediator           mediator): base(requestAccessor) {
+    public EventTypeController(IApiRequestAccessor       requestAccessor,
+                               IValidator<UserEventType> validator,
+                               IMediator                 mediator): base(requestAccessor, validator) {
         _mediator = mediator;
     }
 
@@ -42,6 +47,9 @@ public class EventTypeController: EventAnalyticsApiController {
     /// <summary> Create a new event type </summary>
     [HttpPost]
     public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request, CancellationToken cancellationToken) {
+        await ValidateRequestAsync(request, cancellationToken);
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
         var cqrsResult = await _mediator.Send(new EventTypeCreateCommand(request, SaveChanges: true, OperationContext),
                                               cancellationToken);
         return ProcessCqrsResult(cqrsResult);
@@ -50,6 +58,9 @@ public class EventTypeController: EventAnalyticsApiController {
     /// <summary> Update an event type </summary>
     [HttpPut]
     public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request, CancellationToken cancellationToken) {
+        await ValidateRequestAsync(request, cancellationToken);
+        if (!ModelState.IsValid)
+            return ValidationProblem(ModelState);
         var cqrsResult = await _mediator.Send(new EventTypeUpdateCommand(request, SaveChanges: true, OperationContext),
                                               cancellationToken);
         return ProcessCqrsResult(cqrsResult);

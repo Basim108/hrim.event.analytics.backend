@@ -1,4 +1,4 @@
-using AutoMapper;
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Services;
@@ -12,13 +12,15 @@ using NSubstitute;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests;
 
-public class BaseCqrsTests {
-    protected IMapper                Mapper          { get; }
-    protected IMediator              Mediator        { get; }
-    protected IServiceProvider       ServiceProvider { get; }
-    protected EventAnalyticDbContext DbContext       { get; }
-    protected TestData               TestData        { get; }
-    protected OperationContext       OperatorContext { get; }
+/// <inheritdoc />
+[ExcludeFromCodeCoverage]
+public class BaseCqrsTests: IDisposable {
+    protected IMediator        Mediator        { get; }
+    protected IServiceProvider ServiceProvider { get; }
+    protected TestData         TestData        { get; }
+    protected OperationContext OperatorContext { get; }
+
+    private readonly IServiceScope _serviceScope;
 
     public BaseCqrsTests() {
         var appConfig = new ConfigurationBuilder()
@@ -45,15 +47,26 @@ public class BaseCqrsTests {
                               .Returns(new OperationContext(operatorId, correlationId));
             return apiRequestAccessor;
         });
-        ServiceProvider = services.BuildServiceProvider().CreateScope().ServiceProvider;
+        _serviceScope   = services.BuildServiceProvider().CreateScope();
+        ServiceProvider = _serviceScope.ServiceProvider;
 
-        Mapper    = ServiceProvider.GetRequiredService<IMapper>();
-        Mediator  = ServiceProvider.GetRequiredService<IMediator>();
-        DbContext = ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-        TestData  = new TestData(DbContext);
+        Mediator = ServiceProvider.GetRequiredService<IMediator>();
+        var context = ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
+        TestData = new TestData(context);
         var apiRequestAccessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         OperatorContext = apiRequestAccessor.GetOperationContext();
 
         TestData.CreateUser(OperatorContext.UserId);
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing) {
+        if (disposing) {
+            _serviceScope.Dispose();
+        }
     }
 }

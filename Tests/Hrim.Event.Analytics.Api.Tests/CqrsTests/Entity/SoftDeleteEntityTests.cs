@@ -111,7 +111,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
         var command    = new SoftDeleteEntityCommand<HrimUser>(entityId, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
-        CheckSoftDeletedEntity(entityId, cqrsResult, DbContext.HrimUsers);
+        CheckSoftDeletedEntity(entityId, cqrsResult, TestData.DbContext.HrimUsers);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
         var command    = new SoftDeleteEntityCommand<UserEventType>(headache.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
-        CheckSoftDeletedEntity(headache.Id, cqrsResult, DbContext.UserEventTypes);
+        CheckSoftDeletedEntity(headache.Id, cqrsResult, TestData.DbContext.UserEventTypes);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
         var dbEntity     = _mapper.Map<DbDurationEvent>(cqrsResult.Result);
         var dbCqrsResult = new CqrsResult<DbDurationEvent?>(dbEntity, cqrsResult.StatusCode, cqrsResult.Info);
-        CheckSoftDeletedEntity(durationEvent.Id, dbCqrsResult, DbContext.DurationEvents);
+        CheckSoftDeletedEntity(durationEvent.Id, dbCqrsResult, TestData.DbContext.DurationEvents);
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
         
         var dbEntity     = _mapper.Map<DbOccurrenceEvent>(cqrsResult.Result);
         var dbCqrsResult = new CqrsResult<DbOccurrenceEvent?>(dbEntity, cqrsResult.StatusCode, cqrsResult.Info);
-        CheckSoftDeletedEntity(nicePracticeEvent.Id, dbCqrsResult, DbContext.OccurrenceEvents);
+        CheckSoftDeletedEntity(nicePracticeEvent.Id, dbCqrsResult, TestData.DbContext.OccurrenceEvents);
     }
 
     [Fact]

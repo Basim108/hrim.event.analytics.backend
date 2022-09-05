@@ -1,9 +1,10 @@
 using System.Security.Claims;
-using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 using Hrim.Event.Analytics.Api.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+#if RELEASE
+using Microsoft.AspNetCore.Authorization;
+#endif
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers; 
 

@@ -20,5 +20,12 @@ public class EventAsyncValidator: AbstractValidator<BaseEvent> {
                 return cqrsResult.StatusCode == CqrsResultCode.Ok;
             })
            .WithMessage(ValidationMessages.ENTITY_DOES_NOT_EXISTS);
+        RuleFor(x => x.CreatedById)
+           .MustAsync(async (id, cancellationToken) => {
+                var cqrsResult = await mediator.Send(new CheckEntityExistence(id, EntityType.HrimUser, requestAccessor.GetCorrelationId()),
+                                                     cancellationToken);
+                return cqrsResult.StatusCode == CqrsResultCode.Ok;
+            })
+           .WithMessage(ValidationMessages.ENTITY_DOES_NOT_EXISTS);
     }
 }

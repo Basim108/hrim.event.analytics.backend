@@ -29,6 +29,22 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
                       .ContainsKey(nameof(createRequest.Name).ToSnakeCase())
                       .Should().BeTrue();
     }
+    
+    [Fact]
+    public async Task Create_Given_NonExisting_CreatById_Returns_BadRequest() {
+        CreateEventTypeRequest.CreatedById = Guid.NewGuid();
+
+        var response = await Client!.PostAsync("", TestUtils.PrepareJson(CreateEventTypeRequest));
+        
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().NotBeEmpty();
+        problemDetails.Errors
+                      .ContainsKey(nameof(CreateEventTypeRequest.CreatedById).ToSnakeCase())
+                      .Should().BeTrue();
+    }
 
     [Fact]
     public async Task Create_Given_Color_In_Wrong_Format_Returns_BadRequest() {
@@ -134,6 +150,22 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests {
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors
                       .ContainsKey(nameof(updateRequest.Color).ToSnakeCase())
+                      .Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task Update_Given_NonExisting_CreatById_Returns_BadRequest() {
+        UpdateEventTypeRequest.CreatedById = Guid.NewGuid();
+
+        var response = await Client!.PutAsync("", TestUtils.PrepareJson(UpdateEventTypeRequest));
+        
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().NotBeEmpty();
+        problemDetails.Errors
+                      .ContainsKey(nameof(UpdateEventTypeRequest.CreatedById).ToSnakeCase())
                       .Should().BeTrue();
     }
 }

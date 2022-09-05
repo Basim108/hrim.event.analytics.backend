@@ -14,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
 [ExcludeFromCodeCoverage]
 public class DurationEventControllerValidationTests: BaseEventControllerValidationTests {
-    public DurationEventControllerValidationTests(WebAppFactory<Program> factory) {
+    public DurationEventControllerValidationTests(WebAppFactory<Program> factory):base(factory) {
         Client = factory.GetClient("v1/event/duration/");
     }
 
