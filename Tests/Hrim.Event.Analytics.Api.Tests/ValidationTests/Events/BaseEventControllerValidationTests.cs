@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
 [ExcludeFromCodeCoverage]
+[SuppressMessage("Usage", "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public abstract class BaseEventControllerValidationTests: BaseEntityControllerTests {
     protected readonly JsonSerializerSettings JsonSettings = JsonSettingsFactory.Get();
     
