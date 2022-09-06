@@ -14,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests;
 
 /// <inheritdoc />
 [ExcludeFromCodeCoverage]
-public class BaseCqrsTests: IDisposable {
+public abstract class BaseCqrsTests: IDisposable {
     protected IMediator        Mediator        { get; }
     protected IServiceProvider ServiceProvider { get; }
     protected TestData         TestData        { get; }
@@ -22,7 +22,7 @@ public class BaseCqrsTests: IDisposable {
 
     private readonly IServiceScope _serviceScope;
 
-    public BaseCqrsTests() {
+    protected BaseCqrsTests() {
         var appConfig = new ConfigurationBuilder()
                         // .AddInMemoryCollection(new Dictionary<string, string>() { })
                        .AddJsonFile("appsettings.Tests.json")
@@ -56,7 +56,7 @@ public class BaseCqrsTests: IDisposable {
         var apiRequestAccessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         OperatorContext = apiRequestAccessor.GetOperationContext();
 
-        TestData.CreateUser(OperatorContext.UserId);
+        TestData.Users.EnsureUserExistence(OperatorContext.UserId);
     }
 
     public void Dispose() {

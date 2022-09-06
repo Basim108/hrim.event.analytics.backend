@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
@@ -8,34 +7,11 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
 [ExcludeFromCodeCoverage]
-public class TestData {
-    public readonly EventAnalyticDbContext DbContext;
+public class EventsData {
+    private readonly EventAnalyticDbContext _context;
 
-    public TestData(EventAnalyticDbContext dbContext) {
-        DbContext = dbContext;
-    }
-
-    public HrimUser CreateUser(Guid id, bool isDeleted = false) {
-        lock (DbContext) {
-            var existed = DbContext.HrimUsers.FirstOrDefault(x => x.Id == id);
-            if (existed != null) {
-                if (existed.IsDeleted != isDeleted) {
-                    existed.IsDeleted = isDeleted;
-                    DbContext.SaveChanges();
-                }
-                return existed;
-            }
-            var user = new HrimUser {
-                Id              = id,
-                CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
-                ConcurrentToken = 1
-            };
-            if (isDeleted)
-                user.IsDeleted = true;
-            DbContext.HrimUsers.Add(user);
-            DbContext.SaveChanges();
-            return user;
-        }
+    public EventsData(EventAnalyticDbContext context) {
+        _context = context;
     }
 
     public UserEventType CreateEventType(Guid userId, string name, bool isDeleted = false) {
@@ -49,8 +25,8 @@ public class TestData {
         };
         if (isDeleted)
             entity.IsDeleted = true;
-        DbContext.UserEventTypes.Add(entity);
-        DbContext.SaveChanges();
+        _context.UserEventTypes.Add(entity);
+        _context.SaveChanges();
         return entity;
     }
 
@@ -79,8 +55,8 @@ public class TestData {
             entity.FinishedAt = finishedAt.Value;
             entity.FinishedOn = new DateOnly(finishedAt.Value.Year, finishedAt.Value.Month, finishedAt.Value.Day);
         }
-        DbContext.DurationEvents.Add(entity);
-        DbContext.SaveChanges();
+        _context.DurationEvents.Add(entity);
+        _context.SaveChanges();
         return entity;
     }
 
@@ -104,8 +80,8 @@ public class TestData {
                                              occurredAt.Value.Month,
                                              occurredAt.Value.Day);
         }
-        DbContext.OccurrenceEvents.Add(entity);
-        DbContext.SaveChanges();
+        _context.OccurrenceEvents.Add(entity);
+        _context.SaveChanges();
         return entity;
     }
 
@@ -126,8 +102,8 @@ public class TestData {
             };
             if (isDeleted)
                 entity.IsDeleted = true;
-            DbContext.UserEventTypes.Add(entity);
-            DbContext.SaveChanges();
+            _context.UserEventTypes.Add(entity);
+            _context.SaveChanges();
             result.Add(entity.Id, entity);
         }
         return result;

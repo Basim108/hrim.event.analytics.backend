@@ -15,7 +15,7 @@ public class OccurrenceEventCreateTests: BaseCqrsTests {
     private readonly UserEventType                _eventType;
 
     public OccurrenceEventCreateTests() {
-        _eventType = TestData.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
         _createRequest = new OccurrenceEventCreateRequest {
             OccurredAt  = DateTimeOffset.Now,
             EventTypeId = _eventType.Id
@@ -35,7 +35,7 @@ public class OccurrenceEventCreateTests: BaseCqrsTests {
 
     [Fact]
     public async Task Create_OccurrenceEvent_With_Same_OccurredAt_And_EventType() {
-        var dbEntity      = TestData.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, isDeleted: false, _createRequest.OccurredAt);
+        var dbEntity      = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, isDeleted: false, _createRequest.OccurredAt);
         var createRequest = new OccurrenceEventCreateRequest();
         dbEntity.CopyTo(createRequest);
         var command = new OccurrenceEventCreateCommand(createRequest, SaveChanges: true, OperatorContext);
@@ -46,8 +46,8 @@ public class OccurrenceEventCreateTests: BaseCqrsTests {
 
     [Fact]
     public async Task Create_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt() {
-        TestData.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, isDeleted: true, _createRequest.OccurredAt);
-        var dbEntity      = TestData.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, isDeleted: false, _createRequest.OccurredAt);
+        TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, isDeleted: true, _createRequest.OccurredAt);
+        var dbEntity      = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, isDeleted: false, _createRequest.OccurredAt);
         var createRequest = new OccurrenceEventCreateRequest();
         dbEntity.CopyTo(createRequest);
         createRequest.IsDeleted = null;

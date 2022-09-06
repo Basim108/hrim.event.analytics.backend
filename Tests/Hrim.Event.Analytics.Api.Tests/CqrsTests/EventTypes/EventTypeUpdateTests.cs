@@ -22,7 +22,7 @@ public class EventTypeCqrsTests: BaseCqrsTests {
 
     [Fact]
     public async Task Update_EventType() {
-        var createdEntities = TestData.CreateManyEventTypes(1, OperatorContext.UserId);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId);
         var forUpdate       = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         forUpdate.Name = "Updated";
@@ -52,7 +52,7 @@ public class EventTypeCqrsTests: BaseCqrsTests {
 
     [Fact]
     public async Task Update_With_Wrong_ConcurrentToken() {
-        var createdEntities = TestData.CreateManyEventTypes(1, OperatorContext.UserId);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId);
         var forUpdate       = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         forUpdate.ConcurrentToken = 3;
@@ -65,7 +65,7 @@ public class EventTypeCqrsTests: BaseCqrsTests {
 
     [Fact]
     public async Task Update_Already_Deleted_Entity() {
-        var createdEntities = TestData.CreateManyEventTypes(1, OperatorContext.UserId, isDeleted: true);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId, isDeleted: true);
         var forUpdate       = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         var updateCommand = new EventTypeUpdateCommand(forUpdate, SaveChanges: true, OperatorContext);
@@ -83,8 +83,8 @@ public class EventTypeCqrsTests: BaseCqrsTests {
     [Fact]
     public async Task Update_Given_Not_My_EventType_Forbid() {
         var anotherUserId = Guid.NewGuid();
-        TestData.CreateUser(anotherUserId);
-        var createdEntities = TestData.CreateManyEventTypes(1, anotherUserId);
+        TestData.Users.EnsureUserExistence(anotherUserId);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, anotherUserId);
         var forUpdate       = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         var updateCommand = new EventTypeUpdateCommand(forUpdate, SaveChanges: true, OperatorContext);

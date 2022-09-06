@@ -71,7 +71,7 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     [Theory]
     [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
     public async Task Create_Given_NonExistent_CreatedById_Returns_BadRequest(string createdById) {
-        var eventType     = _testData.CreateEventType(_operatorId, $"Headache-{Guid.NewGuid()}");
+        var eventType     = _testData.Events.CreateEventType(_operatorId, $"Headache-{Guid.NewGuid()}");
         var createRequest = GetBaseEventCreateRequest();
         createRequest.EventTypeId = eventType.Id;
         createRequest.CreatedById = Guid.Parse(createdById);
@@ -131,7 +131,7 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     [Theory]
     [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
     public async Task Update_Given_NonExistent_CreatedById_Returns_BadRequest(string createdById) {
-        var eventType     = _testData.CreateEventType(_operatorId, $"Headache-{Guid.NewGuid()}");
+        var eventType     = _testData.Events.CreateEventType(_operatorId, $"Headache-{Guid.NewGuid()}");
         var updateRequest = GetBaseEventUpdateRequest();
         updateRequest.EventTypeId = eventType.Id;
         updateRequest.CreatedById = Guid.Parse(createdById);

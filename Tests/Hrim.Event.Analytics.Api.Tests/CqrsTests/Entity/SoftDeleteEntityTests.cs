@@ -24,8 +24,8 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
     [Fact]
     public async Task EventType_Should_Forbid() {
         var anotherId = Guid.NewGuid();
-        TestData.CreateUser(anotherId);
-        var headache = TestData.CreateEventType(anotherId, $"Headache-{Guid.NewGuid()}");
+        TestData.Users.EnsureUserExistence(anotherId);
+        var headache = TestData.Events.CreateEventType(anotherId, $"Headache-{Guid.NewGuid()}");
 
         var command    = new SoftDeleteEntityCommand<UserEventType>(headache.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -36,9 +36,9 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
     [Fact]
     public async Task DurationEvent_Should_Forbid() {
         var anotherId = Guid.NewGuid();
-        TestData.CreateUser(anotherId);
-        var headache      = TestData.CreateEventType(anotherId, $"Headache-{Guid.NewGuid()}");
-        var durationEvent = TestData.CreateDurationEvent(anotherId, headache.Id);
+        TestData.Users.EnsureUserExistence(anotherId);
+        var headache      = TestData.Events.CreateEventType(anotherId, $"Headache-{Guid.NewGuid()}");
+        var durationEvent = TestData.Events.CreateDurationEvent(anotherId, headache.Id);
 
         var command    = new SoftDeleteEntityCommand<DurationEvent>(durationEvent.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -49,9 +49,9 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
     [Fact]
     public async Task OccurrenceEvent_Should_Forbid() {
         var anotherId = Guid.NewGuid();
-        TestData.CreateUser(anotherId);
-        var nicePractice    = TestData.CreateEventType(anotherId, $"Nice Practice-{Guid.NewGuid()}");
-        var occurrenceEvent = TestData.CreateOccurrenceEvent(anotherId, nicePractice.Id);
+        TestData.Users.EnsureUserExistence(anotherId);
+        var nicePractice    = TestData.Events.CreateEventType(anotherId, $"Nice Practice-{Guid.NewGuid()}");
+        var occurrenceEvent = TestData.Events.CreateOccurrenceEvent(anotherId, nicePractice.Id);
 
         var command    = new SoftDeleteEntityCommand<OccurrenceEvent>(occurrenceEvent.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -107,7 +107,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
     [Fact]
     public async Task User_Should_SoftDelete() {
         var entityId = Guid.NewGuid();
-        TestData.CreateUser(entityId, isDeleted: false);
+        TestData.Users.EnsureUserExistence(entityId, isDeleted: false);
         var command    = new SoftDeleteEntityCommand<HrimUser>(entityId, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
@@ -116,7 +116,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
     [Fact]
     public async Task EventType_Should_SoftDelete() {
-        var headache = TestData.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        var headache = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
 
         var command    = new SoftDeleteEntityCommand<UserEventType>(headache.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -126,8 +126,8 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
     [Fact]
     public async Task DurationEvent_Should_SoftDelete() {
-        var headache      = TestData.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
-        var durationEvent = TestData.CreateDurationEvent(OperatorContext.UserId, headache.Id);
+        var headache      = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        var durationEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, headache.Id);
 
         var command    = new SoftDeleteEntityCommand<DurationEvent>(durationEvent.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -139,8 +139,8 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
     [Fact]
     public async Task OccurrenceEvent_Should_SoftDelete() {
-        var nicePractice      = TestData.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
-        var nicePracticeEvent = TestData.CreateOccurrenceEvent(OperatorContext.UserId, nicePractice.Id);
+        var nicePractice      = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
+        var nicePracticeEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, nicePractice.Id);
 
         var command      = new SoftDeleteEntityCommand<OccurrenceEvent>(nicePracticeEvent.Id, SaveChanges: true, OperatorContext);
         var cqrsResult   = await Mediator.Send(command);
@@ -153,7 +153,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
     [Fact]
     public async Task Deleted_User_Should_Recognize() {
         var entityId = Guid.NewGuid();
-        TestData.CreateUser(entityId, isDeleted: true);
+        TestData.Users.EnsureUserExistence(entityId, isDeleted: true);
         var command    = new SoftDeleteEntityCommand<HrimUser>(entityId, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
@@ -162,7 +162,7 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
     [Fact]
     public async Task Deleted_EventType_Should_Recognize() {
-        var headache = TestData.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}", isDeleted: true);
+        var headache = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}", isDeleted: true);
 
         var command    = new SoftDeleteEntityCommand<UserEventType>(headache.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -172,8 +172,8 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
     [Fact]
     public async Task Deleted_DurationEvent_Should_Recognize() {
-        var headache      = TestData.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
-        var durationEvent = TestData.CreateDurationEvent(OperatorContext.UserId, headache.Id, isDeleted: true);
+        var headache      = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        var durationEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, headache.Id, isDeleted: true);
 
         var command    = new SoftDeleteEntityCommand<DurationEvent>(durationEvent.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -183,8 +183,8 @@ public class SoftDeleteEntityTests: BaseCqrsTests {
 
     [Fact]
     public async Task Deleted_OccurrenceEvent_Should_Recognize() {
-        var nicePractice      = TestData.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
-        var nicePracticeEvent = TestData.CreateOccurrenceEvent(OperatorContext.UserId, nicePractice.Id, isDeleted: true);
+        var nicePractice      = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
+        var nicePracticeEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, nicePractice.Id, isDeleted: true);
 
         var command    = new SoftDeleteEntityCommand<OccurrenceEvent>(nicePracticeEvent.Id, SaveChanges: true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
