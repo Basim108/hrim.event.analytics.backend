@@ -17,14 +17,7 @@ public static class CqrsResultChecks {
         cqrsResult.Should().NotBeNull();
         cqrsResult.StatusCode.Should().Be(CqrsResultCode.Created);
 
-        cqrsResult.Result.Should().NotBeNull();
-        cqrsResult.Result!.Id.Should().NotBeEmpty();
-        if (operatorId.HasValue && cqrsResult.Result is IHasOwner ownerResult)
-            ownerResult.CreatedById.Should().Be(operatorId.Value);
-        cqrsResult.Result.CreatedAt.Should().BeAfter(beforeSend);
-        cqrsResult.Result.UpdatedAt.Should().BeNull();
-        cqrsResult.Result.IsDeleted.Should().BeNull();
-        cqrsResult.Result.ConcurrentToken.Should().Be(1);
+        cqrsResult.Result.CheckEntitySuccessfulCreation(beforeSend, operatorId);
     }
 
     /// <summary>
@@ -58,14 +51,7 @@ public static class CqrsResultChecks {
         cqrsResult.Should().NotBeNull();
         cqrsResult.StatusCode.Should().Be(CqrsResultCode.Ok);
 
-        cqrsResult.Result.Should().NotBeNull();
-        cqrsResult.Result!.Id.Should().Be(forUpdate.Id);
-        if (operatorId.HasValue && cqrsResult.Result is IHasOwner ownerResult)
-            ownerResult.CreatedById.Should().Be(operatorId.Value);
-        cqrsResult.Result.CreatedAt.Should().Be(forUpdate.CreatedAt);
-        cqrsResult.Result.UpdatedAt.Should().BeAfter(beforeSend);
-        cqrsResult.Result.IsDeleted.Should().BeNull();
-        cqrsResult.Result.ConcurrentToken.Should().Be(2);
+        cqrsResult.Result.CheckEntitySuccessfulUpdate(beforeSend, operatorId, forUpdate);
     }
 
     /// <summary> Checks common for update entity properties </summary>

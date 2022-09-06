@@ -14,7 +14,7 @@ public class OccurrenceEventUpdateTests: BaseCqrsTests {
     private readonly UserEventType                _eventType;
 
     public OccurrenceEventUpdateTests() {
-        _eventType = TestData.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
         _updateRequest = new OccurrenceEventUpdateRequest {
             OccurredAt  = DateTimeOffset.Now,
             EventTypeId = _eventType.Id
@@ -23,7 +23,7 @@ public class OccurrenceEventUpdateTests: BaseCqrsTests {
 
     [Fact]
     public async Task Update_OccurrenceEvent() {
-        var dbEvent = TestData.CreateOccurrenceEvent(OperatorContext.UserId,
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
                                                      _eventType.Id, 
                                                      isDeleted: false, 
                                                      _updateRequest.OccurredAt);
@@ -42,7 +42,7 @@ public class OccurrenceEventUpdateTests: BaseCqrsTests {
 
     [Fact]
     public async Task Update_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt() {
-        var dbEvent = TestData.CreateOccurrenceEvent(OperatorContext.UserId,
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
                                                      _eventType.Id, 
                                                      isDeleted: true, 
                                                      _updateRequest.OccurredAt);
@@ -59,7 +59,7 @@ public class OccurrenceEventUpdateTests: BaseCqrsTests {
     
     [Fact]
     public async Task Update_OccurrenceEvent_With_Wrong_ConcurrentToken() {
-        var dbEvent = TestData.CreateOccurrenceEvent(OperatorContext.UserId,
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
                                                      _eventType.Id, 
                                                      isDeleted: false, 
                                                      _updateRequest.OccurredAt);

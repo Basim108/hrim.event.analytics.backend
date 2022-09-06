@@ -15,7 +15,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
     private readonly UserEventType              _eventType;
 
     public DurationEventCreateTests() {
-        _eventType = TestData.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
         _createRequest = new DurationEventCreateRequest {
             StartedAt   = DateTimeOffset.Now.AddHours(-1),
             FinishedAt  = DateTimeOffset.Now,
@@ -37,7 +37,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
 
     [Fact]
     public async Task Create_DurationEvent_With_Same_StartedAt_And_EventType() {
-        var dbEntity      = TestData.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+        var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
         var createRequest = new DurationEventCreateRequest();
         dbEntity.CopyTo(createRequest);
         var command    = new DurationEventCreateCommand(createRequest, SaveChanges: true, OperatorContext);
@@ -48,7 +48,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
 
     [Fact]
     public async Task Create_DurationEvent_With_Same_But_Soft_Deleted_OccurredAt() {
-        var dbEntity      = TestData.CreateDurationEvent(OperatorContext.UserId, _eventType.Id, isDeleted: true);
+        var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id, isDeleted: true);
         var createRequest = new DurationEventCreateRequest();
         dbEntity.CopyTo(createRequest);
 
@@ -61,7 +61,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
     // TODO: Should work with intervals intersections: add intersection_behaviour
     // [Fact]
     // public async Task Create_DurationEvent_With_Intervals_Intersection_Right_Border() {
-    //     var dbEntity      = TestData.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.StartedAt = createRequest.StartedAt.AddMinutes(5);
@@ -75,7 +75,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
     //
     // [Fact]
     // public async Task Create_DurationEvent_With_Intervals_Intersection_Left_Border() {
-    //     var dbEntity      = TestData.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.FinishedAt = createRequest.StartedAt.AddMinutes(5);
@@ -89,7 +89,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
     //
     // [Fact]
     // public async Task Create_DurationEvent_With_Interval_Inside_Existed() {
-    //     var dbEntity      = TestData.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.StartedAt  = createRequest.StartedAt.AddMinutes(5);
@@ -104,7 +104,7 @@ public class DurationEventCreateTests: BaseCqrsTests {
     // TODO: Should return two intervals: [before existed][existed][after existed]
     // [Fact]
     // public async Task Create_DurationEvent_With_Interval_Includes_Existed() {
-    //     var dbEntity      = TestData.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.StartedAt  = createRequest.StartedAt.AddMinutes(-5);

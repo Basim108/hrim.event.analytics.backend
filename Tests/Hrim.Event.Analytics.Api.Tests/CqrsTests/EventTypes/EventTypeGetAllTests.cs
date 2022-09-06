@@ -10,9 +10,9 @@ public class EventTypeGetAllTests: BaseCqrsTests {
     [Fact]
     public async Task GetAll_Returns_Owned_EventTypes() {
         var anotherUserId = Guid.NewGuid();
-        TestData.CreateUser(anotherUserId);
-        var myEventIds      = TestData.CreateManyEventTypes(4, OperatorContext.UserId).Keys;
-        var anotherEventIds = TestData.CreateManyEventTypes(1, anotherUserId).Keys;
+        TestData.Users.EnsureUserExistence(anotherUserId);
+        var myEventIds      = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId).Keys;
+        var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
 
         var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext));
         resultList.Should().NotBeEmpty();
