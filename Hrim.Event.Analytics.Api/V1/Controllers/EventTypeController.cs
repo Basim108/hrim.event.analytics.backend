@@ -2,6 +2,7 @@ using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
+using Hrim.Event.Analytics.Api.Filters;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
@@ -46,6 +47,7 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType> {
 
     /// <summary> Create a new event type </summary>
     [HttpPost]
+    [SetOwnerTypeFilter]
     public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request, CancellationToken cancellationToken) {
         await ValidateRequestAsync(request, cancellationToken);
         if (!ModelState.IsValid)
@@ -57,6 +59,7 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType> {
 
     /// <summary> Update an event type </summary>
     [HttpPut]
+    [SetOwnerTypeFilter]
     public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request, CancellationToken cancellationToken) {
         await ValidateRequestAsync(request, cancellationToken);
         if (!ModelState.IsValid)

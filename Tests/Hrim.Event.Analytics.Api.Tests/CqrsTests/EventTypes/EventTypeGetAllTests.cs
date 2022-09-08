@@ -6,7 +6,6 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
 
 [ExcludeFromCodeCoverage]
 public class EventTypeGetAllTests: BaseCqrsTests {
-
     [Fact]
     public async Task GetAll_Returns_Owned_EventTypes() {
         var anotherUserId = Guid.NewGuid();
@@ -18,6 +17,21 @@ public class EventTypeGetAllTests: BaseCqrsTests {
         resultList.Should().NotBeEmpty();
         resultList.Count.Should().Be(4);
         resultList.All(x => myEventIds.Contains(x.Id)).Should().BeTrue();
+        resultList.All(x => !anotherEventIds.Contains(x.Id)).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task GetAll_Returns_Owned_Regardless_To_IsPublic() {
+        var anotherUserId = Guid.NewGuid();
+        TestData.Users.EnsureUserExistence(anotherUserId);
+        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        myEvents.First().Value.IsPublic = false;
+        var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
+
+        var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext));
+        resultList.Should().NotBeEmpty();
+        resultList.Count.Should().Be(4);
+        resultList.All(x => myEvents.ContainsKey(x.Id)).Should().BeTrue();
         resultList.All(x => !anotherEventIds.Contains(x.Id)).Should().BeTrue();
     }
 }
