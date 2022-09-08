@@ -22,10 +22,10 @@ public class JsonModelBinder<TResult>: IModelBinder {
                                     .GetValue(bindingContext.ModelName)
                                     .FirstValue;
         var jsonSettings = JsonSettingsFactory.Get();
-        rawData = JsonConvert.SerializeObject(rawData, jsonSettings); // turns value to valid json
+        rawData = JsonConvert.SerializeObject(rawData, jsonSettings); 
         try
         {
-            var result = JsonConvert.DeserializeObject<TResult>(rawData, jsonSettings); //manually deserializing value
+            var result = JsonConvert.DeserializeObject<TResult>(rawData, jsonSettings); 
             bindingContext.Result = ModelBindingResult.Success(result);
         }
         catch (JsonSerializationException ex)

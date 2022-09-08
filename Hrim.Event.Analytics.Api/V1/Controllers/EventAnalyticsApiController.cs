@@ -1,10 +1,12 @@
 using System.Net;
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
+using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 
 #pragma warning disable CS1591

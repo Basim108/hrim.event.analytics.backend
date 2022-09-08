@@ -14,6 +14,7 @@ public static class ApiLogs {
     public const string RETURN_URI_IS_NOT_ALLOWED     = "Provided return uri is not allowed";
     public const string RETURN_URI_IS_IN_WRONG_FORMAT = "Provided return uri has wrong format. ErrorMessage={ErrorMessage}";
     public const string RETURN_URI_PROCESSING_ERROR   = "Error while processing return uri. ErrorMessage={ErrorMessage}";
+    public const string SET_OPERATOR_ID_TO_ENTITY     = "Set OperatorId={{OperatorId}} to the argument={0}";
 
     public const string JSON_MODEL_BINDER_DESERIALIZATION_ERROR =
         "Json deserialization of PropertyName={PropertyName},  ExceptionMessage={ExceptionMessage}, StackTrace={StackTrace}";

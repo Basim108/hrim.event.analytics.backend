@@ -1,6 +1,7 @@
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
+using Hrim.Event.Analytics.Api.Filters;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
@@ -33,6 +34,7 @@ public class EventDurationController: EventBaseController<DurationEvent> {
 
     /// <summary> Create a duration event </summary>
     [HttpPost]
+    [SetOwnerTypeFilter]
     public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEventCreateRequest request, CancellationToken cancellationToken) {
         await ValidateRequestAsync(request, cancellationToken);
         if (!ModelState.IsValid)
@@ -44,6 +46,7 @@ public class EventDurationController: EventBaseController<DurationEvent> {
 
     /// <summary> Update a duration event </summary>
     [HttpPut]
+    [SetOwnerTypeFilter]
     public async Task<ActionResult<DurationEvent>> UpdateDurationAsync(DurationEventUpdateRequest request, CancellationToken cancellationToken) {
         await ValidateRequestAsync(request, cancellationToken);
         if (!ModelState.IsValid)
