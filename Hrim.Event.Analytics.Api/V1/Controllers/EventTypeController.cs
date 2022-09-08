@@ -35,7 +35,7 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType> {
     /// <summary> Get all user event types </summary>
     [HttpGet]
     public Task<IList<ViewEventType>> GetAllAsync(CancellationToken cancellationToken)
-        => _mediator.Send(new EventTypeGetAllMine(OperationContext), cancellationToken);
+        => _mediator.Send(new EventTypeGetAllMine(OperationContext, IncludeOthersPublic: true), cancellationToken);
 
     /// <summary> Get user event type by id </summary>
     [HttpGet("{id}")]

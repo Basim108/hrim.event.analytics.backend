@@ -30,12 +30,16 @@ internal sealed class SetOwnerActionFilter: IActionFilter {
     /// <inheritdoc />
     public void OnActionExecuting(ActionExecutingContext context) {
         var operatorId = _requestAccessor.GetAuthorizedUserId();
+        var isNoOwnerSet = true;
         foreach (var (name, value) in context.ActionArguments) {
             if (value is not IHasOwner entity)
                 continue;
             entity.CreatedById = operatorId;
-            var message = string.Format(ApiLogs.SET_OPERATOR_ID_TO_ENTITY, name);
-            _logger.LogDebug(message, operatorId);
+            isNoOwnerSet       = false;
+            _logger.LogDebug(ApiLogs.SET_OPERATOR_ID_TO_ENTITY, operatorId, name);
+        }
+        if(isNoOwnerSet) {
+            _logger.LogWarning(ApiLogs.NO_OWNER_SET_IN_FILTER);
         }
     }
 

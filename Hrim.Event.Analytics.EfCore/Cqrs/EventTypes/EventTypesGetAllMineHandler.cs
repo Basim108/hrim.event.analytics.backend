@@ -42,7 +42,8 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
                                                                x.Description,
                                                                x.Color,
                                                                x.IsPublic,
-                                                               x.IsDeleted == true))
+                                                               x.IsDeleted == true,
+                                                               x.CreatedById == request.Context.UserId))
                                 .ToListAsync(cancellationToken);
         return result;
     }

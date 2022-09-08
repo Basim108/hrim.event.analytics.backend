@@ -35,4 +35,22 @@ public class EventTypeGetAllTests: BaseCqrsTests {
         myEvents.Keys.All(myEventId => resultList.Any(resultEvent => myEventId == resultEvent.Id)).Should().BeTrue();
         resultList.Any(x => anotherEventIds.Contains(x.Id)).Should().BeTrue();
     }
+    
+    [Fact]
+    public async Task Given_IncludeOthersPublic_True_Returns_Correct_IsMine_Property_Value() {
+        var anotherUserId = Guid.NewGuid();
+        TestData.Users.EnsureUserExistence(anotherUserId);
+        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        myEvents.First().Value.IsPublic = false;
+        var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
+
+        var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext, IncludeOthersPublic: true));
+        resultList.Should().NotBeEmpty();
+        resultList.Count.Should().Be(5);
+        foreach( var myEventId in myEvents.Keys) {
+            var resultEventType = resultList.First(x => x.Id == myEventId);
+            resultEventType.IsMine.Should().BeTrue();
+        }
+        resultList.First(x => anotherEventIds.Contains(x.Id)).IsMine.Should().BeFalse();
+    }
 }
