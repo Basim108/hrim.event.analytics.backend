@@ -7,31 +7,32 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
 [ExcludeFromCodeCoverage]
 public class EventTypeGetAllTests: BaseCqrsTests {
     [Fact]
-    public async Task GetAll_Returns_Owned_EventTypes() {
-        var anotherUserId = Guid.NewGuid();
-        TestData.Users.EnsureUserExistence(anotherUserId);
-        var myEventIds      = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId).Keys;
-        var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
-
-        var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext));
-        resultList.Should().NotBeEmpty();
-        resultList.Count.Should().Be(4);
-        resultList.All(x => myEventIds.Contains(x.Id)).Should().BeTrue();
-        resultList.All(x => !anotherEventIds.Contains(x.Id)).Should().BeTrue();
-    }
-
-    [Fact]
-    public async Task GetAll_Returns_Owned_Regardless_To_IsPublic() {
+    public async Task Given_IncludeOthersPublic_False_Returns_OnlyMine_Private_And_Public_EventTypes() {
         var anotherUserId = Guid.NewGuid();
         TestData.Users.EnsureUserExistence(anotherUserId);
         var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
         myEvents.First().Value.IsPublic = false;
         var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
 
-        var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext));
+        var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext, IncludeOthersPublic: false));
         resultList.Should().NotBeEmpty();
         resultList.Count.Should().Be(4);
         resultList.All(x => myEvents.ContainsKey(x.Id)).Should().BeTrue();
         resultList.All(x => !anotherEventIds.Contains(x.Id)).Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task Given_IncludeOthersPublic_True_Returns_All_Mine_And_Public_Others() {
+        var anotherUserId = Guid.NewGuid();
+        TestData.Users.EnsureUserExistence(anotherUserId);
+        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        myEvents.First().Value.IsPublic = false;
+        var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
+
+        var resultList = await Mediator.Send(new EventTypeGetAllMine(OperatorContext, IncludeOthersPublic: true));
+        resultList.Should().NotBeEmpty();
+        resultList.Count.Should().Be(5);
+        myEvents.Keys.All(myEventId => resultList.Any(resultEvent => myEventId == resultEvent.Id)).Should().BeTrue();
+        resultList.Any(x => anotherEventIds.Contains(x.Id)).Should().BeTrue();
     }
 }

@@ -22,12 +22,16 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
 
         return HandleAsync(request, cancellationToken);
     }
-    
+
     private async Task<IList<ViewEventType>> HandleAsync(EventTypeGetAllMine request, CancellationToken cancellationToken) {
-        var query = _context.UserEventTypes
-                            .Where(x => x.CreatedById == request.Context.UserId);
-        if (request.IsPublic) {
-            query = query.Where(x => x.IsPublic);
+        var query = _context.UserEventTypes.AsQueryable();
+
+        if (request.IncludeOthersPublic) {
+            query = query.Where(x => x.IsPublic ||
+                                     (!x.IsPublic && x.CreatedById == request.Context.UserId));
+        }
+        else {
+            query = query.Where(x => x.CreatedById == request.Context.UserId);
         }
         if (!request.IncludeDeleted) {
             query = query.Where(x => x.IsDeleted != true);
