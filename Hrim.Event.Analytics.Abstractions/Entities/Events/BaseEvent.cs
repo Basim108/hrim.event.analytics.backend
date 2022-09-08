@@ -15,7 +15,7 @@ public abstract class BaseEvent: HrimEntity, IHasOwner {
     /// <summary>
     /// A user who created an instance of this event type
     /// </summary>
-    public HrimUser? CreatedBy { get; set; }
+    public virtual HrimUser? CreatedBy { get; set; }
 
     /// <summary>
     /// Event type id on which current event is based.
@@ -25,7 +25,7 @@ public abstract class BaseEvent: HrimEntity, IHasOwner {
     /// <summary>
     /// Event type on which current event is based.
     /// </summary>
-    public UserEventType? EventType { get; set; } = null!;
+    public virtual UserEventType? EventType { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
     public void CopyTo(BaseEvent another) {

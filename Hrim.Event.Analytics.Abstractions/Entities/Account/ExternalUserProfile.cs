@@ -5,6 +5,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Account;
 /// <summary>
 /// Entity present a user from a specific identity provider such as Google, Facebook, etc
 /// </summary>
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class ExternalUserProfile: HrimEntity {
     /// <summary>
     /// An id of event analytics user
@@ -12,7 +13,7 @@ public class ExternalUserProfile: HrimEntity {
     public Guid HrimUserId { get; set; }
 
     /// <summary> Event analytics user that associated with this external user profile </summary>
-    public HrimUser? HrimUser { get; set; }
+    public virtual HrimUser? HrimUser { get; set; }
 
     /// <summary>
     /// A user id in external identity provider

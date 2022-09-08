@@ -30,7 +30,7 @@ public class UserEventType: HrimEntity, IHasOwner {
     /// <summary>
     /// A user who created an instance of this event type
     /// </summary>
-    public HrimUser? CreatedBy { get; set; }
+    public virtual HrimUser? CreatedBy { get; set; }
 
     /// <summary>
     /// An owner who created this event_type could share it with other end-users
