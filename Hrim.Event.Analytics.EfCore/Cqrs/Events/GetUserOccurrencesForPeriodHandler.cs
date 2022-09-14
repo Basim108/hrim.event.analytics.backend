@@ -15,6 +15,7 @@ public class GetUserOccurrencesForPeriodHandler: IRequestHandler<GetUserOccurren
 
     public async Task<IList<ViewOccurrenceEvent>> Handle(GetUserOccurrencesForPeriod request, CancellationToken cancellationToken) {
         var dbEntities = await _context.OccurrenceEvents
+                                       .Include(x => x.EventType)
                                        .Where(x => x.CreatedById == request.Context.UserId &&
                                                    x.OccurredOn  >= request.Start          &&
                                                    x.OccurredOn  <= request.End            &&
@@ -24,12 +25,16 @@ public class GetUserOccurrencesForPeriodHandler: IRequestHandler<GetUserOccurren
                                             x.Id,
                                             x.OccurredOn,
                                             x.OccurredAt,
-                                            x.EventTypeId
+                                            x.EventTypeId,
+                                            x.EventType!.Color,
+                                            x.ConcurrentToken
                                         })
                                        .ToListAsync(cancellationToken);
         var result = dbEntities.Select(x => new ViewOccurrenceEvent(x.Id,
                                                                     x.OccurredOn.CombineWithTime(x.OccurredAt),
-                                                                    x.EventTypeId))
+                                                                    x.EventTypeId,
+                                                                    x.Color,
+                                                                    x.ConcurrentToken))
                                .ToList();
         return result;
     }

@@ -15,6 +15,7 @@ public class GetUserDurationsForPeriodHandler: IRequestHandler<GetUserDurationsF
 
     public async Task<IList<ViewDurationEvent>> Handle(GetUserDurationsForPeriod request, CancellationToken cancellationToken) {
         var dbEntities = await _context.DurationEvents
+                                       .Include(x => x.EventType)
                                        .Where(x => x.CreatedById == request.Context.UserId &&
                                                    x.StartedOn   >= request.Start          &&
                                                    x.StartedOn   <= request.End            &&
@@ -26,13 +27,17 @@ public class GetUserDurationsForPeriodHandler: IRequestHandler<GetUserDurationsF
                                             x.StartedAt,
                                             x.FinishedOn,
                                             x.FinishedAt,
-                                            x.EventTypeId
+                                            x.EventTypeId,
+                                            x.EventType!.Color,
+                                            x.ConcurrentToken
                                         })
                                        .ToListAsync(cancellationToken);
         var result = dbEntities.Select(x => new ViewDurationEvent(x.Id,
                                                                   x.StartedOn.CombineWithTime(x.StartedAt),
                                                                   x.FinishedOn?.CombineWithTime(x.FinishedAt!.Value),
-                                                                  x.EventTypeId))
+                                                                  x.EventTypeId,
+                                                                  x.Color,
+                                                                  x.ConcurrentToken))
                                .ToList();
         return result;
     }

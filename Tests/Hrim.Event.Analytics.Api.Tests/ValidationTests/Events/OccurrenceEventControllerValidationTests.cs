@@ -14,9 +14,21 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
 [ExcludeFromCodeCoverage]
 public class OccurrenceEventControllerValidationTests: BaseEventControllerValidationTests {
-    public OccurrenceEventControllerValidationTests(WebAppFactory<Program> factory):base(factory) {
+    public OccurrenceEventControllerValidationTests(WebAppFactory<Program> factory): base(factory) {
         Client = factory.GetClient("v1/event/occurrence/");
     }
+
+    /// <summary> Correct create event request  </summary>
+    protected override OccurrenceEventCreateRequest GetCreateRequest() => new() {
+        OccurredAt = DateTimeOffset.Now
+    };
+
+    /// <summary> Correct update event request  </summary>
+    protected override OccurrenceEventUpdateRequest GetUpdateRequest() => new() {
+        Id              = Guid.NewGuid(),
+        ConcurrentToken = 1,
+        OccurredAt      = DateTimeOffset.Now
+    };
 
     /// <summary> Correct duration event create request </summary>
     private readonly OccurrenceEventCreateRequest _occurrenceEventCreateRequest = new() {
