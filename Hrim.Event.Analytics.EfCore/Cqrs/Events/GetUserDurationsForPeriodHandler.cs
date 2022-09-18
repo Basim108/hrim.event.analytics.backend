@@ -17,9 +17,10 @@ public class GetUserDurationsForPeriodHandler: IRequestHandler<GetUserDurationsF
         var dbEntities = await _context.DurationEvents
                                        .Include(x => x.EventType)
                                        .Where(x => x.CreatedById == request.Context.UserId &&
-                                                   x.StartedOn   >= request.Start          &&
-                                                   x.StartedOn   <= request.End            &&
-                                                   x.IsDeleted   != true)
+                                                   (x.StartedOn <= request.Start && x.FinishedOn > request.Start ||
+                                                    x.StartedOn >= request.Start && x.StartedOn  <= request.End  ||
+                                                    x.StartedOn < request.End    && x.FinishedOn >= request.End) &&
+                                                   x.IsDeleted != true)
                                        .AsNoTracking()
                                        .Select(x => new {
                                             x.Id,

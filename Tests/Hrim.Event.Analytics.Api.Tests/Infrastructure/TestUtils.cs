@@ -14,6 +14,10 @@ namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
 [ExcludeFromCodeCoverage]
 public static class TestUtils {
+    
+    public static DateTimeOffset DayStart = new DateTimeOffset(2022, 01, 01, 0,  0,  0,  TimeSpan.Zero);
+    public static DateTimeOffset DayEnd   = new DateTimeOffset(2022, 01, 01, 23, 59, 59, TimeSpan.Zero);
+    
     /// <summary>
     /// Cleans up previous registrations of a type
     /// </summary>
