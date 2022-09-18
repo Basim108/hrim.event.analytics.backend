@@ -4,17 +4,14 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
-using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
-using Hrim.Event.Analytics.Api.V1.Models;
-using Hrimsoft.Core.Extensions;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
 [ExcludeFromCodeCoverage]
-public class GetUserDurationsForPeriodTests: BaseCqrsTests {
+public class DurationEventGetForPeriodTests: BaseCqrsTests {
     private readonly UserEventType _eventType;
 
-    public GetUserDurationsForPeriodTests() {
+    public DurationEventGetForPeriodTests() {
         _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
     }
 
@@ -33,7 +30,7 @@ public class GetUserDurationsForPeriodTests: BaseCqrsTests {
                                             startedAt: DateTimeOffset.Now,
                                             finishedAt: DateTimeOffset.Now);
 
-        var query      = new GetUserDurationsForPeriod(start, end, OperatorContext);
+        var query      = new DurationEventGetForPeriod(start, end, OperatorContext);
         var resultList = await Mediator.Send(query);
 
         resultList.Should().NotBeEmpty();
@@ -48,7 +45,7 @@ public class GetUserDurationsForPeriodTests: BaseCqrsTests {
         TestData.Events.CreateManyDurationEvents(count: 3, OperatorContext.UserId,
                                                  start, end, _eventType.Id);
 
-        var query      = new GetUserDurationsForPeriod(start, end, OperatorContext);
+        var query      = new DurationEventGetForPeriod(start, end, OperatorContext);
         var resultList = await Mediator.Send(query);
 
         resultList.Should().NotBeEmpty();
@@ -65,7 +62,7 @@ public class GetUserDurationsForPeriodTests: BaseCqrsTests {
                                                                isDeleted: false, start, end);
         var reportPeriodStart = start.ToDateOnly().AddDays(1);
         var reportPeriodEnd   = reportPeriodStart.AddDays(1);
-        var query             = new GetUserDurationsForPeriod(reportPeriodStart, reportPeriodEnd, OperatorContext);
+        var query             = new DurationEventGetForPeriod(reportPeriodStart, reportPeriodEnd, OperatorContext);
         var resultList        = await Mediator.Send(query);
 
         resultList.Should().NotBeEmpty();
@@ -83,7 +80,7 @@ public class GetUserDurationsForPeriodTests: BaseCqrsTests {
         // reportEnd should be > eventEnd
         var reportPeriodStart = start.ToDateOnly().AddDays(-1);
         var reportPeriodEnd   = end.ToDateOnly().AddDays(1);
-        var query             = new GetUserDurationsForPeriod(reportPeriodStart, reportPeriodEnd, OperatorContext);
+        var query             = new DurationEventGetForPeriod(reportPeriodStart, reportPeriodEnd, OperatorContext);
         var resultList        = await Mediator.Send(query);
 
         resultList.Should().NotBeEmpty();
@@ -99,7 +96,7 @@ public class GetUserDurationsForPeriodTests: BaseCqrsTests {
                                                                isDeleted: false, start, end);
         var reportPeriodStart = start.ToDateOnly().AddDays(1);
         var reportPeriodEnd   = start.ToDateOnly().AddDays(2);
-        var query             = new GetUserDurationsForPeriod(reportPeriodStart, reportPeriodEnd, OperatorContext);
+        var query             = new DurationEventGetForPeriod(reportPeriodStart, reportPeriodEnd, OperatorContext);
         var resultList        = await Mediator.Send(query);
 
         resultList.Should().NotBeEmpty();

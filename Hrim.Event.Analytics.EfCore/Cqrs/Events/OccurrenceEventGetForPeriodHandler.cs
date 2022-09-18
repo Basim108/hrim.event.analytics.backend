@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
-public class GetUserOccurrencesForPeriodHandler: IRequestHandler<GetUserOccurrencesForPeriod, IList<ViewOccurrenceEvent>> {
+public class OccurrenceEventGetForPeriodHandler: IRequestHandler<OccurrenceEventGetForPeriod, IList<ViewOccurrenceEvent>> {
     private readonly EventAnalyticDbContext _context;
 
-    public GetUserOccurrencesForPeriodHandler(EventAnalyticDbContext context) {
+    public OccurrenceEventGetForPeriodHandler(EventAnalyticDbContext context) {
         _context = context;
     }
 
-    public async Task<IList<ViewOccurrenceEvent>> Handle(GetUserOccurrencesForPeriod request, CancellationToken cancellationToken) {
+    public async Task<IList<ViewOccurrenceEvent>> Handle(OccurrenceEventGetForPeriod request, CancellationToken cancellationToken) {
         var dbEntities = await _context.OccurrenceEvents
                                        .Include(x => x.EventType)
                                        .Where(x => x.CreatedById == request.Context.UserId &&

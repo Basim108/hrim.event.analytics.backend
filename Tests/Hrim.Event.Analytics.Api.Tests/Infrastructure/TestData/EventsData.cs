@@ -81,6 +81,25 @@ public class EventsData {
         return resultList;
     }
 
+    public List<DbOccurrenceEvent> CreateManyOccurrenceEvents(int count, Guid userId, DateOnly start, DateOnly end, Guid? eventTypeId = null) {
+        if (end < start)
+            throw new ArgumentException($"{nameof(end)}({end}) must be greater or equal to {nameof(start)}({start})", nameof(end));
+        eventTypeId ??= CreateEventType(userId, $"event-type-name: {Guid.NewGuid()}").Id;
+        var startedAt  = new DateTimeOffset(start.Year, start.Month, start.Day, 0,  0,  0,  TimeSpan.Zero);
+        var finishedAt = new DateTimeOffset(end.Year,   end.Month,   end.Day,   23, 59, 59, TimeSpan.Zero);
+        var timeStep   = (finishedAt - startedAt).TotalHours / count;
+        var resultList = new List<DbOccurrenceEvent>(count);
+        for (var i = 0; i < count; i++) {
+            var currentStart = startedAt.AddHours(timeStep * i);
+            var @event = CreateOccurrenceEvent(userId,
+                                               eventTypeId.Value,
+                                               isDeleted: false,
+                                               occurredAt: currentStart);
+            resultList.Add(@event);
+        }
+        return resultList;
+    }
+
     public DbOccurrenceEvent CreateOccurrenceEvent(Guid            userId,
                                                    Guid            eventTypeId,
                                                    bool            isDeleted  = false,
