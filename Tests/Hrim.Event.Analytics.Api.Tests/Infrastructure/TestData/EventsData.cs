@@ -31,13 +31,14 @@ public class EventsData {
     }
 
     public DbDurationEvent CreateDurationEvent(Guid            userId,
-                                               Guid            eventTypeId,
-                                               bool            isDeleted  = false,
-                                               DateTimeOffset? startedAt  = null,
-                                               DateTimeOffset? finishedAt = null) {
+                                               Guid?           eventTypeId = null,
+                                               bool            isDeleted   = false,
+                                               DateTimeOffset? startedAt   = null,
+                                               DateTimeOffset? finishedAt  = null) {
+        eventTypeId ??= CreateEventType(userId, $"event type name: {Guid.NewGuid()}").Id;
         var entity = new DbDurationEvent {
             CreatedById     = userId,
-            EventTypeId     = eventTypeId,
+            EventTypeId     = eventTypeId.Value,
             StartedOn       = new DateOnly(2020, 09, 1),
             StartedAt       = new DateTimeOffset(2020, 09, 1, 15, 0, 0, TimeSpan.FromHours(4)),
             FinishedOn      = new DateOnly(2020, 09, 1),
@@ -101,12 +102,13 @@ public class EventsData {
     }
 
     public DbOccurrenceEvent CreateOccurrenceEvent(Guid            userId,
-                                                   Guid            eventTypeId,
-                                                   bool            isDeleted  = false,
-                                                   DateTimeOffset? occurredAt = null) {
+                                                   Guid?           eventTypeId = null,
+                                                   bool            isDeleted   = false,
+                                                   DateTimeOffset? occurredAt  = null) {
+        eventTypeId ??= CreateEventType(userId, $"event-type-name: {Guid.NewGuid()}").Id;
         var entity = new DbOccurrenceEvent() {
             CreatedById     = userId,
-            EventTypeId     = eventTypeId,
+            EventTypeId     = eventTypeId.Value,
             OccurredOn      = new DateOnly(2020, 04, 12),
             OccurredAt      = new DateTimeOffset(2020, 04, 12, 23, 0, 0, TimeSpan.Zero),
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),

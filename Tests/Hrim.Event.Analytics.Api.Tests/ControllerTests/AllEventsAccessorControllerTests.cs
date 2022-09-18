@@ -2,11 +2,12 @@ using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Api.Services;
+using Hrim.Event.Analytics.Api.Tests.CqrsTests;
 using Hrim.Event.Analytics.Api.V1.Controllers;
 using Hrim.Event.Analytics.Api.V1.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
+namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
 public class AllEventsAccessorControllerTests: BaseCqrsTests {
     private readonly AllEventsAccessorController _controller;

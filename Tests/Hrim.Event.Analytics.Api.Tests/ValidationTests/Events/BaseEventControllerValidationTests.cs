@@ -47,48 +47,6 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     protected abstract BaseEvent GetBaseEventUpdateRequest();
 
     [Theory]
-    [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData("352246af-9681")]
-    [InlineData("352246af-9681-4aae-9c2c-6faddcb2e552-352246af-9681-4aae-9c2c-6faddcb2e552")]
-    public async Task Create_Given_Wrong_CreatedById_Returns_BadRequest(string createdById) {
-        var createRequest = GetBaseEventCreateRequest();
-        createRequest.CreatedById = Guid.Empty;
-        var payload = JsonConvert.SerializeObject(createRequest, JsonSettings)
-                                 .Replace(Guid.Empty.ToString(), createdById);
-
-        var response = await Client!.PostAsync("", new StringContent(payload, Encoding.UTF8, "application/json"));
-
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
-        problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().NotBeEmpty();
-        problemDetails.Errors
-                      .ContainsKey(nameof(createRequest.CreatedById).ToSnakeCase())
-                      .Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
-    public async Task Create_Given_NonExistent_CreatedById_Returns_BadRequest(string createdById) {
-        var eventType     = _testData.Events.CreateEventType(_operatorId, $"Headache-{Guid.NewGuid()}");
-        var createRequest = GetBaseEventCreateRequest();
-        createRequest.EventTypeId = eventType.Id;
-        createRequest.CreatedById = Guid.Parse(createdById);
-
-        var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
-
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
-        problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().NotBeEmpty();
-        problemDetails.Errors
-                      .ContainsKey(nameof(createRequest.CreatedById).ToSnakeCase())
-                      .Should().BeTrue();
-    }
-
-    [Theory]
     [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
     public async Task Create_Given_NonExistent_EventTypeId_Returns_BadRequest(string eventTypeId) {
         var createRequest = GetBaseEventCreateRequest();
@@ -155,50 +113,6 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
         updateRequest.EventTypeId = Guid.Parse(eventTypeId);
 
         var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
-
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
-        problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().NotBeEmpty();
-        problemDetails.Errors
-                      .ContainsKey(nameof(updateRequest.EventTypeId).ToSnakeCase())
-                      .Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData("352246af-9681")]
-    [InlineData("352246af-9681-4aae-9c2c-6faddcb2e552-352246af-9681-4aae-9c2c-6faddcb2e552")]
-    public async Task Create_Given_Wrong_EventTypeId_Returns_BadRequest(string eventTypeId) {
-        var createRequest = GetBaseEventCreateRequest();
-        createRequest.EventTypeId = Guid.Empty;
-        var payload = JsonConvert.SerializeObject(createRequest, JsonSettings)
-                                 .Replace(Guid.Empty.ToString(), eventTypeId);
-
-        var response = await Client!.PostAsync("", new StringContent(payload, Encoding.UTF8, "application/json"));
-
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
-        problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().NotBeEmpty();
-        problemDetails.Errors
-                      .ContainsKey(nameof(createRequest.EventTypeId).ToSnakeCase())
-                      .Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData("00000000-0000-0000-0000-000000000000")]
-    [InlineData("352246af-9681")]
-    [InlineData("352246af-9681-4aae-9c2c-6faddcb2e552-352246af-9681-4aae-9c2c-6faddcb2e552")]
-    public async Task Update_Given_Wrong_EventTypeId_Returns_BadRequest(string eventTypeId) {
-        var updateRequest = GetBaseEventUpdateRequest();
-        updateRequest.EventTypeId = Guid.Empty;
-        var payload = JsonConvert.SerializeObject(updateRequest, JsonSettings)
-                                 .Replace(Guid.Empty.ToString(), eventTypeId);
-
-        var response = await Client!.PutAsync("", new StringContent(payload, Encoding.UTF8, "application/json"));
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
