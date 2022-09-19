@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Enums;
@@ -11,6 +12,8 @@ using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
+[ExcludeFromCodeCoverage]
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class EntityControllerTests: IClassFixture<WebAppFactory<Program>>, IDisposable {
     private readonly HttpClient             _client;
     private readonly JsonSerializerSettings _jsonSettings;

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Extensions;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
+[ExcludeFromCodeCoverage]
 public class AllEventsAccessorControllerTests: BaseCqrsTests {
     private readonly AllEventsAccessorController _controller;
     private readonly ByPeriodRequest             _request;
