@@ -33,4 +33,10 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Hrim.Event.Analytics.Api\Hrim.Event.Analytics.Api.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+        <None Update="xunit.runner.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
