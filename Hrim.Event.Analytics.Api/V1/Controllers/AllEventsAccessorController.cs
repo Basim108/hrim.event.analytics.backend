@@ -28,12 +28,12 @@ public class AllEventsAccessorController: ControllerBase {
 
     /// <summary> Get user's events for a period </summary>
     [HttpGet]
-    public async Task<EventsForPeriodResponse> GetUserEventsAsync(DateOnly start, DateOnly end, CancellationToken cancellationToken) {
+    public async Task<EventsForPeriodResponse> GetUserEventsAsync([FromQuery]ByPeriodRequest request, CancellationToken cancellationToken) {
         var operationContext = _requestAccessor.GetOperationContext();
-        var occurrences = await _mediator.Send(new GetUserOccurrencesForPeriod(start, end, operationContext),
+        var occurrences = await _mediator.Send(new OccurrenceEventGetForPeriod(request.Start, request.End, operationContext),
                                                cancellationToken);
-        var durations = await _mediator.Send(new GetUserDurationsForPeriod(start, end, operationContext),
+        var durations = await _mediator.Send(new DurationEventGetForPeriod(request.Start, request.End, operationContext),
                                              cancellationToken);
-        return new EventsForPeriodResponse(new GetEventsForPeriodRequest(start, end), occurrences, durations);
+        return new EventsForPeriodResponse(new GetEventsForPeriodRequest(request.Start, request.End), occurrences, durations);
     }
 }

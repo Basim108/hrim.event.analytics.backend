@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -10,6 +11,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 /// <summary>
 /// Provides control over authentication sessions for event analytics web applications 
 /// </summary>
+[ExcludeFromCodeCoverage]
 [ApiController]
 [Route("[controller]")]
 public class AuthController: ControllerBase {

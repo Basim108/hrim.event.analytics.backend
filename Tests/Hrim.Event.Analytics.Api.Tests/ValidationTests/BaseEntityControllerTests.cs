@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using FluentAssertions;
+using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 using Hrim.Event.Analytics.Api.V1.Models;
@@ -16,26 +17,11 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests;
 [ExcludeFromCodeCoverage]
 [SuppressMessage("Usage",
                  "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
-public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Program>>  {
-    protected        HttpClient? Client { get; init; }
+public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Program>> {
+    protected HttpClient? Client { get; init; }
 
-    /// <summary> Correct create event type request  </summary>
-    protected readonly CreateEventTypeRequest CreateEventTypeRequest = new() {
-        Name        = "Headache",
-        Color       = "#ff0000",
-        Description = "times when I had a headache",
-        IsPublic    = true
-    };
-    
-    /// <summary> Correct update event type request  </summary>
-    protected readonly UpdateEventTypeRequest UpdateEventTypeRequest = new() {
-        Id              = Guid.NewGuid(),
-        ConcurrentToken = 1,
-        Name            = "Headache",
-        Color           = "#ff0000",
-        Description     = "times when I had a headache",
-        IsPublic        = true
-    };
+    protected abstract HrimEntity GetCreateRequest();
+    protected abstract HrimEntity GetUpdateRequest();
     
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]
@@ -55,7 +41,7 @@ public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Pro
 
     [Fact]
     public async Task Create_Given_Id_Returns_BadRequest() {
-        var createRequest = CreateEventTypeRequest;
+        var createRequest = GetCreateRequest();
         createRequest.Id = Guid.NewGuid();
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -70,7 +56,7 @@ public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Pro
 
     [Fact]
     public async Task Create_Given_Positive_ConcurrentToken_Returns_BadRequest() {
-        var createRequest = CreateEventTypeRequest;
+        var createRequest = GetCreateRequest();
         createRequest.ConcurrentToken = 1;
         var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -85,7 +71,7 @@ public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Pro
 
     [Fact]
     public async Task Update_Given_Empty_Id_Returns_BadRequest() {
-        var updateRequest = UpdateEventTypeRequest;
+        var updateRequest = GetUpdateRequest();
         updateRequest.Id = Guid.Empty;
         var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -100,7 +86,7 @@ public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Pro
 
     [Fact]
     public async Task Update_Given_0_ConcurrentToken_Returns_BadRequest() {
-        var updateRequest = CreateEventTypeRequest;
+        var updateRequest = GetCreateRequest();
         updateRequest.ConcurrentToken = 0;
         var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

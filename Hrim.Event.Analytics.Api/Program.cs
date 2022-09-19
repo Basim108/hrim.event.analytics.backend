@@ -14,8 +14,8 @@ builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
 app.UseEventAnalyticsCors(builder.Configuration);
+app.UseHttpsRedirection();
 
 app.UseSerilogRequestLogging();
 app.Use(async (context, next) => {
@@ -29,7 +29,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEventAnalyticsSwagger();
+if(!app.Environment.IsProduction())
+    app.UseEventAnalyticsSwagger();
 
 var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
 if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory") {

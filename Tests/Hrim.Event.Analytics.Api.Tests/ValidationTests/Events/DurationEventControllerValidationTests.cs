@@ -17,7 +17,21 @@ public class DurationEventControllerValidationTests: BaseEventControllerValidati
     public DurationEventControllerValidationTests(WebAppFactory<Program> factory):base(factory) {
         Client = factory.GetClient("v1/event/duration/");
     }
+    
+    /// <summary> Correct create event request  </summary>
+    protected override DurationEventCreateRequest GetCreateRequest() => new() {
+        StartedAt = DateTimeOffset.Now,
+        FinishedAt = DateTimeOffset.Now.AddHours(1)
+    };
 
+    /// <summary> Correct update event request  </summary>
+    protected override DurationEventUpdateRequest GetUpdateRequest() => new() {
+        Id              = Guid.NewGuid(),
+        ConcurrentToken = 1,
+        StartedAt       = DateTimeOffset.Now,
+        FinishedAt      = DateTimeOffset.Now.AddHours(1)
+    };
+    
     /// <summary> Correct duration event create request </summary>
     private readonly DurationEventCreateRequest _durationEventCreateRequest = new() {
         CreatedById = Guid.NewGuid(),
