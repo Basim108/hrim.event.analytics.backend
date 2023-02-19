@@ -42,15 +42,16 @@ public class ApiRequestAccessor : IApiRequestAccessor
         return Guid.Parse(GetStringCorrelationId());
     }
 
-    public OperationContext GetOperationContext()
-    {
-        return new(GetAuthorizedUserId(), GetCorrelationId());
-    }
+    public OperationContext GetOperationContext() => new(GetAuthorizedUserId(), GetCorrelationId());
 
-    public string GetStringCorrelationId()
+    private string GetStringCorrelationId()
     {
-        return _httpContextAccessor.HttpContext?
-            .Response
-            .Headers[CorrelationMiddleware.CORRELATION_ID_HEADER] ?? Guid.Empty.ToString();
+        var result = Guid.Empty.ToString();
+        if (_httpContextAccessor.HttpContext == null)
+            return result;
+        var context = _httpContextAccessor.HttpContext;
+        if (!context.Response.Headers.TryGetValue(CorrelationMiddleware.CORRELATION_ID_HEADER, out var value))
+            return result;
+        return string.IsNullOrWhiteSpace(value.ToString()) ? result : value.ToString();
     }
 }

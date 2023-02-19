@@ -37,7 +37,7 @@ var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<Ev
 if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
     await dbContext.Database.MigrateAsync();
 
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+app.MapControllers();
 app.Run();
 
 // add for sonar lint issue

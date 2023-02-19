@@ -35,7 +35,7 @@ public class CorrelationMiddleware
         await _next(context);
     }
 
-    private static Guid GetCorrelationId(string header)
+    private static Guid GetCorrelationId(string? header)
     {
         return string.IsNullOrWhiteSpace(header)
             ? Guid.NewGuid()
