@@ -1,7 +1,8 @@
 namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary> Each entity own these properties </summary>
-public abstract class HrimEntity {
+public abstract class HrimEntity
+{
     /// <summary> Entity id </summary>
     public Guid Id { get; set; }
 
@@ -15,16 +16,17 @@ public abstract class HrimEntity {
     public bool? IsDeleted { get; set; }
 
     /// <summary>
-    /// Update is possible only when this token equals to the token in the storage
+    ///     Update is possible only when this token equals to the token in the storage
     /// </summary>
     public long ConcurrentToken { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(HrimEntity another) {
-        another.Id              = Id;
-        another.CreatedAt       = CreatedAt;
-        another.UpdatedAt       = UpdatedAt;
-        another.IsDeleted       = IsDeleted;
+    public void CopyTo(HrimEntity another)
+    {
+        another.Id = Id;
+        another.CreatedAt = CreatedAt;
+        another.UpdatedAt = UpdatedAt;
+        another.IsDeleted = IsDeleted;
         another.ConcurrentToken = ConcurrentToken;
     }
 }

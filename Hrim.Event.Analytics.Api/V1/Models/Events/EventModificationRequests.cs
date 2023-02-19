@@ -3,13 +3,21 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 namespace Hrim.Event.Analytics.Api.V1.Models;
 
 /// <inheritdoc />
-public class OccurrenceEventCreateRequest: OccurrenceEvent { }
+public class OccurrenceEventCreateRequest : OccurrenceEvent
+{
+}
 
 /// <inheritdoc />
-public class OccurrenceEventUpdateRequest: OccurrenceEvent { }
+public class OccurrenceEventUpdateRequest : OccurrenceEvent
+{
+}
 
 /// <inheritdoc />
-public class DurationEventCreateRequest: DurationEvent { }
+public class DurationEventCreateRequest : DurationEvent
+{
+}
 
 /// <inheritdoc />
-public class DurationEventUpdateRequest: DurationEvent { }
+public class DurationEventUpdateRequest : DurationEvent
+{
+}

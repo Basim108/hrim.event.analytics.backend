@@ -8,11 +8,14 @@ using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Users;
 
 [ExcludeFromCodeCoverage]
-public class ExternalUserProfileBuildTests: BaseCqrsTests {
+public class ExternalUserProfileBuildTests : BaseCqrsTests
+{
     private readonly IDictionary<string, string> _claims;
 
-    public ExternalUserProfileBuildTests() {
-        _claims = new Dictionary<string, string> {
+    public ExternalUserProfileBuildTests()
+    {
+        _claims = new Dictionary<string, string>
+        {
             { ClaimTypes.NameIdentifier, UsersData.EXTERNAL_ID },
             { ClaimTypes.Email, UsersData.EMAIL },
             { ClaimTypes.Name, UsersData.FULL_NAME },
@@ -22,7 +25,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Facebook_Given_NameIdentifier_Claim_Builds_On_ExternalId() {
+    public async Task Facebook_Given_NameIdentifier_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Facebook);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -30,7 +34,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Google_Given_NameIdentifier_Claim_Builds_On_ExternalId() {
+    public async Task Google_Given_NameIdentifier_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Google);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -38,7 +43,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Facebook_Given_Email_Claim_Builds_On_ExternalId() {
+    public async Task Facebook_Given_Email_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Facebook);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -46,7 +52,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Google_Given_Email_Claim_Builds_On_ExternalId() {
+    public async Task Google_Given_Email_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Google);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -54,7 +61,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Facebook_Given_FullName_Claim_Builds_On_ExternalId() {
+    public async Task Facebook_Given_FullName_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Facebook);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -62,7 +70,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Google_Given_FullName_Claim_Builds_On_ExternalId() {
+    public async Task Google_Given_FullName_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Google);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -70,7 +79,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Facebook_Given_FirstName_Claim_Builds_On_ExternalId() {
+    public async Task Facebook_Given_FirstName_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Facebook);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -78,15 +88,17 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Google_Given_FirstName_Claim_Builds_On_ExternalId() {
+    public async Task Google_Given_FirstName_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Google);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
         profile.FirstName.Should().Be(UsersData.FIRST_NAME);
     }
-    
+
     [Fact]
-    public async Task Facebook_Given_LastName_Claim_Builds_On_ExternalId() {
+    public async Task Facebook_Given_LastName_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Facebook);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();
@@ -94,7 +106,8 @@ public class ExternalUserProfileBuildTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Google_Given_LastName_Claim_Builds_On_ExternalId() {
+    public async Task Google_Given_LastName_Claim_Builds_On_ExternalId()
+    {
         var command = new ExternalUserProfileBuild(Guid.NewGuid(), _claims, ExternalIdp.Google);
         var profile = await Mediator.Send(command);
         profile.Should().NotBeNull();

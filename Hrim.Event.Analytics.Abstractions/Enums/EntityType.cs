@@ -1,10 +1,11 @@
 #pragma warning disable CS1591
-namespace Hrim.Event.Analytics.Abstractions.Enums; 
+namespace Hrim.Event.Analytics.Abstractions.Enums;
 
 /// <summary>
-/// Enumeration of all types of entties 
+///     Enumeration of all types of entties
 /// </summary>
-public enum EntityType {
+public enum EntityType
+{
     HrimUser,
     HrimTag,
     EventType,

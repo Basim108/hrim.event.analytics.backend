@@ -1,4 +1,4 @@
-namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users; 
+namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 
 /// <summary> User information for UI </summary>
 /// <param name="FullName">User full name</param>

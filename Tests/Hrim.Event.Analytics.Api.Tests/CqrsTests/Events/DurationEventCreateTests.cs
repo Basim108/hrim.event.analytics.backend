@@ -9,23 +9,27 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
 [ExcludeFromCodeCoverage]
-public class DurationEventCreateTests: BaseCqrsTests {
-    private readonly DurationEventCreateRequest _createRequest;
+public class DurationEventCreateTests : BaseCqrsTests
+{
     private readonly DurationEventCreateCommand _createCommand;
-    private readonly UserEventType              _eventType;
+    private readonly DurationEventCreateRequest _createRequest;
+    private readonly UserEventType _eventType;
 
-    public DurationEventCreateTests() {
+    public DurationEventCreateTests()
+    {
         _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
-        _createRequest = new DurationEventCreateRequest {
-            StartedAt   = DateTimeOffset.Now.AddHours(-1),
-            FinishedAt  = DateTimeOffset.Now,
+        _createRequest = new DurationEventCreateRequest
+        {
+            StartedAt = DateTimeOffset.Now.AddHours(-1),
+            FinishedAt = DateTimeOffset.Now,
             EventTypeId = _eventType.Id
         };
-        _createCommand = new DurationEventCreateCommand(_createRequest, SaveChanges: true, OperatorContext);
+        _createCommand = new DurationEventCreateCommand(_createRequest, true, OperatorContext);
     }
 
     [Fact]
-    public async Task Create_DurationEvent() {
+    public async Task Create_DurationEvent()
+    {
         var beforeSend = DateTime.UtcNow;
 
         var cqrsResult = await Mediator.Send(_createCommand);
@@ -36,23 +40,25 @@ public class DurationEventCreateTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Create_DurationEvent_With_Same_StartedAt_And_EventType() {
-        var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    public async Task Create_DurationEvent_With_Same_StartedAt_And_EventType()
+    {
+        var dbEntity = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
         var createRequest = new DurationEventCreateRequest();
         dbEntity.CopyTo(createRequest);
-        var command    = new DurationEventCreateCommand(createRequest, SaveChanges: true, OperatorContext);
+        var command = new DurationEventCreateCommand(createRequest, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
         cqrsResult.CheckCreationOfSameEntity();
     }
 
     [Fact]
-    public async Task Create_DurationEvent_With_Same_But_Soft_Deleted_OccurredAt() {
-        var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id, isDeleted: true);
+    public async Task Create_DurationEvent_With_Same_But_Soft_Deleted_OccurredAt()
+    {
+        var dbEntity = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id, true);
         var createRequest = new DurationEventCreateRequest();
         dbEntity.CopyTo(createRequest);
 
-        var command    = new DurationEventCreateCommand(createRequest, SaveChanges: true, OperatorContext);
+        var command = new DurationEventCreateCommand(createRequest, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
 
         cqrsResult.CheckUpdateOrCreationOfSoftDeletedEntity();

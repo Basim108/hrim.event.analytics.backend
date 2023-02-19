@@ -6,45 +6,52 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Hrim.Event.Analytics.Api.Filters;
 
 /// <summary>
-/// Set created_by_id property from authorization context
+///     Set created_by_id property from authorization context
 /// </summary>
-public class SetOwnerTypeFilterAttribute: TypeFilterAttribute {
+public class SetOwnerTypeFilterAttribute : TypeFilterAttribute
+{
     /// <inheritdoc />
     public SetOwnerTypeFilterAttribute()
-        : base(typeof(SetOwnerActionFilter)) { }
+        : base(typeof(SetOwnerActionFilter))
+    {
+    }
 }
 
 /// <summary>
-/// Set created_by_id property from authorization context
+///     Set created_by_id property from authorization context
 /// </summary>
-internal sealed class SetOwnerActionFilter: IActionFilter {
-    private readonly IApiRequestAccessor           _requestAccessor;
+internal sealed class SetOwnerActionFilter : IActionFilter
+{
     private readonly ILogger<SetOwnerActionFilter> _logger;
-        
-    public SetOwnerActionFilter(IApiRequestAccessor           requestAccessor,
-                                ILogger<SetOwnerActionFilter> logger) {
+    private readonly IApiRequestAccessor _requestAccessor;
+
+    public SetOwnerActionFilter(IApiRequestAccessor requestAccessor,
+        ILogger<SetOwnerActionFilter> logger)
+    {
         _requestAccessor = requestAccessor;
-        _logger          = logger;
+        _logger = logger;
     }
 
     /// <inheritdoc />
-    public void OnActionExecuting(ActionExecutingContext context) {
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
         var operatorId = _requestAccessor.GetAuthorizedUserId();
         var isNoOwnerSet = true;
-        foreach (var (name, value) in context.ActionArguments) {
+        foreach (var (name, value) in context.ActionArguments)
+        {
             if (value is not IHasOwner entity)
                 continue;
             entity.CreatedById = operatorId;
-            isNoOwnerSet       = false;
+            isNoOwnerSet = false;
             _logger.LogDebug(ApiLogs.SET_OPERATOR_ID_TO_ENTITY, operatorId, name);
         }
-        if(isNoOwnerSet) {
-            _logger.LogWarning(ApiLogs.NO_OWNER_SET_IN_FILTER);
-        }
+
+        if (isNoOwnerSet) _logger.LogWarning(ApiLogs.NO_OWNER_SET_IN_FILTER);
     }
 
     /// <inheritdoc />
-    public void OnActionExecuted(ActionExecutedContext context) {
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
         // as there is no way to create only OnActionExecuting filter, leave this method blanked.
     }
 }

@@ -11,16 +11,17 @@ public static class MvcBuilderExtensions
     /// <param name="builder"></param>
     /// <returns></returns>
     public static IMvcBuilder AddHrimsoftJsonOptions(this IMvcBuilder builder)
-        => builder.AddNewtonsoftJson(opt =>
+    {
+        return builder.AddNewtonsoftJson(opt =>
         {
-            opt.SerializerSettings.NullValueHandling    = NullValueHandling.Ignore;
+            opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             opt.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-            opt.SerializerSettings.TypeNameHandling     = TypeNameHandling.None;
+            opt.SerializerSettings.TypeNameHandling = TypeNameHandling.None;
             opt.SerializerSettings.ContractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
-            opt.SerializerSettings.Converters = new List<JsonConverter>()
+            opt.SerializerSettings.Converters = new List<JsonConverter>
             {
                 new StringEnumConverter
                 {
@@ -28,4 +29,5 @@ public static class MvcBuilderExtensions
                 }
             };
         });
+    }
 }

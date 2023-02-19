@@ -2,15 +2,16 @@ using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.EfCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hrim.Event.Analytics.Api.Tests.Infrastructure; 
+namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
 /// <summary>
-/// Helpers for test use of DbContext
+///     Helpers for test use of DbContext
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class DbUtils {
+public static class DbUtils
+{
     /// <summary>
-    /// Creates a new DbContext with unique database name
+    ///     Creates a new DbContext with unique database name
     /// </summary>
     public static EventAnalyticDbContext GetDbContext()
     {

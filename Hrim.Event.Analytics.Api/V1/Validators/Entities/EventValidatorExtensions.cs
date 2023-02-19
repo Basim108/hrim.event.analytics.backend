@@ -6,31 +6,34 @@ using Hrim.Event.Analytics.Abstractions.Entities;
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities;
 
 /// <summary>
-/// Rules for Duration Event related validators
+///     Rules for Duration Event related validators
 /// </summary>
-public static class EventValidatorExtensions {
+public static class EventValidatorExtensions
+{
     /// <summary>
-    /// Adds rules to update and create duration event requests
+    ///     Adds rules to update and create duration event requests
     /// </summary>
     public static void AddRulesForEntityUpdateRequests<TRequest>(this AbstractValidator<TRequest> validator)
-        where TRequest : HrimEntity {
+        where TRequest : HrimEntity
+    {
         validator.RuleFor(x => x.Id)
-                 .NotEmpty()
-                 .WithMessage(ValidationMessages.IS_REQUIRED);
+            .NotEmpty()
+            .WithMessage(ValidationMessages.IS_REQUIRED);
 
         validator.RuleFor(x => x.ConcurrentToken)
-                 .GreaterThan(0);
+            .GreaterThan(0);
     }
-    
+
     /// <summary>
-    /// Adds rules to update and create duration event requests
+    ///     Adds rules to update and create duration event requests
     /// </summary>
     public static void AddRulesForEntityCreateRequests<TRequest>(this AbstractValidator<TRequest> validator)
-        where TRequest : HrimEntity {
+        where TRequest : HrimEntity
+    {
         validator.RuleFor(x => x.Id)
-                 .Empty();
+            .Empty();
 
         validator.RuleFor(x => x.ConcurrentToken)
-                 .Equal(0);
+            .Equal(0);
     }
 }

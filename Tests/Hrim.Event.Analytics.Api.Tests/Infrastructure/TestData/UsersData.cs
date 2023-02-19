@@ -7,31 +7,38 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
 [ExcludeFromCodeCoverage]
-public class UsersData {
+public class UsersData
+{
+    public const string EXTERNAL_ID = "225583379887912482138";
+    public const string EMAIL = "test@mailinator.com";
+    public const string FULL_NAME = "Alan Turing";
+    public const string FIRST_NAME = "Alan";
+    public const string LAST_NAME = "Turing";
     private readonly EventAnalyticDbContext _context;
 
-    public UsersData(EventAnalyticDbContext context) {
+    public UsersData(EventAnalyticDbContext context)
+    {
         _context = context;
     }
 
-    public const string EXTERNAL_ID = "225583379887912482138";
-    public const string EMAIL       = "test@mailinator.com";
-    public const string FULL_NAME   = "Alan Turing";
-    public const string FIRST_NAME  = "Alan";
-    public const string LAST_NAME   = "Turing";
-
-    public HrimUser EnsureUserExistence(Guid id, bool isDeleted = false) {
+    public HrimUser EnsureUserExistence(Guid id, bool isDeleted = false)
+    {
         var existed = _context.HrimUsers.FirstOrDefault(x => x.Id == id);
-        if (existed != null) {
-            if (existed.IsDeleted != isDeleted) {
+        if (existed != null)
+        {
+            if (existed.IsDeleted != isDeleted)
+            {
                 existed.IsDeleted = isDeleted;
                 _context.SaveChanges();
             }
+
             return existed;
         }
-        var user = new HrimUser {
-            Id              = id,
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+
+        var user = new HrimUser
+        {
+            Id = id,
+            CreatedAt = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
         if (isDeleted)
@@ -42,24 +49,26 @@ public class UsersData {
     }
 
     /// <summary> Creates a user if not exists and create a profile for this user </summary>
-    public ExternalUserProfile CreateUniqueLogin(Guid?       userId     = null,
-                                                 string?     email      = null,
-                                                 string?     externalId = null,
-                                                 ExternalIdp idp        = ExternalIdp.Google,
-                                                 bool        isDeleted  = false) {
+    public ExternalUserProfile CreateUniqueLogin(Guid? userId = null,
+        string? email = null,
+        string? externalId = null,
+        ExternalIdp idp = ExternalIdp.Google,
+        bool isDeleted = false)
+    {
         var user = EnsureUserExistence(userId ?? Guid.NewGuid());
         externalId ??= Guid.NewGuid().ToString();
-        email      ??= $"{externalId}@mailinator.com";
-        var profile = new ExternalUserProfile {
-            Idp             = idp,
-            Email           = email,
-            ExternalUserId  = externalId,
-            FullName        = FULL_NAME,
-            FirstName       = FIRST_NAME,
-            LastName        = LAST_NAME,
-            HrimUserId      = user.Id,
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
-            LastLogin       = DateTime.UtcNow.TruncateToMicroseconds(),
+        email ??= $"{externalId}@mailinator.com";
+        var profile = new ExternalUserProfile
+        {
+            Idp = idp,
+            Email = email,
+            ExternalUserId = externalId,
+            FullName = FULL_NAME,
+            FirstName = FIRST_NAME,
+            LastName = LAST_NAME,
+            HrimUserId = user.Id,
+            CreatedAt = DateTime.UtcNow.TruncateToMicroseconds(),
+            LastLogin = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
         _context.ExternalUserProfiles.Add(profile);

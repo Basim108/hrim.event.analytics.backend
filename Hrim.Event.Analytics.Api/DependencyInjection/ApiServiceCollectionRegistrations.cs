@@ -15,12 +15,15 @@ using Hrimsoft.StringCases;
 
 namespace Hrim.Event.Analytics.Api.DependencyInjection;
 
-public static class ApiServiceCollectionRegistrations {
-    public static void AddEventAnalyticsServices(this IServiceCollection services, IConfiguration appConfig) {
+public static class ApiServiceCollectionRegistrations
+{
+    public static void AddEventAnalyticsServices(this IServiceCollection services, IConfiguration appConfig)
+    {
         services.AddCors();
-        services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
-                .AddHrimsoftJsonOptions();
-        services.AddFluentValidationAutoValidation(_ => {
+        services.AddControllers()
+            .AddHrimsoftJsonOptions();
+        services.AddFluentValidationAutoValidation(_ =>
+        {
             ValidatorOptions.Global.LanguageManager.Enabled = false;
             ValidatorOptions.Global.DisplayNameResolver = (_, member, _)
                 => member?.Name.ToSnakeCase();

@@ -8,24 +8,30 @@ using MediatR;
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 
 /// <summary>
-/// Checks event lookups
+///     Checks event lookups
 /// </summary>
-public class EventAsyncValidator: AbstractValidator<BaseEvent> {
+public class EventAsyncValidator : AbstractValidator<BaseEvent>
+{
     /// <inheritdoc />
-    public EventAsyncValidator(IMediator mediator, IApiRequestAccessor requestAccessor) {
+    public EventAsyncValidator(IMediator mediator, IApiRequestAccessor requestAccessor)
+    {
         RuleFor(x => x.EventTypeId)
-           .MustAsync(async (id, cancellationToken) => {
-                var cqrsResult = await mediator.Send(new CheckEntityExistence(id, EntityType.EventType, requestAccessor.GetCorrelationId()),
-                                                     cancellationToken);
+            .MustAsync(async (id, cancellationToken) =>
+            {
+                var cqrsResult = await mediator.Send(
+                    new CheckEntityExistence(id, EntityType.EventType, requestAccessor.GetCorrelationId()),
+                    cancellationToken);
                 return cqrsResult.StatusCode == CqrsResultCode.Ok;
             })
-           .WithMessage(ValidationMessages.ENTITY_DOES_NOT_EXISTS);
+            .WithMessage(ValidationMessages.ENTITY_DOES_NOT_EXISTS);
         RuleFor(x => x.CreatedById)
-           .MustAsync(async (id, cancellationToken) => {
-                var cqrsResult = await mediator.Send(new CheckEntityExistence(id, EntityType.HrimUser, requestAccessor.GetCorrelationId()),
-                                                     cancellationToken);
+            .MustAsync(async (id, cancellationToken) =>
+            {
+                var cqrsResult = await mediator.Send(
+                    new CheckEntityExistence(id, EntityType.HrimUser, requestAccessor.GetCorrelationId()),
+                    cancellationToken);
                 return cqrsResult.StatusCode == CqrsResultCode.Ok;
             })
-           .WithMessage(ValidationMessages.ENTITY_DOES_NOT_EXISTS);
+            .WithMessage(ValidationMessages.ENTITY_DOES_NOT_EXISTS);
     }
 }

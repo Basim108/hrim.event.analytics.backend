@@ -7,30 +7,33 @@ using Newtonsoft.Json;
 namespace Hrim.Event.Analytics.Api.Middleware;
 
 /// <summary>
-/// Logs http request headers and body and unhandled exceptions
+///     Logs http request headers and body and unhandled exceptions
 /// </summary>
 [ExcludeFromCodeCoverage]
-public class HttpContextLoggingMiddleware {
+public class HttpContextLoggingMiddleware
+{
+    private const int MAX_BODY_LENGTH = 32_000;
+    private readonly bool _isDevelopment;
+    private readonly bool _isStaging;
     private readonly ILogger<HttpContextLoggingMiddleware> _logger;
 
     private readonly RequestDelegate _next;
-    private readonly bool            _isDevelopment;
-    private readonly bool            _isStaging;
 
-    private const int MAX_BODY_LENGTH = 32_000;
-
-    public HttpContextLoggingMiddleware(RequestDelegate                       next,
-                                        IWebHostEnvironment                   environment,
-                                        ILogger<HttpContextLoggingMiddleware> logger) {
-        _next          = next;
+    public HttpContextLoggingMiddleware(RequestDelegate next,
+        IWebHostEnvironment environment,
+        ILogger<HttpContextLoggingMiddleware> logger)
+    {
+        _next = next;
         _isDevelopment = environment.IsDevelopment();
-        _isStaging     = environment.IsStaging();
-        _logger        = logger;
+        _isStaging = environment.IsStaging();
+        _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context) {
+    public async Task InvokeAsync(HttpContext context)
+    {
         var isRequestSkipped = true;
-        if (_isDevelopment || _isStaging) {
+        if (_isDevelopment || _isStaging)
+        {
             await LogRequestAsync(context);
             isRequestSkipped = false;
         }
@@ -38,16 +41,13 @@ public class HttpContextLoggingMiddleware {
         await _next(context);
 
         using var responseStatusScope = _logger.BeginScope(ApiLogs.RESPONSE_STATUS_CODE, context.Response.StatusCode);
-        var       isError             = context.Response.StatusCode >= 500;
-        if (isError && isRequestSkipped) {
-            await LogRequestAsync(context);
-        }
-        if (isError) {
-            LogError(context);
-        }
+        var isError = context.Response.StatusCode >= 500;
+        if (isError && isRequestSkipped) await LogRequestAsync(context);
+        if (isError) LogError(context);
     }
 
-    private async Task LogRequestAsync(HttpContext context) {
+    private async Task LogRequestAsync(HttpContext context)
+    {
         var requestHeaders = JsonConvert.SerializeObject(context.Request.Headers);
         _logger.LogInformation(ApiLogs.REQUEST_HEADERS, requestHeaders);
 
@@ -57,19 +57,21 @@ public class HttpContextLoggingMiddleware {
         _logger.LogInformation(ApiLogs.REQUEST_BODY, requestBody);
     }
 
-    private void LogError(HttpContext context) {
+    private void LogError(HttpContext context)
+    {
         var ex = context.Features
-                        .Get<IExceptionHandlerPathFeature>()
-                       ?.Error;
+            .Get<IExceptionHandlerPathFeature>()
+            ?.Error;
         if (ex != null)
             _logger.LogError(ApiLogs.UNHANDLED_EXCEPTION, ex.ToString());
     }
 
-    private static async Task<string> GetBodyAsync(HttpContext context) {
+    private static async Task<string> GetBodyAsync(HttpContext context)
+    {
         context.Request.EnableBuffering();
         context.Request.Body.Position = 0;
         var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync()
-                                                                      .ConfigureAwait(false);
+            .ConfigureAwait(false);
         context.Request.Body.Position = 0;
         return requestBody;
     }
