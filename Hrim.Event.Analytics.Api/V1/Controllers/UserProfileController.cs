@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 #endif
 
-namespace Hrim.Event.Analytics.Api.V1.Controllers; 
+namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Hrim user profile endpoints </summary>
 [ApiController]
@@ -14,17 +14,19 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Authorize]
 #endif
 [Route("v1/user-profile")]
-public class UserProfileController: ControllerBase {
-    
+public class UserProfileController : ControllerBase
+{
     /// <summary>
-    /// Access to user profile built for a user from authorization context
+    ///     Access to user profile built for a user from authorization context
     /// </summary>
     [HttpGet("me")]
-    public ViewHrimUser GetMeAsync() {
-        var fullName   = "";
+    public ViewHrimUser GetMeAsync()
+    {
+        var fullName = "";
         var pictureUri = "";
-        foreach (var claim in User.Claims) {
-            switch (claim.Type) {
+        foreach (var claim in User.Claims)
+            switch (claim.Type)
+            {
                 case ClaimTypes.Name:
                     fullName = claim.Value;
                     break;
@@ -32,7 +34,7 @@ public class UserProfileController: ControllerBase {
                     pictureUri = claim.Value;
                     break;
             }
-        }
+
         return new ViewHrimUser(fullName, pictureUri);
     }
 }

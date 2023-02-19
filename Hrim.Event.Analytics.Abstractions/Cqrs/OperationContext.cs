@@ -1,4 +1,4 @@
-namespace Hrim.Event.Analytics.Abstractions.Cqrs; 
+namespace Hrim.Event.Analytics.Abstractions.Cqrs;
 
 /// <summary></summary>
 /// <param name="UserId"></param>

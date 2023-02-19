@@ -5,20 +5,24 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 
 [Serializable]
-public class UnexpectedCqrsResultException<TResult>: Exception {
-    public CqrsResult<TResult>? CqrsResult { get; }
-
+public class UnexpectedCqrsResultException<TResult> : Exception
+{
     public UnexpectedCqrsResultException(CqrsResult<TResult> cqrsResult)
-        : base(CoreLogs.UNEXPECTED_CQRS_RESULT.Replace("{CqrsResult}", cqrsResult.ToString())) {
+        : base(CoreLogs.UNEXPECTED_CQRS_RESULT.Replace("{CqrsResult}", cqrsResult.ToString()))
+    {
         CqrsResult = cqrsResult;
     }
 
     protected UnexpectedCqrsResultException(SerializationInfo info, StreamingContext context)
-        : base(info, context) {
+        : base(info, context)
+    {
         CqrsResult = info.GetValue(nameof(CqrsResult), typeof(CqrsResult<TResult>)) as CqrsResult<TResult>;
     }
 
-    public override void GetObjectData(SerializationInfo info, StreamingContext context) {
+    public CqrsResult<TResult>? CqrsResult { get; }
+
+    public override void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
         if (info == null)
             throw new ArgumentNullException(nameof(info));
         base.GetObjectData(info, context);

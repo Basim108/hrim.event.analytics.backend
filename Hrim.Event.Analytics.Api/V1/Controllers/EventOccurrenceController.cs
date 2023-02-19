@@ -6,7 +6,6 @@ using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-
 #if RELEASE
 using Microsoft.AspNetCore.Authorization;
 #endif
@@ -14,45 +13,51 @@ using Microsoft.AspNetCore.Authorization;
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary>
-/// Manage user event types with this crud controller
+///     Manage user event types with this crud controller
 /// </summary>
 [ApiController]
 #if RELEASE
 [Authorize]
 #endif
 [Route("v1/event/occurrence")]
-public class EventOccurrenceController: EventBaseController<OccurrenceEvent> {
+public class EventOccurrenceController : EventBaseController<OccurrenceEvent>
+{
     private readonly IMediator _mediator;
 
     /// <summary> </summary>
-    public EventOccurrenceController(IApiRequestAccessor         requestAccessor,
-                                     IValidator<OccurrenceEvent> validator,
-                                     IMediator                   mediator)
-        : base(requestAccessor, validator, mediator) {
+    public EventOccurrenceController(IApiRequestAccessor requestAccessor,
+        IValidator<OccurrenceEvent> validator,
+        IMediator mediator)
+        : base(requestAccessor, validator, mediator)
+    {
         _mediator = mediator;
     }
 
     /// <summary> Create an occurrence event </summary>
     [HttpPost]
     [SetOwnerTypeFilter]
-    public async Task<ActionResult<OccurrenceEvent>> CreateOccurrenceAsync(OccurrenceEventCreateRequest request, CancellationToken cancellationToken) {
+    public async Task<ActionResult<OccurrenceEvent>> CreateOccurrenceAsync(OccurrenceEventCreateRequest request,
+        CancellationToken cancellationToken)
+    {
         await ValidateRequestAsync(request, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);
-        var cqrsResult = await _mediator.Send(new OccurrenceEventCreateCommand(request, SaveChanges: true, OperationContext),
-                                              cancellationToken);
+        var cqrsResult = await _mediator.Send(new OccurrenceEventCreateCommand(request, true, OperationContext),
+            cancellationToken);
         return ProcessCqrsResult(cqrsResult);
     }
 
     /// <summary> Update a duration event </summary>
     [HttpPut]
     [SetOwnerTypeFilter]
-    public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(OccurrenceEventUpdateRequest request, CancellationToken cancellationToken) {
+    public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(OccurrenceEventUpdateRequest request,
+        CancellationToken cancellationToken)
+    {
         await ValidateRequestAsync(request, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(ModelState);
-        var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(request, SaveChanges: true, OperationContext),
-                                              cancellationToken);
+        var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(request, true, OperationContext),
+            cancellationToken);
         return ProcessCqrsResult(cqrsResult);
     }
 }

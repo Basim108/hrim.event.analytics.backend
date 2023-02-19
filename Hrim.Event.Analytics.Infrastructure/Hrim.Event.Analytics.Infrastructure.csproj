@@ -1,22 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />
+        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests"/>
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="10.0.1" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
+        <PackageReference Include="MediatR" Version="12.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">

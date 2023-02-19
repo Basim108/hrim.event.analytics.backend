@@ -19,7 +19,7 @@ namespace Hrim.Event.Analytics.EfCore.DependencyInjection;
 
 public static class EfCoreServiceRegistration {
     public static void AddEventAnalyticsStorage(this IServiceCollection services, IConfiguration appConfig, string migrationAssembly) {
-        services.AddMediatR(typeof(EventTypeCreateHandler).Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventTypeCreateHandler>());
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<UserEventType>, CqrsResult<UserEventType?>>, SoftDeleteEntityCommandHandler<UserEventType>>();
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<OccurrenceEvent>, CqrsResult<OccurrenceEvent?>>, SoftDeleteEntityCommandHandler<OccurrenceEvent>>();
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<DurationEvent>, CqrsResult<DurationEvent?>>, SoftDeleteEntityCommandHandler<DurationEvent>>();

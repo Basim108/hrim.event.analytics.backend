@@ -15,32 +15,37 @@ using NSubstitute;
 namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
 [ExcludeFromCodeCoverage]
-public class EventAnalyticsApiControllerTests {
+public class EventAnalyticsApiControllerTests
+{
     private readonly EventAnalyticsApiController<UserEventType> _controller;
 
-    public EventAnalyticsApiControllerTests() {
+    public EventAnalyticsApiControllerTests()
+    {
         _controller = new EventAnalyticsApiController<UserEventType>(Substitute.For<IApiRequestAccessor>(),
-                                                                     Substitute.For<IValidator<UserEventType>>());
+            Substitute.For<IValidator<UserEventType>>());
     }
 
-    private MethodInfo GetProcessCqrsResult() {
+    private MethodInfo GetProcessCqrsResult()
+    {
         return _controller.GetType()
-                          .GetMethod("ProcessCqrsResult", BindingFlags.NonPublic | BindingFlags.Instance)!;
+            .GetMethod("ProcessCqrsResult", BindingFlags.NonPublic | BindingFlags.Instance)!;
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_EntityIsDeleted_Returns_EmptyResult() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.EntityIsDeleted);
+    public void ProcessCqrsResult_Given_EntityIsDeleted_Returns_EmptyResult()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.EntityIsDeleted);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Value.Should().BeNull();
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_EntityIsDeleted_Returns_Gone() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.EntityIsDeleted);
+    public void ProcessCqrsResult_Given_EntityIsDeleted_Returns_Gone()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.EntityIsDeleted);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Result.Should().BeOfType<StatusCodeResult>();
@@ -50,9 +55,10 @@ public class EventAnalyticsApiControllerTests {
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_Conflict_Without_Info_Returns_EmptyResult() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Conflict);
+    public void ProcessCqrsResult_Given_Conflict_Without_Info_Returns_EmptyResult()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Conflict);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Value.Should().BeNull();
@@ -64,9 +70,10 @@ public class EventAnalyticsApiControllerTests {
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_Conflict_With_Info_Returns_Info() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Conflict, "hello");
+    public void ProcessCqrsResult_Given_Conflict_With_Info_Returns_Info()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Conflict, "hello");
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Result.Should().BeOfType<ObjectResult>();
@@ -77,9 +84,10 @@ public class EventAnalyticsApiControllerTests {
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_Forbidden_Returns_Constant_Result() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Forbidden);
+    public void ProcessCqrsResult_Given_Forbidden_Returns_Constant_Result()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Forbidden);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Result.Should().BeOfType<ObjectResult>();
@@ -90,9 +98,10 @@ public class EventAnalyticsApiControllerTests {
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_Locked_Returns_EmptyResult() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Locked);
+    public void ProcessCqrsResult_Given_Locked_Returns_EmptyResult()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.Locked);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Value.Should().BeNull();
@@ -104,9 +113,10 @@ public class EventAnalyticsApiControllerTests {
     }
 
     [Fact]
-    public void ProcessCqrsResult_Given_NotFound_Returns_EmptyResult() {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.NotFound);
+    public void ProcessCqrsResult_Given_NotFound_Returns_EmptyResult()
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), CqrsResultCode.NotFound);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Value.Should().BeNull();
@@ -120,9 +130,10 @@ public class EventAnalyticsApiControllerTests {
     [Theory]
     [InlineData(CqrsResultCode.Created)]
     [InlineData(CqrsResultCode.Ok)]
-    public void ProcessCqrsResult_Given_Created_Or_Updated_Returns_OkResult(CqrsResultCode cqrsCode) {
-        var dynMethod    = GetProcessCqrsResult();
-        var cqrsResult   = new CqrsResult<UserEventType?>(new UserEventType(), cqrsCode);
+    public void ProcessCqrsResult_Given_Created_Or_Updated_Returns_OkResult(CqrsResultCode cqrsCode)
+    {
+        var dynMethod = GetProcessCqrsResult();
+        var cqrsResult = new CqrsResult<UserEventType?>(new UserEventType(), cqrsCode);
         var actionResult = dynMethod.Invoke(_controller, new object[] { cqrsResult }) as ActionResult<UserEventType>;
         actionResult.Should().NotBeNull();
         actionResult!.Result.Should().BeOfType<OkObjectResult>();

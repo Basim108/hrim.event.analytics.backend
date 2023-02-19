@@ -5,23 +5,25 @@ using Hrimsoft.StringCases;
 namespace Hrim.Event.Analytics.Api.V1.Validators;
 
 /// <summary>
-/// Validates by period requests
+///     Validates by period requests
 /// </summary>
-public class ByPeriodRequestValidator: AbstractValidator<ByPeriodRequest> {
+public class ByPeriodRequestValidator : AbstractValidator<ByPeriodRequest>
+{
     /// <summary> </summary>
-    public ByPeriodRequestValidator() {
+    public ByPeriodRequestValidator()
+    {
         RuleFor(x => x.Start)
-           .GreaterThan(DateOnly.MinValue)
-           .WithMessage(ValidationMessages.IS_REQUIRED);
+            .GreaterThan(DateOnly.MinValue)
+            .WithMessage(ValidationMessages.IS_REQUIRED);
 
         RuleFor(x => x.End)
-           .GreaterThan(DateOnly.MinValue)
-           .WithMessage(ValidationMessages.IS_REQUIRED);
+            .GreaterThan(DateOnly.MinValue)
+            .WithMessage(ValidationMessages.IS_REQUIRED);
 
         RuleFor(x => x.End)
-           .GreaterThan(x => x.Start)
-           .WithMessage(ValidationMessages.GREATER_THAN_PROPERTY
-                                          .Replace(ValidationMessages.PROPERTY_NAME_TEMPLATE,
-                                                   nameof(ByPeriodRequest.Start).ToSnakeCase()));
+            .GreaterThan(x => x.Start)
+            .WithMessage(ValidationMessages.GREATER_THAN_PROPERTY
+                .Replace(ValidationMessages.PROPERTY_NAME_TEMPLATE,
+                    nameof(ByPeriodRequest.Start).ToSnakeCase()));
     }
 }

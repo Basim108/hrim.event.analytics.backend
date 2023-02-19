@@ -1,9 +1,10 @@
-namespace Hrim.Event.Analytics.Abstractions.Entities; 
+namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary> Entities that has an owner  </summary>
-public interface IHasOwner {
+public interface IHasOwner
+{
     /// <summary>
-    /// User identifier of an owner
+    ///     User identifier of an owner
     /// </summary>
     Guid CreatedById { get; set; }
 }

@@ -6,10 +6,13 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace Hrim.Event.Analytics.Api.Swagger.Configuration;
 
-public static class SwaggerServiceCollectionRegistrations {
-    public static void AddApiSwagger(this IServiceCollection services) {
+public static class SwaggerServiceCollectionRegistrations
+{
+    public static void AddApiSwagger(this IServiceCollection services)
+    {
         services.AddSwaggerGenNewtonsoftSupport();
-        services.AddSwaggerGen(c => {
+        services.AddSwaggerGen(c =>
+        {
             c.UseDateOnlyTimeOnlyStringConverters();
             c.SwaggerDoc("v1", SwaggerConfig.MakeEventAnalytics());
             c.ExampleFilters();
@@ -22,13 +25,15 @@ public static class SwaggerServiceCollectionRegistrations {
         services.AddSwaggerExamplesFromAssemblyOf<Program>();
     }
 
-    private static string GetXmlCommentsPath() {
+    private static string GetXmlCommentsPath()
+    {
         var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         return xmlPath;
     }
 
-    private static string GetAbstractionsXmlCommentsPath() {
+    private static string GetAbstractionsXmlCommentsPath()
+    {
         var xmlFile = $"{Assembly.GetAssembly(typeof(HrimEntity))?.GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         return xmlPath;

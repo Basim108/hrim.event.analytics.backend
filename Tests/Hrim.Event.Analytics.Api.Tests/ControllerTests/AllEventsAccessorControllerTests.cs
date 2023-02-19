@@ -11,26 +11,30 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
 [ExcludeFromCodeCoverage]
-public class AllEventsAccessorControllerTests: BaseCqrsTests {
+public class AllEventsAccessorControllerTests : BaseCqrsTests
+{
     private readonly AllEventsAccessorController _controller;
-    private readonly ByPeriodRequest             _request;
-    private readonly UserEventType               _eventType;
+    private readonly UserEventType _eventType;
+    private readonly ByPeriodRequest _request;
 
-    public AllEventsAccessorControllerTests() {
+    public AllEventsAccessorControllerTests()
+    {
         var accessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         _controller = new AllEventsAccessorController(accessor, Mediator);
-        
-        _eventType  = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
-        _request = new ByPeriodRequest {
+
+        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _request = new ByPeriodRequest
+        {
             Start = DateTime.Now.Date.AddDays(-1).ToDateOnly(),
-            End   = DateTime.Now.Date.AddDays(1).ToDateOnly()
+            End = DateTime.Now.Date.AddDays(1).ToDateOnly()
         };
     }
 
     [Fact]
-    public async Task Having_No_Occurrence_Should_Returns_EmptyList() {
-        TestData.Events.CreateManyDurationEvents(count: 3, OperatorContext.UserId,
-                                                 _request.Start, _request.End, _eventType.Id);
+    public async Task Having_No_Occurrence_Should_Returns_EmptyList()
+    {
+        TestData.Events.CreateManyDurationEvents(3, OperatorContext.UserId,
+            _request.Start, _request.End, _eventType.Id);
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 
         result.Should().NotBeNull();
@@ -40,9 +44,10 @@ public class AllEventsAccessorControllerTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Having_No_Duration_Should_Returns_EmptyList() {
-        TestData.Events.CreateManyOccurrenceEvents(count: 3, OperatorContext.UserId,
-                                                   _request.Start, _request.End, _eventType.Id);
+    public async Task Having_No_Duration_Should_Returns_EmptyList()
+    {
+        TestData.Events.CreateManyOccurrenceEvents(3, OperatorContext.UserId,
+            _request.Start, _request.End, _eventType.Id);
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 
         result.Should().NotBeNull();
@@ -50,13 +55,14 @@ public class AllEventsAccessorControllerTests: BaseCqrsTests {
         result.Durations.Should().NotBeNull();
         result.Durations.Should().BeEmpty();
     }
-    
+
     [Fact]
-    public async Task Having_Durations_And_Occurrence_Should_Return_Correct() {
-        TestData.Events.CreateManyDurationEvents(count: 3, OperatorContext.UserId,
-                                                   _request.Start, _request.End, _eventType.Id);
-        TestData.Events.CreateManyOccurrenceEvents(count: 3, OperatorContext.UserId,
-                                                   _request.Start, _request.End, _eventType.Id);
+    public async Task Having_Durations_And_Occurrence_Should_Return_Correct()
+    {
+        TestData.Events.CreateManyDurationEvents(3, OperatorContext.UserId,
+            _request.Start, _request.End, _eventType.Id);
+        TestData.Events.CreateManyOccurrenceEvents(3, OperatorContext.UserId,
+            _request.Start, _request.End, _eventType.Id);
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 
         result.Should().NotBeNull();
@@ -68,7 +74,8 @@ public class AllEventsAccessorControllerTests: BaseCqrsTests {
     }
 
     [Fact]
-    public async Task Having_No_Events_Should_Returns_RequestInfo() {
+    public async Task Having_No_Events_Should_Returns_RequestInfo()
+    {
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 
         result.Should().NotBeNull();
