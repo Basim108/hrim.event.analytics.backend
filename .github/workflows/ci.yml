@@ -10,9 +10,9 @@ jobs:
     - name: 'Checkout'
       uses: actions/checkout@v2
     - name: 'Install dotnet'
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '7.0.x'
     - name: 'Restore packages'
       run: dotnet restore ${{ env.PROJECT_PATH }}
     - name: 'Build project'
@@ -25,9 +25,9 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v2
       - name: 'Install dotnet'
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
       - name: 'Unit tests'
         run: dotnet test ${{ env.TESTS_PROJECT_PATH }} --configuration Release
         
