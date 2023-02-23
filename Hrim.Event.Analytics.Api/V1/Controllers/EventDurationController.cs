@@ -33,6 +33,16 @@ public class EventDurationController : EventBaseController<DurationEvent>
         _mediator = mediator;
     }
 
+    /// <summary> Get duration events for a period </summary>
+    [HttpGet]
+    public async Task<ActionResult<EventsForPeriodResponse>> GetForPeriodAsync([FromQuery] ByPeriodRequest request,
+        CancellationToken cancellationToken)
+    {
+        var query = new DurationEventGetForPeriod(request.Start, request.End, OperationContext);
+        var durations = await _mediator.Send(query, cancellationToken);
+        return new EventsForPeriodResponse(new GetEventsForPeriodRequest(request.Start, request.End), null, durations);
+    }
+    
     /// <summary> Create a duration event </summary>
     [HttpPost]
     [SetOwnerTypeFilter]

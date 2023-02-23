@@ -7,6 +7,7 @@ public static class ApiLogs
     public const string IDENTITY_IS_NOT_AUTHENTICATED = "Identity is not authenticated.";
     public const string FB_PICTURE_WAS_ADDED = "Facebook picture claim was added.";
     public const string EXTERNAL_USER_ID = "ExternalUserId={ExternalUserId}";
+    public const string INTERNAL_USER_ID = "InternalUserId={InternalUserId}";
     public const string AUTH_TYPE = "AuthenticationType={AuthenticationType}";
     public const string REQUEST_HEADERS = "RequestHeaders={RequestHeaders}";
     public const string REQUEST_BODY = "RequestBody={RequestBody}";

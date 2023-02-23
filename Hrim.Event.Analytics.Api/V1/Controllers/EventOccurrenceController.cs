@@ -32,6 +32,16 @@ public class EventOccurrenceController : EventBaseController<OccurrenceEvent>
     {
         _mediator = mediator;
     }
+    
+    /// <summary> Get occurrence events for a period </summary>
+    [HttpGet]
+    public async Task<ActionResult<EventsForPeriodResponse>> GetForPeriodAsync([FromQuery] ByPeriodRequest request,
+        CancellationToken cancellationToken)
+    {
+        var query = new OccurrenceEventGetForPeriod(request.Start, request.End, OperationContext);
+        var occurrences = await _mediator.Send(query, cancellationToken);
+        return new EventsForPeriodResponse(new GetEventsForPeriodRequest(request.Start, request.End), occurrences, null);
+    }
 
     /// <summary> Create an occurrence event </summary>
     [HttpPost]
