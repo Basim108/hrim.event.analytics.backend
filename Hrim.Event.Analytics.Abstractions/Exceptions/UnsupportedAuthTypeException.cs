@@ -7,7 +7,7 @@ namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 public class UnsupportedAuthTypeException : Exception
 {
     public UnsupportedAuthTypeException(string? authType)
-        : base(CoreLogs.UNSUPPORTED_AUTH_TYPE + authType)
+        : base(CoreLogs.UNSUPPORTED_AUTH_TYPE + Sanitize(authType))
     {
         AuthenticationType = Sanitize(authType);
     }

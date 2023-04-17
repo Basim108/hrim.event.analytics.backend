@@ -8,7 +8,7 @@ namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 public class UnexpectedCqrsStatusCodeException : Exception
 {
     public UnexpectedCqrsStatusCodeException(CqrsResultCode? statusCode)
-        : base(CoreLogs.UNEXPECTED_CQRS_RESULT)
+        : base(CoreLogs.UNEXPECTED_CQRS_RESULT_CODE.Replace("{CqrsResultCode}", statusCode.ToString()))
     {
         StatusCode = statusCode;
     }

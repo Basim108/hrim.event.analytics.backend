@@ -7,8 +7,8 @@ namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
 public class HrimTagDbConfig: IEntityTypeConfiguration<HrimTag> {
     public void Configure(EntityTypeBuilder<HrimTag> builder) {
-        builder.ToTable("hrim_tags")
-               .HasComment("A tag that could be linked to an instance of any entity");
+        builder.ToTable("hrim_tags", 
+                        t => t.HasComment("A tag that could be linked to an instance of any entity"));
 
         builder.HasIndex(x => x.CreatedById)
                .IncludeProperties(x => x.Tag);
