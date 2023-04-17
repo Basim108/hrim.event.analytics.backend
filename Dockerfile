@@ -1,18 +1,14 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS publish
 WORKDIR /src
-COPY ["Hrim.Event.Analytics.Api.csproj", "./"]
-RUN dotnet restore "Hrim.Event.Analytics.sln"
 COPY . .
-WORKDIR "/src/"
-RUN dotnet build "Hrim.Event.Analytics.sln" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "Hrim.Event.Analytics.sln" -c Release -o /app/publish
+RUN dotnet restore 
+RUN dotnet build -c Release --no-restore -o /app/build
+RUN dotnet publish -c Release --no-restore -o /app/publish
 
 FROM base AS final
 WORKDIR /app
