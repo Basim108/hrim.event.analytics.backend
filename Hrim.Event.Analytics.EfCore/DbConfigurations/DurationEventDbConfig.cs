@@ -7,8 +7,10 @@ namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
 public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent> {
     public void Configure(EntityTypeBuilder<DbDurationEvent> builder) {
-        builder.ToTable("duration_events")
-               .HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
+        builder.ToTable("duration_events",
+                        t => 
+                            t.HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.")
+                        );
 
         builder.HasIndex(x => new {
                     x.CreatedById,

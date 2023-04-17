@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
 public static class EntityDbConfig {
-    public const string POSTGRES_GUID_GENERATOR = "uuid_generate_v4()";
+    private const string POSTGRES_GUID_GENERATOR = "uuid_generate_v4()";
 
     public static void AddEntityProperties<TEntity>(this EntityTypeBuilder<TEntity> builder)
         where TEntity : HrimEntity {

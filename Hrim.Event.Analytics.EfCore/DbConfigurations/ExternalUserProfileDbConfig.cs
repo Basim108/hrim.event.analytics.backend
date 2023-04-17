@@ -9,8 +9,8 @@ namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
 public class ExternalUserProfileDbConfig: IEntityTypeConfiguration<ExternalUserProfile> {
     public void Configure(EntityTypeBuilder<ExternalUserProfile> builder) {
-        builder.ToTable("external_user_profiles")
-               .HasComment("user profiles from a specific idp such as Google, Facebook, etc");
+        builder.ToTable("external_user_profiles", 
+                        t => t.HasComment("user profiles from a specific idp such as Google, Facebook, etc"));
 
         builder.AddEntityProperties();
 

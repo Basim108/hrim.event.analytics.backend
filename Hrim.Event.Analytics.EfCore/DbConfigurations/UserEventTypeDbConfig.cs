@@ -7,14 +7,19 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
-public class UserEventTypeDbConfig: IEntityTypeConfiguration<UserEventType> {
+public class UserEventTypeDbConfig: IEntityTypeConfiguration<UserEventType>
+{
     public void Configure(EntityTypeBuilder<UserEventType> builder) {
-        builder.ToTable("event_types")
-               .HasComment("User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
+        builder.ToTable("event_types",
+                        t =>
+                            t.HasComment("User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types"));
 
         builder.AddEntityProperties();
 
-        builder.HasIndex(x => new { x.CreatedById, x.Name })
+        builder.HasIndex(x => new {
+                    x.CreatedById,
+                    x.Name
+                })
                .IsUnique();
 
         builder.Property(p => p.Name)
