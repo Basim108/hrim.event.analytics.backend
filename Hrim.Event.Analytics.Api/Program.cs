@@ -1,6 +1,7 @@
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -26,6 +27,11 @@ app.Use(async (context, next) =>
 app.UseCorrelationId();
 app.UseHttpContextLogging();
 app.UseRouting();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    AllowCachingResponses = false
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

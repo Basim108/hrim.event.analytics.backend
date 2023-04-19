@@ -7,6 +7,7 @@ using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Swagger.Configuration;
 using Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 using Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
+using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
 using Hrim.Event.Analytics.Infrastructure.DependencyInjection;
 using Hrimsoft.StringCases;
@@ -42,5 +43,8 @@ public static class ApiServiceCollectionRegistrations
 
         services.AddEventAnalyticsInfrastructure();
         services.AddEventAnalyticsStorage(appConfig, typeof(Program).Assembly.GetName().Name!);
+
+        services.AddHealthChecks()
+                .AddDbContextCheck<EventAnalyticDbContext>();
     }
 }
