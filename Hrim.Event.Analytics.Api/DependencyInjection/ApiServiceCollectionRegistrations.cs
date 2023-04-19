@@ -44,7 +44,6 @@ public static class ApiServiceCollectionRegistrations
         services.AddEventAnalyticsInfrastructure();
         services.AddEventAnalyticsStorage(appConfig, typeof(Program).Assembly.GetName().Name!);
 
-        services.AddHealthChecks()
-                .AddDbContextCheck<EventAnalyticDbContext>();
+        services.AddHealthChecks();
     }
 }
