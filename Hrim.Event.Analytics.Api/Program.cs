@@ -2,6 +2,7 @@ using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -12,11 +13,14 @@ builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console()
 
 builder.Services.AddEventAnalyticsServices(builder.Configuration);
 builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
+builder.Services.Configure<ForwardedHeadersOptions>(options => {
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseEventAnalyticsCors(builder.Configuration);
-app.UseHttpsRedirection();
 
 app.UseSerilogRequestLogging();
 app.Use(async (context, next) =>
