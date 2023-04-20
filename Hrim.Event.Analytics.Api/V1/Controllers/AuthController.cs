@@ -68,7 +68,7 @@ public class AuthController : ControllerBase
             return Ok();
         try
         {
-            var whiteList = _appConfig["AllowedOrigins"];
+            var whiteList = _appConfig["ALLOWED_ORIGINS"];
             if (!string.IsNullOrEmpty(whiteList))
             {
                 var returnUri = new Uri(userReturnUri);
