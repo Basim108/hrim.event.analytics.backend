@@ -128,7 +128,7 @@ public class RestoreEntityTests : BaseCqrsTests
     [Fact]
     public async Task EventType_Should_Restore()
     {
-        var headache = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}", true);
+        var headache = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}", true);
 
         var command = new RestoreEntityCommand<UserEventType>(headache.Id, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -139,8 +139,8 @@ public class RestoreEntityTests : BaseCqrsTests
     [Fact]
     public async Task DurationEvent_Should_Restore()
     {
-        var headache = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
-        var durationEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, headache.Id, true);
+        var headache = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
+        var durationEvent = TestData.Events.CreateDurationEvent(OperatorUserId, headache.Id, true);
 
         var command = new RestoreEntityCommand<DurationEvent>(durationEvent.Id, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -153,8 +153,8 @@ public class RestoreEntityTests : BaseCqrsTests
     [Fact]
     public async Task OccurrenceEvent_Should_Restore()
     {
-        var nicePractice = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
-        var nicePracticeEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, nicePractice.Id, true);
+        var nicePractice = TestData.Events.CreateEventType(OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
+        var nicePracticeEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId, nicePractice.Id, true);
 
         var command = new RestoreEntityCommand<OccurrenceEvent>(nicePracticeEvent.Id, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -178,7 +178,7 @@ public class RestoreEntityTests : BaseCqrsTests
     [Fact]
     public async Task Not_Deleted_EventType_Should_Recognize()
     {
-        var headache = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        var headache = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
 
         var command = new RestoreEntityCommand<UserEventType>(headache.Id, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -189,8 +189,8 @@ public class RestoreEntityTests : BaseCqrsTests
     [Fact]
     public async Task Not_Deleted_DurationEvent_Should_Recognize()
     {
-        var headache = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
-        var durationEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, headache.Id);
+        var headache = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
+        var durationEvent = TestData.Events.CreateDurationEvent(OperatorUserId, headache.Id);
 
         var command = new RestoreEntityCommand<DurationEvent>(durationEvent.Id, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);
@@ -201,8 +201,8 @@ public class RestoreEntityTests : BaseCqrsTests
     [Fact]
     public async Task Not_Deleted_OccurrenceEvent_Should_Recognized()
     {
-        var nicePractice = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
-        var nicePracticeEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, nicePractice.Id);
+        var nicePractice = TestData.Events.CreateEventType(OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
+        var nicePracticeEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId, nicePractice.Id);
 
         var command = new RestoreEntityCommand<OccurrenceEvent>(nicePracticeEvent.Id, true, OperatorContext);
         var cqrsResult = await Mediator.Send(command);

@@ -31,7 +31,7 @@ public class EventTypeCreateTests : BaseCqrsTests
         var beforeSend = DateTime.UtcNow;
         var cqrsResult = await Mediator.Send(_createCommand);
 
-        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorContext.UserId, beforeSend);
+        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorUserId, beforeSend);
 
         cqrsResult.Result!.Name.Should().Be(_createEventTypeRequest.Name);
         cqrsResult.Result.Color.Should().Be(_createEventTypeRequest.Color);
@@ -42,7 +42,7 @@ public class EventTypeCreateTests : BaseCqrsTests
     [Fact]
     public async Task Create_EventType_With_Same_Name()
     {
-        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorUserId);
         _createEventTypeRequest.Name = createdEntities.First().Value.Name;
 
         var cqrsResult = await Mediator.Send(_createCommand);
@@ -53,7 +53,7 @@ public class EventTypeCreateTests : BaseCqrsTests
     [Fact]
     public async Task Create_Already_Deleted_Entity()
     {
-        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId, true);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorUserId, true);
         _createEventTypeRequest.Name = createdEntities.First().Value.Name;
 
         var cqrsResult = await Mediator.Send(_createCommand);

@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
 using Hrimsoft.StringCases;
@@ -15,17 +16,21 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateCommand, CqrsResult<DurationEvent?>> {
+public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateCommand, CqrsResult<DurationEvent?>>
+{
     private readonly ILogger<DurationEventCreateHandler> _logger;
     private readonly IMapper                             _mapper;
+    private readonly IApiRequestAccessor                 _requestAccessor;
     private readonly EventAnalyticDbContext              _context;
 
     public DurationEventCreateHandler(ILogger<DurationEventCreateHandler> logger,
                                       IMapper                             mapper,
+                                      IApiRequestAccessor                 requestAccessor,
                                       EventAnalyticDbContext              context) {
-        _logger   = logger;
-        _mapper   = mapper;
-        _context  = context;
+        _logger          = logger;
+        _mapper          = mapper;
+        _requestAccessor = requestAccessor;
+        _context         = context;
     }
 
     public Task<CqrsResult<DurationEvent?>> Handle(DurationEventCreateCommand request, CancellationToken cancellationToken) {
@@ -36,12 +41,13 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
 
     private async Task<CqrsResult<DurationEvent?>> HandleAsync(DurationEventCreateCommand request, CancellationToken cancellationToken) {
         var mappedEventInfo = _mapper.Map<DbDurationEvent>(request.EventInfo);
+        var operatorUserId  = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
         var existed = await _context.DurationEvents
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == request.Context.UserId    &&
-                                                              x.StartedOn   == mappedEventInfo.StartedOn &&
-                                                              x.StartedAt   == mappedEventInfo.StartedAt &&
-                                                              x.EventTypeId == mappedEventInfo.EventTypeId,
+                                    .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId
+                                                           && x.StartedOn   == mappedEventInfo.StartedOn
+                                                           && x.StartedAt   == mappedEventInfo.StartedAt
+                                                           && x.EventTypeId == mappedEventInfo.EventTypeId,
                                                          cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
@@ -61,7 +67,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
             FinishedOn      = mappedEventInfo.FinishedOn,
             FinishedAt      = mappedEventInfo.FinishedAt,
             EventTypeId     = request.EventInfo.EventTypeId,
-            CreatedById     = request.Context.UserId,
+            CreatedById     = operatorUserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };

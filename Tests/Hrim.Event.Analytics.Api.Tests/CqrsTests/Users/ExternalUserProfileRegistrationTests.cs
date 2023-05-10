@@ -1,107 +1,125 @@
+using System.Security.Claims;
 using FluentAssertions;
+using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
+using Hrimsoft.Core.Extensions;
+using NSubstitute;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Users;
 
-public class ExternalUserProfileRegistrationTests : BaseCqrsTests
+public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 {
-    private readonly ExternalUserProfile _profile;
+    private readonly UserProfileModel _profile;
 
-    public ExternalUserProfileRegistrationTests()
-    {
-        _profile = new ExternalUserProfile
-        {
-            ExternalUserId = UsersData.EXTERNAL_ID,
-            Email = UsersData.EMAIL,
-            FullName = UsersData.FULL_NAME,
+    private DateTime _beforeSend = DateTime.UtcNow;
+
+    public ExternalUserProfileRegistrationTests() {
+        _profile = new UserProfileModel {
+            FullName  = UsersData.FULL_NAME,
             FirstName = UsersData.FIRST_NAME,
-            LastName = UsersData.LAST_NAME
+            LastName  = UsersData.LAST_NAME
         };
     }
 
     [Fact]
-    public async Task First_Login_Should_Register()
-    {
-        var command = new ExternalUserProfileRegistration(Guid.NewGuid(), _profile);
-        var beforeSend = DateTime.UtcNow;
+    public async Task First_Login_Should_Register() {
+        var claims = new List<Claim> {
+            new("sub", $"facebook|{UsersData.EXTERNAL_ID}-new"),
+            new("https://hrimsoft.us.auth0.com.example.com/email", UsersData.EMAIL + ".new")
+        };
+        OperatorContext = new OperationContext(claims, Guid.NewGuid());
+        _apiRequestAccessor.GetUserClaims().Returns(claims);
+        _apiRequestAccessor.GetOperationContext().Returns(OperatorContext);
+        var command = new ExternalUserProfileRegistration(OperatorContext, _profile);
 
         var resultProfile = await Mediator.Send(command);
 
-        resultProfile.CheckEntitySuccessfulCreation(beforeSend);
-        resultProfile.LastLogin.Should().BeAfter(beforeSend);
+        resultProfile.CheckEntitySuccessfulCreation(_beforeSend);
+        resultProfile.LastLogin.Should().BeAfter(_beforeSend);
         resultProfile.HrimUserId.Should().NotBeEmpty();
     }
 
     [Fact]
-    public async Task Second_Login_Should_Update_LastLogin()
-    {
+    public async Task Second_Login_Should_Update_LastLogin() {
         var currentProfile = TestData.Users.CreateUniqueLogin();
         currentProfile.CheckEntitySuccessfulCreation();
 
-        var command = new ExternalUserProfileRegistration(Guid.NewGuid(), currentProfile);
-        var beforeSend = DateTime.UtcNow;
+        var command = new ExternalUserProfileRegistration(OperatorContext, _profile);
+        _beforeSend = DateTime.UtcNow;
 
         var resultProfile = await Mediator.Send(command);
 
-        resultProfile.CheckEntitySuccessfulUpdate(beforeSend, null, currentProfile);
-        resultProfile.LastLogin.Should().BeAfter(beforeSend);
-        resultProfile.HrimUserId.Should().Be(currentProfile.HrimUserId);
+        resultProfile.UpdatedAt.Should().BeAfter(_beforeSend);
+        resultProfile.IsDeleted.Should().BeNull();
+        resultProfile.ConcurrentToken.Should().Be(2);
+        resultProfile.LastLogin.Should().BeAfter(_beforeSend);
+        resultProfile.ExternalUserId.Should().Be(UsersData.EXTERNAL_ID);
     }
 
     [Fact]
-    public async Task Given_Different_Idp_But_Same_Email_Should_Link_Profile()
-    {
-        var user = TestData.Users.EnsureUserExistence(Guid.NewGuid());
-        var email = $"{user.Id}@mailinator.com";
-        var anotherProfile = TestData.Users.CreateUniqueLogin(user.Id, email, idp: ExternalIdp.Facebook);
-        anotherProfile.CheckEntitySuccessfulCreation();
+    public async Task Given_Different_Idp_But_Same_Email_Should_Link_Profile() {
+        var userId = Guid.NewGuid();
+        var email  = $"{userId}@mailinator.com";
+        var user = TestData.Users.EnsureUserExistence(userId,
+                                                      isDeleted: false,
+                                                      externalId: Guid.NewGuid().ToString(),
+                                                      idp: ExternalIdp.Facebook,
+                                                      email);
 
-        _profile.Email = email;
-        _profile.ExternalUserId = Guid.NewGuid().ToString();
-        _profile.Idp = ExternalIdp.Google;
-
-        var command = new ExternalUserProfileRegistration(Guid.NewGuid(), _profile);
-        var beforeSend = DateTime.UtcNow;
+        var googleUserId = Guid.NewGuid().ToString();
+        var claims = new List<Claim> {
+            new("sub", $"google|{googleUserId}"),
+            new("https://hrimsoft.us.auth0.com.example.com/email", email)
+        };
+        OperatorContext = new OperationContext(claims, Guid.NewGuid());
+        _apiRequestAccessor.GetUserClaims().Returns(claims);
+        _apiRequestAccessor.GetOperationContext().Returns(OperatorContext);
+        var command = new ExternalUserProfileRegistration(OperatorContext, _profile);
+        _beforeSend = DateTime.UtcNow;
 
         var resultProfile = await Mediator.Send(command);
 
         // despite the fact that _profile is linked to a user, it's a new profile. 
-        resultProfile.CheckEntitySuccessfulCreation(beforeSend, null);
+        resultProfile.CheckEntitySuccessfulCreation(_beforeSend, userId);
 
-        resultProfile.LastLogin.Should().BeAfter(beforeSend);
-        resultProfile.HrimUserId.Should().Be(user.Id);
+        resultProfile.LastLogin.Should().BeAfter(_beforeSend);
+        resultProfile.HrimUserId.Should().Be(userId);
         user.ExternalProfiles.Count.Should().Be(2);
-        user.ExternalProfiles.Any(x => x.Id == anotherProfile.Id).Should().BeTrue();
-        user.ExternalProfiles.Any(x => x.Id == _profile.Id).Should().BeTrue();
     }
 
     [Fact]
-    public async Task Given_Different_Email_For_Same_ExternalId_Should_Update_Email()
-    {
-        var user = TestData.Users.EnsureUserExistence(Guid.NewGuid());
+    public async Task Given_Different_Email_For_Same_ExternalId_Should_Update_Email() {
+        var userId     = Guid.NewGuid();
+        var email      = $"{userId}@mailinator.com";
         var externalId = Guid.NewGuid().ToString();
-        var anotherProfile = TestData.Users.CreateUniqueLogin(user.Id, externalId: externalId, idp: ExternalIdp.Google);
-        anotherProfile.CheckEntitySuccessfulCreation();
-
-        _profile.Email = $"new-{externalId}@mailinator.com";
-        _profile.ExternalUserId = externalId;
-        _profile.Idp = ExternalIdp.Google;
-
-        var command = new ExternalUserProfileRegistration(Guid.NewGuid(), _profile);
-        var beforeSend = DateTime.UtcNow;
-
+        var user = TestData.Users.EnsureUserExistence(userId,
+                                                      isDeleted: false,
+                                                      externalId,
+                                                      idp: ExternalIdp.Facebook,
+                                                      $"{userId}@mailinator.com");
+        var anotherProfile = user.ExternalProfiles.First();
+        var claims = new List<Claim> {
+            new("sub", $"facebook|{externalId}"),
+            new("https://hrimsoft.us.auth0.com.example.com/email", email + ".new")
+        };
+        OperatorContext = new OperationContext(claims, Guid.NewGuid());
+        _apiRequestAccessor.GetUserClaims().Returns(claims);
+        _apiRequestAccessor.GetOperationContext().Returns(OperatorContext);
+        var command       = new ExternalUserProfileRegistration(OperatorContext, _profile);
         var resultProfile = await Mediator.Send(command);
 
-        resultProfile.CheckEntitySuccessfulUpdate(beforeSend, null, anotherProfile);
+        resultProfile.CheckEntitySuccessfulUpdate(_beforeSend, userId, anotherProfile);
 
-        resultProfile.LastLogin.Should().BeAfter(beforeSend);
+        resultProfile.LastLogin.Should().BeAfter(_beforeSend);
         resultProfile.Id.Should().Be(anotherProfile.Id);
         resultProfile.HrimUserId.Should().Be(user.Id);
         user.ExternalProfiles.Count.Should().Be(1);
-        user.ExternalProfiles.Any(x => x.Id == anotherProfile.Id).Should().BeTrue();
+        user.ExternalProfiles.Any(x => x.Id    == anotherProfile.Id).Should().BeTrue();
+        user.ExternalProfiles.Any(x => x.Email == email + ".new").Should().BeTrue();
     }
 }

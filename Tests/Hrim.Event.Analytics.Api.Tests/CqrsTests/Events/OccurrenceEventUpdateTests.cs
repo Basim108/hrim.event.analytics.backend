@@ -16,7 +16,7 @@ public class OccurrenceEventUpdateTests : BaseCqrsTests
 
     public OccurrenceEventUpdateTests()
     {
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
         _updateRequest = new OccurrenceEventUpdateRequest
         {
             OccurredAt = DateTimeOffset.Now,
@@ -27,7 +27,7 @@ public class OccurrenceEventUpdateTests : BaseCqrsTests
     [Fact]
     public async Task Update_OccurrenceEvent()
     {
-        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
             _eventType.Id,
             false,
             _updateRequest.OccurredAt);
@@ -40,14 +40,14 @@ public class OccurrenceEventUpdateTests : BaseCqrsTests
 
         var cqrsResult = await Mediator.Send(updateCommand);
 
-        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorContext.UserId, forUpdate, beforeSend);
+        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorUserId, forUpdate, beforeSend);
         cqrsResult.Result!.OccurredAt.Should().Be(forUpdate.OccurredAt.TruncateToMilliseconds());
     }
 
     [Fact]
     public async Task Update_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt()
     {
-        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
             _eventType.Id,
             true,
             _updateRequest.OccurredAt);
@@ -65,7 +65,7 @@ public class OccurrenceEventUpdateTests : BaseCqrsTests
     [Fact]
     public async Task Update_OccurrenceEvent_With_Wrong_ConcurrentToken()
     {
-        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
             _eventType.Id,
             false,
             _updateRequest.OccurredAt);

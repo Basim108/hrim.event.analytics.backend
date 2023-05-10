@@ -3,6 +3,7 @@ using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

@@ -1,0 +1,46 @@
+using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
+using Hrim.Event.Analytics.Abstractions.Entities.Account;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
+
+public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQuery, Guid>
+{
+    private readonly ILogger<GetInternalUserIdQueryHandler> _logger;
+    private readonly EventAnalyticDbContext                 _context;
+
+    public GetInternalUserIdQueryHandler(ILogger<GetInternalUserIdQueryHandler> logger,
+                                         EventAnalyticDbContext                 context) {
+        _logger  = logger;
+        _context = context;
+    }
+
+    public Task<Guid> Handle(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+        if (request.Context == null)
+            throw new ArgumentNullException(nameof(request), nameof(request.Context));
+
+        return HandleAsync(request, cancellationToken);
+    }
+
+    private async Task<Guid> HandleAsync(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
+        var externalId = request.Context.ExternalId();
+        var email      = request.Context.Email;
+
+        IQueryable<ExternalUserProfile> query = _context.ExternalUserProfiles;
+        query = string.IsNullOrWhiteSpace(email)
+                    ? query.Where(x => x.ExternalUserId == externalId)
+                    : query.Where(x => x.ExternalUserId == externalId || x.Email == email);
+
+        var existedList = await query.Select(x => x.HrimUserId).Distinct().ToListAsync(cancellationToken);
+        if (existedList.Count > 1) {
+            _logger.LogWarning(EfCoreLogs.THERE_ARE_MANY_USERS_FOUND_BY_CLAIMS);
+        }
+        return existedList.Count == 0
+                   ? Guid.Empty
+                   : existedList.First();
+    }
+}

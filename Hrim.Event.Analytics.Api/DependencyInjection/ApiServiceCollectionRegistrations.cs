@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Swagger.Configuration;
@@ -36,7 +37,7 @@ public static class ApiServiceCollectionRegistrations
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
         services.AddHttpContextAccessor();
-        services.AddTransient<IApiRequestAccessor, ApiRequestAccessor>();
+        services.AddScoped<IApiRequestAccessor, ApiRequestAccessor>();
         services.AddTransient<IValidator<DurationEvent>, EventAsyncValidator>();
         services.AddTransient<IValidator<OccurrenceEvent>, EventAsyncValidator>();
         services.AddTransient<IValidator<UserEventType>, EventTypeAsyncValidator>();

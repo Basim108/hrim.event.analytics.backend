@@ -1,5 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
@@ -16,8 +18,8 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests;
 [ExcludeFromCodeCoverage]
 public abstract class BaseCqrsTests : IDisposable
 {
-    private readonly IServiceScope _serviceScope;
-
+    private readonly   IServiceScope       _serviceScope;
+    protected readonly IApiRequestAccessor _apiRequestAccessor = Substitute.For<IApiRequestAccessor>();
     protected BaseCqrsTests()
     {
         var appConfig = new ConfigurationBuilder()
@@ -29,22 +31,22 @@ public abstract class BaseCqrsTests : IDisposable
         services.AddEventAnalyticsServices(appConfig);
 
         services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));
-        services.AddDbContext<EventAnalyticDbContext>(options =>
-            options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+        services.AddDbContext<EventAnalyticDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
+        var operatorId = Guid.NewGuid();
         services.CleanUpCurrentRegistrations(typeof(IApiRequestAccessor));
         services.AddScoped(_ =>
         {
-            var apiRequestAccessor = Substitute.For<IApiRequestAccessor>();
-            var operatorId = Guid.NewGuid();
+            var claims = new List<Claim> {
+                new("sub", $"facebook|{UsersData.EXTERNAL_ID}"),
+                new("https://hrimsoft.us.auth0.com.example.com/email", UsersData.EMAIL)
+            };
             var correlationId = Guid.NewGuid();
-            apiRequestAccessor.GetAuthorizedUserId()
-                .Returns(operatorId);
-            apiRequestAccessor.GetCorrelationId()
-                .Returns(correlationId);
-            apiRequestAccessor.GetOperationContext()
-                .Returns(new OperationContext(operatorId, correlationId));
-            return apiRequestAccessor;
+            _apiRequestAccessor.GetInternalUserIdAsync(Arg.Any<CancellationToken>()).Returns(operatorId);
+            _apiRequestAccessor.GetUserClaims().Returns(claims);
+            _apiRequestAccessor.GetCorrelationId().Returns(correlationId);
+            _apiRequestAccessor.GetOperationContext().Returns(new OperationContext(claims, correlationId));
+            return _apiRequestAccessor;
         });
         _serviceScope = services.BuildServiceProvider().CreateScope();
         ServiceProvider = _serviceScope.ServiceProvider;
@@ -54,14 +56,16 @@ public abstract class BaseCqrsTests : IDisposable
         TestData = new TestData(context);
         var apiRequestAccessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         OperatorContext = apiRequestAccessor.GetOperationContext();
-
-        TestData.Users.EnsureUserExistence(OperatorContext.UserId);
+        OperatorUserId  = operatorId;
+        TestData.Users.EnsureUserExistence(OperatorUserId);
     }
 
-    protected IMediator Mediator { get; }
+    protected IMediator        Mediator        { get; }
     protected IServiceProvider ServiceProvider { get; }
-    protected TestData TestData { get; }
-    protected OperationContext OperatorContext { get; }
+    protected TestData         TestData        { get; }
+    protected OperationContext OperatorContext { get; set;  }
+    
+    protected Guid OperatorUserId { get; }
 
     public void Dispose()
     {

@@ -14,7 +14,7 @@ public class OccurrenceEventGetForPeriodTests : BaseCqrsTests
 
     public OccurrenceEventGetForPeriodTests()
     {
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class OccurrenceEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTime.Now.Date.AddDays(-1).ToDateOnly();
         var end = start.AddDays(2);
-        var mineEvent = TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId,
+        var mineEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
             _eventType.Id,
             occurredAt: DateTimeOffset.Now);
         var anotherUserId = Guid.NewGuid();
@@ -44,7 +44,7 @@ public class OccurrenceEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTime.Now.Date.AddDays(-1).ToDateOnly();
         var end = start.AddDays(2);
-        TestData.Events.CreateManyOccurrenceEvents(3, OperatorContext.UserId,
+        TestData.Events.CreateManyOccurrenceEvents(3, OperatorUserId,
             start, end, _eventType.Id);
 
         var query = new OccurrenceEventGetForPeriod(start, end, OperatorContext);

@@ -25,8 +25,7 @@ public class ExternalUserProfileDbConfig: IEntityTypeConfiguration<ExternalUserP
                .IsRequired();
 
         builder.Property(p => p.Email)
-               .HasColumnName(nameof(ExternalUserProfile.Email).ToSnakeCase())
-               .IsRequired();
+               .HasColumnName(nameof(ExternalUserProfile.Email).ToSnakeCase());
         
         builder.Property(p => p.Idp)
                .HasColumnName(nameof(ExternalUserProfile.Idp).ToSnakeCase())

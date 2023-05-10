@@ -7,21 +7,16 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-#if RELEASE
-using Microsoft.AspNetCore.Authorization;
-#endif
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Manage any entity type </summary>
 [ApiController]
-#if RELEASE
-[Authorize]
-#endif
 [Route("v1/entity/{id}")]
 public class EntityController : ControllerBase
 {

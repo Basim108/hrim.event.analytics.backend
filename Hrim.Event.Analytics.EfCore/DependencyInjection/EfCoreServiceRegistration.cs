@@ -6,7 +6,6 @@ using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.AutoMapper;
-using Hrim.Event.Analytics.EfCore.Cqrs;
 using Hrim.Event.Analytics.EfCore.Cqrs.Entity;
 using Hrim.Event.Analytics.EfCore.Cqrs.Events;
 using Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;

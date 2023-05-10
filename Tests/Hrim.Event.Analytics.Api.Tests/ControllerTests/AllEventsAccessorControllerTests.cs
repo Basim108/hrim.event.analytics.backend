@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Extensions;
-using Hrim.Event.Analytics.Api.Services;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Tests.CqrsTests;
 using Hrim.Event.Analytics.Api.V1.Controllers;
 using Hrim.Event.Analytics.Api.V1.Models;
@@ -22,7 +22,7 @@ public class AllEventsAccessorControllerTests : BaseCqrsTests
         var accessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         _controller = new AllEventsAccessorController(accessor, Mediator);
 
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
         _request = new ByPeriodRequest
         {
             Start = DateTime.Now.Date.AddDays(-1).ToDateOnly(),
@@ -33,7 +33,7 @@ public class AllEventsAccessorControllerTests : BaseCqrsTests
     [Fact]
     public async Task Having_No_Occurrence_Should_Returns_EmptyList()
     {
-        TestData.Events.CreateManyDurationEvents(3, OperatorContext.UserId,
+        TestData.Events.CreateManyDurationEvents(3, OperatorUserId,
             _request.Start, _request.End, _eventType.Id);
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 
@@ -46,7 +46,7 @@ public class AllEventsAccessorControllerTests : BaseCqrsTests
     [Fact]
     public async Task Having_No_Duration_Should_Returns_EmptyList()
     {
-        TestData.Events.CreateManyOccurrenceEvents(3, OperatorContext.UserId,
+        TestData.Events.CreateManyOccurrenceEvents(3, OperatorUserId,
             _request.Start, _request.End, _eventType.Id);
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 
@@ -59,9 +59,9 @@ public class AllEventsAccessorControllerTests : BaseCqrsTests
     [Fact]
     public async Task Having_Durations_And_Occurrence_Should_Return_Correct()
     {
-        TestData.Events.CreateManyDurationEvents(3, OperatorContext.UserId,
+        TestData.Events.CreateManyDurationEvents(3, OperatorUserId,
             _request.Start, _request.End, _eventType.Id);
-        TestData.Events.CreateManyOccurrenceEvents(3, OperatorContext.UserId,
+        TestData.Events.CreateManyOccurrenceEvents(3, OperatorUserId,
             _request.Start, _request.End, _eventType.Id);
         var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
 

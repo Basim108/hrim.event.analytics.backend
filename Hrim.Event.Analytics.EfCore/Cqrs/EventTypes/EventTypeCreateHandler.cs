@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrimsoft.Core.Extensions;
 using Hrimsoft.StringCases;
 using MediatR;
@@ -13,14 +14,18 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, CqrsResult<UserEventType?>> {
+public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, CqrsResult<UserEventType?>>
+{
     private readonly ILogger<EventTypeCreateHandler> _logger;
     private readonly EventAnalyticDbContext          _context;
+    private readonly IApiRequestAccessor             _requestAccessor;
 
     public EventTypeCreateHandler(ILogger<EventTypeCreateHandler> logger,
-                                  EventAnalyticDbContext          context) {
-        _logger  = logger;
-        _context = context;
+                                  EventAnalyticDbContext          context,
+                                  IApiRequestAccessor             requestAccessor) {
+        _logger          = logger;
+        _context         = context;
+        _requestAccessor = requestAccessor;
     }
 
     public Task<CqrsResult<UserEventType?>> Handle(EventTypeCreateCommand request, CancellationToken cancellationToken) {
@@ -28,18 +33,16 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventType)}");
         if (request.Context == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
-        if (request.Context.UserId == Guid.Empty)
-            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}.{request.Context.UserId}");
 
         return HandleAsync(request, cancellationToken);
     }
 
     private async Task<CqrsResult<UserEventType?>> HandleAsync(EventTypeCreateCommand request, CancellationToken cancellationToken) {
         using var eventTypeNameScope = _logger.BeginScope("EventTypeName={EventTypeName}", request.EventType.Name);
+        var       operatorUserId     = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
         var existed = await _context.UserEventTypes
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == request.Context.UserId &&
-                                                              x.Name        == request.EventType.Name,
+                                    .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId && x.Name == request.EventType.Name,
                                                          cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
@@ -58,7 +61,7 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
                               : request.EventType.Description.Trim(),
             Color           = request.EventType.Color,
             IsPublic        = request.EventType.IsPublic,
-            CreatedById     = request.Context.UserId,
+            CreatedById     = operatorUserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };

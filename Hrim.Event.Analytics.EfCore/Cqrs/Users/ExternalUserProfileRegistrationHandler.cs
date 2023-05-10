@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUserProfileRegistration, ExternalUserProfile> {
+public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUserProfileRegistration, ExternalUserProfile>
+{
     private readonly EventAnalyticDbContext _context;
     private readonly IMediator              _mediator;
 
@@ -29,18 +30,23 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
 
     private async Task<ExternalUserProfile> HandleAsync(ExternalUserProfileRegistration request,
                                                         CancellationToken               cancellationToken) {
-        var profile = request.Profile;
-        var existedList = await _context.ExternalUserProfiles
-                                        .Include(x => x.HrimUser)
-                                        .Where(x => x.ExternalUserId == profile.ExternalUserId ||
-                                                    x.Email          == profile.Email)
-                                        .ToListAsync(cancellationToken);
+        var externalId = request.Context.ExternalId();
+        var email      = request.Context.Email;
+
+        IQueryable<ExternalUserProfile> query = _context.ExternalUserProfiles
+                                                        .Include(x => x.HrimUser);
+        query = string.IsNullOrWhiteSpace(email)
+                    ? query.Where(x => x.ExternalUserId == externalId)
+                    : query.Where(x => x.ExternalUserId == externalId || x.Email == email);
+
+        var existedList = await query.ToListAsync(cancellationToken);
+
         ExternalUserProfile? result              = null;
         var                  shouldCreateProfile = existedList.Count == 0;
         foreach (var existedProfile in existedList) {
-            var hasSameIdp        = existedProfile.Idp            == profile.Idp;
-            var hasSameExternalId = existedProfile.ExternalUserId == profile.ExternalUserId;
-            var hasSameEmail      = existedProfile.Email          == profile.Email;
+            var hasSameIdp        = existedProfile.Idp            == request.Context.Idp();
+            var hasSameExternalId = existedProfile.ExternalUserId == externalId;
+            var hasSameEmail      = existedProfile.Email          == email;
             if (hasSameExternalId && hasSameIdp) {
                 result = existedProfile;
                 break;
@@ -54,23 +60,30 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
                 shouldCreateProfile = true;
             }
         }
-        var user = result?.HrimUser;
-        if (user == null) {
-            // create user without saving
-            user = await _mediator.Send(new HrimUserCreateCommand(request.CorrelationId, SaveChanges: false),
+        // create inner user without saving
+        var user = result?.HrimUser
+                ?? await _mediator.Send(new HrimUserCreateCommand(request.Context.CorrelationId,
+                                                                  SaveChanges: false),
                                         cancellationToken);
-        }
         if (shouldCreateProfile) {
-            profile.HrimUser        = user;
-            profile.LastLogin       = DateTime.UtcNow.TruncateToMicroseconds();
-            profile.CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds();
-            profile.ConcurrentToken = 1;
-            _context.ExternalUserProfiles.Add(profile);
-            result = profile;
+            result = new ExternalUserProfile {
+                HrimUser        = user,
+                ExternalUserId  = externalId,
+                Email           = email,
+                FullName        = request.Profile.FullName,
+                FirstName       = request.Profile.FirstName,
+                LastName        = request.Profile.LastName,
+                Idp             = request.Context.Idp(),
+                LastLogin       = DateTime.UtcNow.TruncateToMicroseconds(),
+                CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+                ConcurrentToken = 1
+            };
+            _context.ExternalUserProfiles.Add(result);
         }
         else {
-            result!.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
-            result.LastLogin  = DateTime.UtcNow.TruncateToMicroseconds();
+            result!.Email    = email;
+            result.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
+            result.LastLogin = DateTime.UtcNow.TruncateToMicroseconds();
             result.ConcurrentToken++;
         }
         await _context.SaveChangesAsync(cancellationToken);

@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
 using Hrimsoft.StringCases;
@@ -15,17 +16,21 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreateCommand, CqrsResult<OccurrenceEvent?>> {
+public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreateCommand, CqrsResult<OccurrenceEvent?>>
+{
     private readonly ILogger<OccurrenceEventCreateHandler> _logger;
     private readonly IMapper                               _mapper;
     private readonly EventAnalyticDbContext                _context;
+    private readonly IApiRequestAccessor                   _requestAccessor;
 
     public OccurrenceEventCreateHandler(ILogger<OccurrenceEventCreateHandler> logger,
                                         IMapper                               mapper,
-                                        EventAnalyticDbContext                context) {
-        _logger  = logger;
-        _mapper  = mapper;
-        _context = context;
+                                        EventAnalyticDbContext                context,
+                                        IApiRequestAccessor                   requestAccessor) {
+        _logger          = logger;
+        _mapper          = mapper;
+        _context         = context;
+        _requestAccessor = requestAccessor;
     }
 
     public Task<CqrsResult<OccurrenceEvent?>> Handle(OccurrenceEventCreateCommand request, CancellationToken cancellationToken) {
@@ -37,12 +42,13 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
 
     private async Task<CqrsResult<OccurrenceEvent?>> HandleAsync(OccurrenceEventCreateCommand request, CancellationToken cancellationToken) {
         var mappedEventInfo = _mapper.Map<DbOccurrenceEvent>(request.EventInfo);
+        var operatorUserId  = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
         var existed = await _context.OccurrenceEvents
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == request.Context.UserId     &&
-                                                              x.OccurredOn  == mappedEventInfo.OccurredOn &&
-                                                              x.OccurredAt  == mappedEventInfo.OccurredAt &&
-                                                              x.EventTypeId == mappedEventInfo.EventTypeId,
+                                    .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId
+                                                           && x.OccurredOn  == mappedEventInfo.OccurredOn
+                                                           && x.OccurredAt  == mappedEventInfo.OccurredAt
+                                                           && x.EventTypeId == mappedEventInfo.EventTypeId,
                                                          cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
@@ -60,7 +66,7 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
             OccurredOn      = mappedEventInfo.OccurredOn,
             OccurredAt      = mappedEventInfo.OccurredAt,
             EventTypeId     = request.EventInfo.EventTypeId,
-            CreatedById     = request.Context.UserId,
+            CreatedById     = operatorUserId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };

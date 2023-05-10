@@ -1,40 +1,33 @@
-using System.Security.Claims;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
-using Hrim.Event.Analytics.Api.Authentication;
+using Hrim.Event.Analytics.Api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-#if RELEASE
-using Microsoft.AspNetCore.Authorization;
-#endif
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Hrim user profile endpoints </summary>
 [ApiController]
-#if RELEASE
-[Authorize]
-#endif
 [Route("v1/user-profile")]
-public class UserProfileController : ControllerBase
+public class UserProfileController: ControllerBase
 {
+    private readonly IMediator           _mediator;
+    private readonly IApiRequestAccessor _accessor;
+
+    /// <summary> </summary>
+    public UserProfileController(IMediator mediator, IApiRequestAccessor accessor) {
+        _mediator = mediator;
+        _accessor = accessor;
+    }
+
     /// <summary>
     ///     Access to user profile built for a user from authorization context
     /// </summary>
-    [HttpGet("me")]
-    public ViewHrimUser GetMeAsync()
-    {
-        var fullName = "";
-        var pictureUri = "";
-        foreach (var claim in User.Claims)
-            switch (claim.Type)
-            {
-                case ClaimTypes.Name:
-                    fullName = claim.Value;
-                    break;
-                case HrimClaims.PICTURE:
-                    pictureUri = claim.Value;
-                    break;
-            }
-
-        return new ViewHrimUser(fullName, pictureUri);
+    [HttpPost("me")]
+    public async Task<IActionResult> RegisterMeAsync(UserProfileModel userProfile, CancellationToken cancellation) {
+        var operationContext = _accessor.GetOperationContext();
+        await _mediator.Send(new ExternalUserProfileRegistration(operationContext, userProfile), cancellation);
+        return NoContent();
     }
 }

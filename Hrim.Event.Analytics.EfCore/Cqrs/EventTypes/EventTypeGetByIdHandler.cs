@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,14 +12,18 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class EventTypeGetByIdHandler: IRequestHandler<EventTypeGetById, CqrsResult<UserEventType?>> {
+public class EventTypeGetByIdHandler: IRequestHandler<EventTypeGetById, CqrsResult<UserEventType?>>
+{
     private readonly EventAnalyticDbContext           _context;
     private readonly ILogger<EventTypeGetByIdHandler> _logger;
+    private readonly IApiRequestAccessor              _requestAccessor;
 
     public EventTypeGetByIdHandler(EventAnalyticDbContext           context,
-                                   ILogger<EventTypeGetByIdHandler> logger) {
-        _context = context;
-        _logger  = logger;
+                                   ILogger<EventTypeGetByIdHandler> logger,
+                                   IApiRequestAccessor              requestAccessor) {
+        _context         = context;
+        _logger          = logger;
+        _requestAccessor = requestAccessor;
     }
 
     public Task<CqrsResult<UserEventType?>> Handle(EventTypeGetById request, CancellationToken cancellationToken) {
@@ -42,7 +47,8 @@ public class EventTypeGetByIdHandler: IRequestHandler<EventTypeGetById, CqrsResu
             if (result.IsDeleted == true) {
                 return new CqrsResult<UserEventType?>(result, CqrsResultCode.EntityIsDeleted);
             }
-            if (result.CreatedById != request.Context.UserId) {
+            var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+            if (result.CreatedById != operatorUserId) {
                 _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, nameof(UserEventType));
                 return new CqrsResult<UserEventType?>(result, CqrsResultCode.Forbidden);
             }

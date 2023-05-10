@@ -12,7 +12,7 @@ public class EventTypeGetAllTests : BaseCqrsTests
     {
         var anotherUserId = Guid.NewGuid();
         TestData.Users.EnsureUserExistence(anotherUserId);
-        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorUserId);
         myEvents.First().Value.IsPublic = false;
         var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
 
@@ -28,7 +28,7 @@ public class EventTypeGetAllTests : BaseCqrsTests
     {
         var anotherUserId = Guid.NewGuid();
         TestData.Users.EnsureUserExistence(anotherUserId);
-        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorUserId);
         myEvents.First().Value.IsPublic = false;
         var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
 
@@ -44,7 +44,7 @@ public class EventTypeGetAllTests : BaseCqrsTests
     {
         var anotherUserId = Guid.NewGuid();
         TestData.Users.EnsureUserExistence(anotherUserId);
-        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        var myEvents = TestData.Events.CreateManyEventTypes(4, OperatorUserId);
         myEvents.First().Value.IsPublic = false;
         var anotherEventIds = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys;
 

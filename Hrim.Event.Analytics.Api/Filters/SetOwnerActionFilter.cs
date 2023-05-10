@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -20,7 +21,7 @@ public class SetOwnerTypeFilterAttribute : TypeFilterAttribute
 /// <summary>
 ///     Set created_by_id property from authorization context
 /// </summary>
-internal sealed class SetOwnerActionFilter : IActionFilter
+internal sealed class SetOwnerActionFilter : IActionFilter, IAsyncActionFilter
 {
     private readonly ILogger<SetOwnerActionFilter> _logger;
     private readonly IApiRequestAccessor _requestAccessor;
@@ -32,18 +33,19 @@ internal sealed class SetOwnerActionFilter : IActionFilter
         _logger = logger;
     }
 
+    private Guid _internalUserId;
+
     /// <inheritdoc />
     public void OnActionExecuting(ActionExecutingContext context)
     {
-        var operatorId = _requestAccessor.GetAuthorizedUserId();
         var isNoOwnerSet = true;
         foreach (var (name, value) in context.ActionArguments)
         {
             if (value is not IHasOwner entity)
                 continue;
-            entity.CreatedById = operatorId;
+            entity.CreatedById = _internalUserId;
             isNoOwnerSet = false;
-            _logger.LogDebug(ApiLogs.SET_OPERATOR_ID_TO_ENTITY, operatorId, name);
+            _logger.LogDebug(ApiLogs.SET_OPERATOR_ID_TO_ENTITY, _internalUserId, name);
         }
 
         if (isNoOwnerSet) _logger.LogWarning(ApiLogs.NO_OWNER_SET_IN_FILTER);
@@ -53,5 +55,12 @@ internal sealed class SetOwnerActionFilter : IActionFilter
     public void OnActionExecuted(ActionExecutedContext context)
     {
         // as there is no way to create only OnActionExecuting filter, leave this method blanked.
+    }
+
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next) {
+        _internalUserId = await _requestAccessor.GetInternalUserIdAsync(CancellationToken.None);
+        OnActionExecuting(context);
+        var resultContext = await next();
+        OnActionExecuted(resultContext);
     }
 }

@@ -27,7 +27,7 @@ public class ExternalUserProfile : HrimEntity
     public ExternalIdp Idp { get; set; }
 
     /// <summary> A user email </summary>
-    public string Email { get; set; } = null!;
+    public string? Email { get; set; }
 
     /// <summary>
     ///     If null then profile was linked but never used as a login

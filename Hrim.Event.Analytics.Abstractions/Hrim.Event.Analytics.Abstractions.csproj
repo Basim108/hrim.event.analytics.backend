@@ -22,4 +22,10 @@
             <Value>**/*.Designer.cs</Value>
         </SonarQubeSetting>
     </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Hrimsoft.StringCases">
+        <HintPath>..\..\..\..\.nuget\packages\hrimsoft.stringcases\1.0.0\lib\netstandard1.0\Hrimsoft.StringCases.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 </Project>

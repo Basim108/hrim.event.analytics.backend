@@ -9,6 +9,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore.Extensions;
 using Hrimsoft.Core.Extensions;
 using MediatR;
@@ -19,17 +20,21 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.Entity;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
 public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDeleteEntityCommand<TEntity>, CqrsResult<TEntity?>>
-    where TEntity : HrimEntity, new() {
+    where TEntity : HrimEntity, new()
+{
     private readonly ILogger<SoftDeleteEntityCommandHandler<TEntity>> _logger;
     private readonly IMapper                                          _mapper;
     private readonly EventAnalyticDbContext                           _context;
+    private readonly IApiRequestAccessor                              _requestAccessor;
 
     public SoftDeleteEntityCommandHandler(ILogger<SoftDeleteEntityCommandHandler<TEntity>> logger,
                                           IMapper                                          mapper,
-                                          EventAnalyticDbContext                           context) {
-        _logger  = logger;
-        _mapper  = mapper;
-        _context = context;
+                                          EventAnalyticDbContext                           context,
+                                          IApiRequestAccessor                              requestAccessor) {
+        _logger          = logger;
+        _mapper          = mapper;
+        _context         = context;
+        _requestAccessor = requestAccessor;
     }
 
     public Task<CqrsResult<TEntity?>> Handle(SoftDeleteEntityCommand<TEntity> request, CancellationToken cancellationToken) {
@@ -55,7 +60,8 @@ public class SoftDeleteEntityCommandHandler<TEntity>: IRequestHandler<SoftDelete
             _logger.LogDebug(EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, typeof(TEntity).Name);
             return new CqrsResult<TEntity?>(null, CqrsResultCode.NotFound);
         }
-        if (existed is IHasOwner existedOwn && existedOwn.CreatedById != request.Context.UserId) {
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        if (existed is IHasOwner existedOwn && existedOwn.CreatedById != operatorUserId) {
             _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.SoftDelete, existedOwn.CreatedById, typeof(TEntity).Name);
             return new CqrsResult<TEntity?>(null, CqrsResultCode.Forbidden);
         }

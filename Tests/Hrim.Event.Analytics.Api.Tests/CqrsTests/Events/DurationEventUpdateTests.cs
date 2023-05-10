@@ -15,13 +15,13 @@ public class DurationEventUpdateTests : BaseCqrsTests
 
     public DurationEventUpdateTests()
     {
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
     }
 
     [Fact]
     public async Task Update_StartedAt()
     {
-        var dbEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+        var dbEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
 
         var forUpdate = new DurationEventUpdateRequest();
         dbEvent.CopyTo(forUpdate);
@@ -31,14 +31,14 @@ public class DurationEventUpdateTests : BaseCqrsTests
 
         var cqrsResult = await Mediator.Send(updateCommand);
 
-        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorContext.UserId, forUpdate, beforeSend);
+        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorUserId, forUpdate, beforeSend);
         cqrsResult.Result!.StartedAt.Should().Be(forUpdate.StartedAt.TruncateToMilliseconds());
     }
 
     [Fact]
     public async Task Update_StartedAt_With_Same_But_Soft_Deleted_OccurredAt()
     {
-        var dbEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id, true);
+        var dbEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id, true);
 
         var forUpdate = new DurationEventUpdateRequest();
         dbEvent.CopyTo(forUpdate);
@@ -53,7 +53,7 @@ public class DurationEventUpdateTests : BaseCqrsTests
     [Fact]
     public async Task Update_StartedAt_With_Wrong_ConcurrentToken()
     {
-        var dbEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+        var dbEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
 
         var forUpdate = new DurationEventUpdateRequest();
         dbEvent.CopyTo(forUpdate);

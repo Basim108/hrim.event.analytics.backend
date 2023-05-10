@@ -7,5 +7,6 @@ namespace Hrim.Event.Analytics.Abstractions.Enums;
 public enum ExternalIdp
 {
     Google,
-    Facebook
+    Facebook,
+    Auth0
 }

@@ -17,7 +17,7 @@ public class DurationEventCreateTests : BaseCqrsTests
 
     public DurationEventCreateTests()
     {
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
         _createRequest = new DurationEventCreateRequest
         {
             StartedAt = DateTimeOffset.Now.AddHours(-1),
@@ -34,7 +34,7 @@ public class DurationEventCreateTests : BaseCqrsTests
 
         var cqrsResult = await Mediator.Send(_createCommand);
 
-        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorContext.UserId, beforeSend);
+        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorUserId, beforeSend);
         cqrsResult.Result!.StartedAt.Should().Be(_createRequest.StartedAt.TruncateToMilliseconds());
         cqrsResult.Result!.FinishedAt.Should().Be(_createRequest.FinishedAt!.Value.TruncateToMilliseconds());
     }
@@ -42,7 +42,7 @@ public class DurationEventCreateTests : BaseCqrsTests
     [Fact]
     public async Task Create_DurationEvent_With_Same_StartedAt_And_EventType()
     {
-        var dbEntity = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+        var dbEntity = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
         var createRequest = new DurationEventCreateRequest();
         dbEntity.CopyTo(createRequest);
         var command = new DurationEventCreateCommand(createRequest, true, OperatorContext);
@@ -54,7 +54,7 @@ public class DurationEventCreateTests : BaseCqrsTests
     [Fact]
     public async Task Create_DurationEvent_With_Same_But_Soft_Deleted_OccurredAt()
     {
-        var dbEntity = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id, true);
+        var dbEntity = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id, true);
         var createRequest = new DurationEventCreateRequest();
         dbEntity.CopyTo(createRequest);
 
@@ -67,7 +67,7 @@ public class DurationEventCreateTests : BaseCqrsTests
     // TODO: Should work with intervals intersections: add intersection_behaviour
     // [Fact]
     // public async Task Create_DurationEvent_With_Intervals_Intersection_Right_Border() {
-    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.StartedAt = createRequest.StartedAt.AddMinutes(5);
@@ -81,7 +81,7 @@ public class DurationEventCreateTests : BaseCqrsTests
     //
     // [Fact]
     // public async Task Create_DurationEvent_With_Intervals_Intersection_Left_Border() {
-    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.FinishedAt = createRequest.StartedAt.AddMinutes(5);
@@ -95,7 +95,7 @@ public class DurationEventCreateTests : BaseCqrsTests
     //
     // [Fact]
     // public async Task Create_DurationEvent_With_Interval_Inside_Existed() {
-    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.StartedAt  = createRequest.StartedAt.AddMinutes(5);
@@ -110,7 +110,7 @@ public class DurationEventCreateTests : BaseCqrsTests
     // TODO: Should return two intervals: [before existed][existed][after existed]
     // [Fact]
     // public async Task Create_DurationEvent_With_Interval_Includes_Existed() {
-    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id);
+    //     var dbEntity      = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
     //     var createRequest = new DurationEventCreateRequest();
     //     dbEntity.CopyTo(createRequest);
     //     createRequest.StartedAt  = createRequest.StartedAt.AddMinutes(-5);

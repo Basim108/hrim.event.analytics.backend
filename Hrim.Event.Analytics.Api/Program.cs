@@ -11,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console()
     .ReadFrom.Configuration(ctx.Configuration));
 
+builder.Services.AddMediatR(cfg => {
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+});
 builder.Services.AddEventAnalyticsServices(builder.Configuration);
 builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
 builder.Services.Configure<ForwardedHeadersOptions>(options => {

@@ -14,7 +14,7 @@ public class DurationEventGetForPeriodTests : BaseCqrsTests
 
     public DurationEventGetForPeriodTests()
     {
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class DurationEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTime.Now.Date.AddDays(-1).ToDateOnly();
         var end = start.AddDays(2);
-        var mineEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId,
+        var mineEvent = TestData.Events.CreateDurationEvent(OperatorUserId,
             _eventType.Id,
             startedAt: DateTimeOffset.Now,
             finishedAt: DateTimeOffset.Now);
@@ -46,7 +46,7 @@ public class DurationEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTime.Now.Date.AddDays(-1).ToDateOnly();
         var end = start.AddDays(2);
-        TestData.Events.CreateManyDurationEvents(3, OperatorContext.UserId,
+        TestData.Events.CreateManyDurationEvents(3, OperatorUserId,
             start, end, _eventType.Id);
 
         var query = new DurationEventGetForPeriod(start, end, OperatorContext);
@@ -63,7 +63,7 @@ public class DurationEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTimeOffset.UtcNow.Date.AddDays(-1);
         var end = start.AddDays(2);
-        var createdEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id,
+        var createdEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id,
             false, start, end);
         var reportPeriodStart = start.ToDateOnly().AddDays(1);
         var reportPeriodEnd = reportPeriodStart.AddDays(1);
@@ -80,7 +80,7 @@ public class DurationEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTime.UtcNow;
         var end = start.AddDays(2);
-        var createdEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id,
+        var createdEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id,
             false, start, end);
         // reportStart should be < eventStart 
         // reportEnd should be > eventEnd
@@ -99,7 +99,7 @@ public class DurationEventGetForPeriodTests : BaseCqrsTests
     {
         var start = DateTimeOffset.UtcNow.Date.AddDays(-1);
         var end = start.AddDays(3);
-        var createdEvent = TestData.Events.CreateDurationEvent(OperatorContext.UserId, _eventType.Id,
+        var createdEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id,
             false, start, end);
         var reportPeriodStart = start.ToDateOnly().AddDays(1);
         var reportPeriodEnd = start.ToDateOnly().AddDays(2);

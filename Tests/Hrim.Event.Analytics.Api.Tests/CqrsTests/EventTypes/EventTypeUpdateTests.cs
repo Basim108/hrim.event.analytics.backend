@@ -25,7 +25,7 @@ public class EventTypeCqrsTests : BaseCqrsTests
     [Fact]
     public async Task Update_EventType()
     {
-        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorUserId);
         var forUpdate = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         forUpdate.Name = "Updated";
@@ -34,7 +34,7 @@ public class EventTypeCqrsTests : BaseCqrsTests
 
         var cqrsResult = await Mediator.Send(updateCommand);
 
-        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorContext.UserId, forUpdate, beforeSend);
+        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorUserId, forUpdate, beforeSend);
 
         cqrsResult.Result!.Name.Should().Be("Updated");
         cqrsResult.Result.Color.Should().Be(forUpdate.Color);
@@ -58,7 +58,7 @@ public class EventTypeCqrsTests : BaseCqrsTests
     [Fact]
     public async Task Update_With_Wrong_ConcurrentToken()
     {
-        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorUserId);
         var forUpdate = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         forUpdate.ConcurrentToken = 3;
@@ -72,7 +72,7 @@ public class EventTypeCqrsTests : BaseCqrsTests
     [Fact]
     public async Task Update_Already_Deleted_Entity()
     {
-        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorContext.UserId, true);
+        var createdEntities = TestData.Events.CreateManyEventTypes(1, OperatorUserId, true);
         var forUpdate = new UserEventType();
         createdEntities.First().Value.CopyTo(forUpdate);
         var updateCommand = new EventTypeUpdateCommand(forUpdate, true, OperatorContext);

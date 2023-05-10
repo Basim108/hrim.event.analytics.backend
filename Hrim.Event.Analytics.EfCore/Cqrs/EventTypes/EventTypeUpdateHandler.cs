@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,14 +13,18 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, CqrsResult<UserEventType?>> {
+public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, CqrsResult<UserEventType?>>
+{
     private readonly ILogger<EventTypeUpdateHandler> _logger;
     private readonly EventAnalyticDbContext          _context;
+    private readonly IApiRequestAccessor             _requestAccessor;
 
     public EventTypeUpdateHandler(ILogger<EventTypeUpdateHandler> logger,
-                                  EventAnalyticDbContext          context) {
-        _logger  = logger;
-        _context = context;
+                                  EventAnalyticDbContext          context,
+                                  IApiRequestAccessor             requestAccessor) {
+        _logger          = logger;
+        _context         = context;
+        _requestAccessor = requestAccessor;
     }
 
     public Task<CqrsResult<UserEventType?>> Handle(EventTypeUpdateCommand request, CancellationToken cancellationToken) {
@@ -29,8 +34,6 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventType)}.{nameof(request.EventType.Id)}");
         if (request.Context == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
-        if (request.Context.UserId == Guid.Empty)
-            throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}.{request.Context.UserId}");
 
         return HandleAsync(request, cancellationToken);
     }
@@ -56,7 +59,8 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
                                    nameof(UserEventType));
             return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Conflict);
         }
-        if (existed.CreatedById != request.Context.UserId) {
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        if (existed.CreatedById != operatorUserId) {
             _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(UserEventType));
             return new CqrsResult<UserEventType?>(null, CqrsResultCode.Forbidden);
         }

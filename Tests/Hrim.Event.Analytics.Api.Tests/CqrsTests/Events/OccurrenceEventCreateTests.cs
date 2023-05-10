@@ -17,7 +17,7 @@ public class OccurrenceEventCreateTests : BaseCqrsTests
 
     public OccurrenceEventCreateTests()
     {
-        _eventType = TestData.Events.CreateEventType(OperatorContext.UserId, $"Nice practice-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
         _createRequest = new OccurrenceEventCreateRequest
         {
             OccurredAt = DateTimeOffset.Now,
@@ -33,7 +33,7 @@ public class OccurrenceEventCreateTests : BaseCqrsTests
 
         var cqrsResult = await Mediator.Send(_createCommand);
 
-        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorContext.UserId, beforeSend);
+        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorUserId, beforeSend);
         cqrsResult.Result!.OccurredAt.Should().Be(_createRequest.OccurredAt.TruncateToMilliseconds());
     }
 
@@ -41,7 +41,7 @@ public class OccurrenceEventCreateTests : BaseCqrsTests
     public async Task Create_OccurrenceEvent_With_Same_OccurredAt_And_EventType()
     {
         var dbEntity =
-            TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, false,
+            TestData.Events.CreateOccurrenceEvent(OperatorUserId, _eventType.Id, false,
                 _createRequest.OccurredAt);
         var createRequest = new OccurrenceEventCreateRequest();
         dbEntity.CopyTo(createRequest);
@@ -54,9 +54,9 @@ public class OccurrenceEventCreateTests : BaseCqrsTests
     [Fact]
     public async Task Create_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt()
     {
-        TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, true, _createRequest.OccurredAt);
+        TestData.Events.CreateOccurrenceEvent(OperatorUserId, _eventType.Id, true, _createRequest.OccurredAt);
         var dbEntity =
-            TestData.Events.CreateOccurrenceEvent(OperatorContext.UserId, _eventType.Id, false,
+            TestData.Events.CreateOccurrenceEvent(OperatorUserId, _eventType.Id, false,
                 _createRequest.OccurredAt);
         var createRequest = new OccurrenceEventCreateRequest();
         dbEntity.CopyTo(createRequest);

@@ -1,14 +1,12 @@
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Filters;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-#if RELEASE
-using Microsoft.AspNetCore.Authorization;
-#endif
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
@@ -16,9 +14,6 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 ///     Manage user event types with this crud controller
 /// </summary>
 [ApiController]
-#if RELEASE
-[Authorize]
-#endif
 [Route("v1/event/occurrence")]
 public class EventOccurrenceController : EventBaseController<OccurrenceEvent>
 {

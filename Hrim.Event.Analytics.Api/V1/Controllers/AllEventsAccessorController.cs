@@ -1,19 +1,16 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
-#if RELEASE
 using Microsoft.AspNetCore.Authorization;
-#endif
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Get access to events of all types at once </summary>
 [ApiController]
-#if RELEASE
 [Authorize]
-#endif
 [Route("v1/event")]
 public class AllEventsAccessorController : ControllerBase
 {

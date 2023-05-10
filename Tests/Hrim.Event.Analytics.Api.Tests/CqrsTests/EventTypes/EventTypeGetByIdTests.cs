@@ -14,7 +14,7 @@ public class EventTypeGetByIdTests : BaseCqrsTests
         var anotherUserId = Guid.NewGuid();
         TestData.Users.EnsureUserExistence(anotherUserId);
         TestData.Events.CreateManyEventTypes(1, anotherUserId);
-        var myEventIds = TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        var myEventIds = TestData.Events.CreateManyEventTypes(4, OperatorUserId);
 
         var targetEntity = myEventIds.First().Value;
         var cqrsResult = await Mediator.Send(new EventTypeGetById(targetEntity.Id, true, OperatorContext));
@@ -30,7 +30,7 @@ public class EventTypeGetByIdTests : BaseCqrsTests
         var anotherUserId = Guid.NewGuid();
         TestData.Users.EnsureUserExistence(anotherUserId);
         var anotherEntityId = TestData.Events.CreateManyEventTypes(1, anotherUserId).Keys.First();
-        TestData.Events.CreateManyEventTypes(4, OperatorContext.UserId);
+        TestData.Events.CreateManyEventTypes(4, OperatorUserId);
 
         var cqrsResult = await Mediator.Send(new EventTypeGetById(anotherEntityId, true, OperatorContext));
         cqrsResult.Should().NotBeNull();

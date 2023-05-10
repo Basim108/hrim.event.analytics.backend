@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
 using MediatR;
@@ -13,17 +14,21 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
 [SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
-public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateCommand, CqrsResult<DurationEvent?>> {
+public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateCommand, CqrsResult<DurationEvent?>>
+{
     private readonly ILogger<DurationEventUpdateHandler> _logger;
     private readonly IMapper                             _mapper;
+    private readonly IApiRequestAccessor                 _requestAccessor;
     private readonly EventAnalyticDbContext              _context;
 
     public DurationEventUpdateHandler(ILogger<DurationEventUpdateHandler> logger,
                                       IMapper                             mapper,
+                                      IApiRequestAccessor                 requestAccessor,
                                       EventAnalyticDbContext              context) {
-        _logger  = logger;
-        _mapper  = mapper;
-        _context = context;
+        _logger          = logger;
+        _mapper          = mapper;
+        _requestAccessor = requestAccessor;
+        _context         = context;
     }
 
     public Task<CqrsResult<DurationEvent?>> Handle(DurationEventUpdateCommand request, CancellationToken cancellationToken) {
@@ -48,15 +53,16 @@ public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateComm
             return new CqrsResult<DurationEvent?>(deletedEvent, CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventInfo.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT, 
-                                   HrimOperations.Update, 
-                                   existed.ConcurrentToken, 
-                                   request.EventInfo.ConcurrentToken, 
+            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT,
+                                   HrimOperations.Update,
+                                   existed.ConcurrentToken,
+                                   request.EventInfo.ConcurrentToken,
                                    nameof(DurationEvent));
             var conflictedEvent = _mapper.Map<DurationEvent>(existed);
             return new CqrsResult<DurationEvent?>(conflictedEvent, CqrsResultCode.Conflict);
         }
-        if(existed.CreatedById != request.Context.UserId) {
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        if (existed.CreatedById != operatorUserId) {
             _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(DurationEvent));
             var conflictedEvent = _mapper.Map<DurationEvent>(existed);
             return new CqrsResult<DurationEvent?>(conflictedEvent, CqrsResultCode.Forbidden);
