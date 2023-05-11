@@ -122,4 +122,49 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
         user.ExternalProfiles.Any(x => x.Id    == anotherProfile.Id).Should().BeTrue();
         user.ExternalProfiles.Any(x => x.Email == email + ".new").Should().BeTrue();
     }
+
+    [Fact]
+    public async Task Given_No_Email_Should_Find_User_By_ExternalId() {
+        var userId     = Guid.NewGuid();
+        var externalId = Guid.NewGuid().ToString();
+        var user = TestData.Users.EnsureUserExistence(userId,
+                                                      isDeleted: false,
+                                                      externalId,
+                                                      idp: ExternalIdp.Facebook,
+                                                      email: null);
+        var anotherProfile = user.ExternalProfiles.First();
+        var claims = new List<Claim> {
+            new("sub", $"facebook|{externalId}")
+        };
+        OperatorContext = new OperationContext(claims, Guid.NewGuid());
+        _apiRequestAccessor.GetUserClaims().Returns(claims);
+        _apiRequestAccessor.GetOperationContext().Returns(OperatorContext);
+        var command       = new ExternalUserProfileRegistration(OperatorContext, _profile);
+        var resultProfile = await Mediator.Send(command);
+
+        resultProfile.CheckEntitySuccessfulUpdate(_beforeSend, userId, anotherProfile);
+
+        resultProfile.LastLogin.Should().BeAfter(_beforeSend);
+        resultProfile.Id.Should().Be(anotherProfile.Id);
+        resultProfile.HrimUserId.Should().Be(user.Id);
+        resultProfile.Email.Should().BeNull();
+        user.ExternalProfiles.Count.Should().Be(1);
+        user.ExternalProfiles.Any(x => x.Id             == anotherProfile.Id).Should().BeTrue();
+        user.ExternalProfiles.Any(x => x.ExternalUserId == externalId).Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task Given_Google_Subject_Should_Register_Correct_Idp() {
+        var externalId = Guid.NewGuid().ToString();
+        var claims = new List<Claim> {
+            new("sub", $"google-auth0|{externalId}")
+        };
+        OperatorContext = new OperationContext(claims, Guid.NewGuid());
+        _apiRequestAccessor.GetUserClaims().Returns(claims);
+        _apiRequestAccessor.GetOperationContext().Returns(OperatorContext);
+        var command       = new ExternalUserProfileRegistration(OperatorContext, _profile);
+        var resultProfile = await Mediator.Send(command);
+
+        resultProfile.Idp.Should().Be(ExternalIdp.Google);
+    }
 }

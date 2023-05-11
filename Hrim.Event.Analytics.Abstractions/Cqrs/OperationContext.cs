@@ -1,12 +1,14 @@
 using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Enums;
-using Hrimsoft.StringCases;
 
 namespace Hrim.Event.Analytics.Abstractions.Cqrs;
 
 /// <summary></summary>
 public record OperationContext
 {
+    /// <summary> </summary>
+    /// <param name="userClaims"></param>
+    /// <param name="correlationId"></param>
     public OperationContext(IEnumerable<Claim> userClaims, Guid correlationId) {
         UserClaims    = userClaims;
         CorrelationId = correlationId;
@@ -23,7 +25,7 @@ public record OperationContext
     public Guid CorrelationId { get; init; }
 
     /// <summary> Operator Email taken from jwt claims </summary>
-    public string Email => _operatorEmail ??= UserClaims.FirstOrDefault(x => x.Type.Contains("email"))?.Value;
+    public string? Email => _operatorEmail ??= UserClaims.FirstOrDefault(x => x.Type.Contains("email"))?.Value;
 
     /// <summary> External User Identifier </summary>
     public string ExternalId() {
@@ -46,6 +48,10 @@ public record OperationContext
     private void ProcessSubjectClaim() {
         var subjectParts = UserClaims.First(x => x.Type == "sub").Value.Split('|');
         _externalId ??= subjectParts[1];
-        _idp        =   Enum.Parse<ExternalIdp>(subjectParts[0].ToPascalCase());
+        _idp = subjectParts[0].StartsWith("google")
+                   ? ExternalIdp.Google
+                   : subjectParts[0].StartsWith("facebook")
+                       ? ExternalIdp.Facebook
+                       : ExternalIdp.Auth0;
     }
 }

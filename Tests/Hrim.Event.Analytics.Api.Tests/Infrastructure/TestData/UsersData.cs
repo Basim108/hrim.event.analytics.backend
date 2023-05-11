@@ -22,7 +22,7 @@ public class UsersData
                                         bool        isDeleted  = false,
                                         string      externalId = UsersData.EXTERNAL_ID,
                                         ExternalIdp idp        = ExternalIdp.Facebook,
-                                        string      email      = UsersData.EMAIL) {
+                                        string?     email      = UsersData.EMAIL) {
         var existed = _context.HrimUsers.FirstOrDefault(x => x.Id == id);
         if (existed != null) {
             if (existed.IsDeleted != isDeleted) {
