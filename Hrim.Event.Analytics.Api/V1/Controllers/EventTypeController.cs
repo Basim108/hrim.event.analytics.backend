@@ -4,7 +4,6 @@ using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using Hrim.Event.Analytics.Api.Filters;
-using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 ///     Manage user event types with this crud controller
 /// </summary>
 [ApiController]
-[Route("v1/event-type")]
+[Route(template: "v1/event-type")]
 public class EventTypeController: EventAnalyticsApiController<UserEventType>
 {
     private readonly IMediator _mediator;
@@ -23,23 +22,23 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     /// <summary> </summary>
     public EventTypeController(IApiRequestAccessor       requestAccessor,
                                IValidator<UserEventType> validator,
-                               IMediator                 mediator): base(requestAccessor, validator) {
+                               IMediator                 mediator): base(requestAccessor: requestAccessor, validator: validator) {
         _mediator = mediator;
     }
 
     /// <summary> Get all user event types </summary>
     [HttpGet]
     public Task<IList<ViewEventType>> GetAllAsync(CancellationToken cancellationToken) {
-        return _mediator.Send(new EventTypeGetAllMine(OperationContext, true), cancellationToken);
+        return _mediator.Send(new EventTypeGetAllMine(Context: OperationContext, IncludeOthersPublic: true), cancellationToken: cancellationToken);
     }
 
     /// <summary> Get user event type by id </summary>
-    [HttpGet("{id}")]
+    [HttpGet(template: "{id}")]
     public async Task<ActionResult<UserEventType>> GetByIdAsync([FromRoute] ByIdRequest request,
                                                                 CancellationToken       cancellationToken) {
-        var result = await _mediator.Send(new EventTypeGetById(request.Id, true, OperationContext),
-                                          cancellationToken);
-        return ProcessCqrsResult(result);
+        var result = await _mediator.Send(new EventTypeGetById(Id: request.Id, IsNotTrackable: true, Context: OperationContext),
+                                          cancellationToken: cancellationToken);
+        return ProcessCqrsResult(cqrsResult: result);
     }
 
     /// <summary> Create a new event type </summary>
@@ -47,12 +46,12 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request,
                                                                CancellationToken      cancellationToken) {
-        await ValidateRequestAsync(request, cancellationToken);
+        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
         if (!ModelState.IsValid)
-            return ValidationProblem(ModelState);
-        var cqrsResult = await _mediator.Send(new EventTypeCreateCommand(request, true, OperationContext),
-                                              cancellationToken);
-        return ProcessCqrsResult(cqrsResult);
+            return ValidationProblem(modelStateDictionary: ModelState);
+        var cqrsResult = await _mediator.Send(new EventTypeCreateCommand(EventType: request, SaveChanges: true, Context: OperationContext),
+                                              cancellationToken: cancellationToken);
+        return ProcessCqrsResult(cqrsResult: cqrsResult);
     }
 
     /// <summary> Update an event type </summary>
@@ -60,11 +59,11 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request,
                                                                CancellationToken      cancellationToken) {
-        await ValidateRequestAsync(request, cancellationToken);
+        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
         if (!ModelState.IsValid)
-            return ValidationProblem(ModelState);
-        var cqrsResult = await _mediator.Send(new EventTypeUpdateCommand(request, true, OperationContext),
-                                              cancellationToken);
-        return ProcessCqrsResult(cqrsResult);
+            return ValidationProblem(modelStateDictionary: ModelState);
+        var cqrsResult = await _mediator.Send(new EventTypeUpdateCommand(EventType: request, SaveChanges: true, Context: OperationContext),
+                                              cancellationToken: cancellationToken);
+        return ProcessCqrsResult(cqrsResult: cqrsResult);
     }
 }

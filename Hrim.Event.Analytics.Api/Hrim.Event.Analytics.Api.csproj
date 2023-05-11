@@ -14,42 +14,42 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="2.1.1" />
-        <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="2.1.1" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
-        <PackageReference Include="Hrimsoft.Core" Version="0.0.11" />
-        <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0" />
-        <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="7.0.3" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.3" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+        <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="2.1.1"/>
+        <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="2.1.1"/>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2"/>
+        <PackageReference Include="Hrimsoft.Core" Version="0.0.11"/>
+        <PackageReference Include="Hrimsoft.StringCases" Version="1.0.0"/>
+        <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="7.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.3"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-        <PackageReference Include="Serilog" Version="2.12.0" />
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
+        <PackageReference Include="Serilog" Version="2.12.0"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj" />
-        <ProjectReference Include="..\Hrim.Event.Analytics.EfCore\Hrim.Event.Analytics.EfCore.csproj" />
-        <ProjectReference Include="..\Hrim.Event.Analytics.Infrastructure\Hrim.Event.Analytics.Infrastructure.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj"/>
+        <ProjectReference Include="..\Hrim.Event.Analytics.EfCore\Hrim.Event.Analytics.EfCore.csproj"/>
+        <ProjectReference Include="..\Hrim.Event.Analytics.Infrastructure\Hrim.Event.Analytics.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Migrations" />
+        <Folder Include="Migrations"/>
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />
+        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests"/>
     </ItemGroup>
     <ItemGroup>
         <SonarQubeSetting Include="sonar.coverage.exclusions">
@@ -68,10 +68,10 @@
             <DependentUpon>appsettings.json</DependentUpon>
         </Content>
         <Content Update="appsettings.Development.json">
-          <DependentUpon>appsettings.json</DependentUpon>
+            <DependentUpon>appsettings.json</DependentUpon>
         </Content>
         <Content Update="appsettings.Staging.json">
-          <DependentUpon>appsettings.json</DependentUpon>
+            <DependentUpon>appsettings.json</DependentUpon>
         </Content>
     </ItemGroup>
 </Project>

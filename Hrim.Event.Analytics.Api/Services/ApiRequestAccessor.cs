@@ -14,6 +14,8 @@ public class ApiRequestAccessor: IApiRequestAccessor
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMediator            _mediator;
 
+    private Guid _internalUserId;
+
     public ApiRequestAccessor(IHttpContextAccessor httpContextAccessor,
                               IMediator            mediator) {
         _httpContextAccessor = httpContextAccessor;
@@ -22,7 +24,7 @@ public class ApiRequestAccessor: IApiRequestAccessor
 
     public Guid GetCorrelationId() { return Guid.Parse(GetStringCorrelationId()); }
 
-    public OperationContext GetOperationContext() => new(GetUserClaims(), GetCorrelationId());
+    public OperationContext GetOperationContext() { return new OperationContext(GetUserClaims(), GetCorrelationId()); }
 
     public IEnumerable<Claim> GetUserClaims() {
         var isNotAuthorized = !(_httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false);
@@ -31,13 +33,10 @@ public class ApiRequestAccessor: IApiRequestAccessor
                    : _httpContextAccessor.HttpContext!.User.Claims;
     }
 
-    private Guid _internalUserId;
-
     /// <inheritdoc />
     public async Task<Guid> GetInternalUserIdAsync(CancellationToken cancellation) {
-        if (_internalUserId == Guid.Empty) {
-            _internalUserId = await _mediator.Send(new GetInternalUserIdQuery(GetOperationContext()), cancellation);
-        }
+        if (_internalUserId == Guid.Empty)
+            _internalUserId = await _mediator.Send(new GetInternalUserIdQuery(GetOperationContext()), cancellationToken: cancellation);
         return _internalUserId;
     }
 
@@ -46,7 +45,7 @@ public class ApiRequestAccessor: IApiRequestAccessor
         if (_httpContextAccessor.HttpContext == null)
             return result;
         var context = _httpContextAccessor.HttpContext;
-        if (!context.Response.Headers.TryGetValue(CorrelationMiddleware.CORRELATION_ID_HEADER, out var value))
+        if (!context.Response.Headers.TryGetValue(key: CorrelationMiddleware.CORRELATION_ID_HEADER, out var value))
             return result;
         return string.IsNullOrWhiteSpace(value.ToString()) ? result : value.ToString();
     }

@@ -1,9 +1,7 @@
-using Hrim.Event.Analytics.Abstractions.Enums;
-
 namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 
 /// <summary>
-/// User profile registration request
+///     User profile registration request
 /// </summary>
 public class UserProfileModel
 {

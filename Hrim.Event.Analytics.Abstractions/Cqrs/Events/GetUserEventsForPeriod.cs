@@ -10,7 +10,7 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 ///     <see cref="OperationRequest" />
 /// </param>
 public record OccurrenceEventGetForPeriod(DateOnly Start, DateOnly End, OperationContext Context)
-    : OperationRequest(Context), IRequest<IList<ViewOccurrenceEvent>>;
+    : OperationRequest(Context: Context), IRequest<IList<ViewOccurrenceEvent>>;
 
 /// <summary> Get all user's durations events for a period </summary>
 /// <param name="Start">Includes durations that intersects start border </param>
@@ -19,4 +19,4 @@ public record OccurrenceEventGetForPeriod(DateOnly Start, DateOnly End, Operatio
 ///     <see cref="OperationRequest" />
 /// </param>
 public record DurationEventGetForPeriod(DateOnly Start, DateOnly End, OperationContext Context)
-    : OperationRequest(Context), IRequest<IList<ViewDurationEvent>>;
+    : OperationRequest(Context: Context), IRequest<IList<ViewDurationEvent>>;

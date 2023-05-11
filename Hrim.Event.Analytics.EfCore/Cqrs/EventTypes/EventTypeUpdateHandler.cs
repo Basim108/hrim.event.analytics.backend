@@ -12,11 +12,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
-[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
+[SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
 public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, CqrsResult<UserEventType?>>
 {
-    private readonly ILogger<EventTypeUpdateHandler> _logger;
     private readonly EventAnalyticDbContext          _context;
+    private readonly ILogger<EventTypeUpdateHandler> _logger;
     private readonly IApiRequestAccessor             _requestAccessor;
 
     public EventTypeUpdateHandler(ILogger<EventTypeUpdateHandler> logger,
@@ -35,34 +35,34 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
         if (request.Context == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
 
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<CqrsResult<UserEventType?>> HandleAsync(EventTypeUpdateCommand request, CancellationToken cancellationToken) {
-        using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.EventType.Id);
+        using var entityIdScope = _logger.BeginScope(messageFormat: CoreLogs.HRIM_ENTITY_ID, request.EventType.Id);
         var existed = await _context.UserEventTypes
                                     .FirstOrDefaultAsync(x => x.Id == request.EventType.Id,
-                                                         cancellationToken);
+                                                         cancellationToken: cancellationToken);
         if (existed == null) {
-            _logger.LogDebug(EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, nameof(UserEventType));
-            return new CqrsResult<UserEventType?>(null, CqrsResultCode.NotFound);
+            _logger.LogDebug(message: EfCoreLogs.ENTITY_NOT_FOUND_BY_ID, nameof(UserEventType));
+            return new CqrsResult<UserEventType?>(Result: null, StatusCode: CqrsResultCode.NotFound);
         }
         if (existed.IsDeleted == true) {
-            _logger.LogInformation(EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(UserEventType));
-            return new CqrsResult<UserEventType?>(existed, CqrsResultCode.EntityIsDeleted);
+            _logger.LogInformation(message: EfCoreLogs.CANNOT_UPDATE_ENTITY_IS_DELETED, existed.ConcurrentToken, nameof(UserEventType));
+            return new CqrsResult<UserEventType?>(Result: existed, StatusCode: CqrsResultCode.EntityIsDeleted);
         }
         if (existed.ConcurrentToken != request.EventType.ConcurrentToken) {
-            _logger.LogInformation(EfCoreLogs.CONCURRENT_CONFLICT,
+            _logger.LogInformation(message: EfCoreLogs.CONCURRENT_CONFLICT,
                                    HrimOperations.Update,
                                    existed.ConcurrentToken,
                                    request.EventType.ConcurrentToken,
                                    nameof(UserEventType));
-            return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Conflict);
+            return new CqrsResult<UserEventType?>(Result: existed, StatusCode: CqrsResultCode.Conflict);
         }
-        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         if (existed.CreatedById != operatorUserId) {
-            _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(UserEventType));
-            return new CqrsResult<UserEventType?>(null, CqrsResultCode.Forbidden);
+            _logger.LogWarning(message: EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Update, existed.CreatedById, nameof(UserEventType));
+            return new CqrsResult<UserEventType?>(Result: null, StatusCode: CqrsResultCode.Forbidden);
         }
         var isChanged = false;
         if (existed.Color != request.EventType.Color) {
@@ -77,7 +77,7 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
             existed.IsPublic = request.EventType.IsPublic;
             isChanged        = true;
         }
-        var newDescription = string.IsNullOrWhiteSpace(request.EventType.Description)
+        var newDescription = string.IsNullOrWhiteSpace(value: request.EventType.Description)
                                  ? null
                                  : request.EventType.Description.Trim();
         if (existed.Description != newDescription) {
@@ -88,8 +88,8 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
             existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
             existed.ConcurrentToken++;
             if (request.SaveChanges)
-                await _context.SaveChangesAsync(cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken: cancellationToken);
         }
-        return new CqrsResult<UserEventType?>(existed, CqrsResultCode.Ok);
+        return new CqrsResult<UserEventType?>(Result: existed, StatusCode: CqrsResultCode.Ok);
     }
 }

@@ -11,4 +11,8 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 /// <param name="FinishedAt">Date and time with end-user timezone when an event finishes</param>
 /// <param name="EventType">Event type on which this event is based on</param>
 /// <param name="ConcurrentToken">Update is possible only when this token equals to the token in the storage</param>
-public record ViewDurationEvent(Guid Id, DateTimeOffset StartedAt, DateTimeOffset? FinishedAt, ViewEventType EventType, long ConcurrentToken);
+public record ViewDurationEvent(Guid            Id,
+                                DateTimeOffset  StartedAt,
+                                DateTimeOffset? FinishedAt,
+                                ViewEventType   EventType,
+                                long            ConcurrentToken);

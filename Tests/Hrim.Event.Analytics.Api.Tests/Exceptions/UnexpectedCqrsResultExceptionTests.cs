@@ -15,10 +15,10 @@ public class UnexpectedCqrsResultExceptionTests
 {
     [Fact]
     public void Should_Set_Message_and_CqrsResult_Property() {
-        var cqrsResult = new CqrsResult<DurationEvent?>(null, CqrsResultCode.Conflict);
-        var ex         = new UnexpectedCqrsResultException<DurationEvent?>(cqrsResult);
-        ex.Message.StartsWith("Unexpected CqrsResult").Should().BeTrue();
+        var cqrsResult = new CqrsResult<DurationEvent?>(Result: null, StatusCode: CqrsResultCode.Conflict);
+        var ex         = new UnexpectedCqrsResultException<DurationEvent?>(cqrsResult: cqrsResult);
+        ex.Message.StartsWith(value: "Unexpected CqrsResult").Should().BeTrue();
         ex.Message.Contains(CqrsResultCode.Conflict.ToString()).Should().BeTrue();
-        ex.CqrsResult.Should().Be(cqrsResult);
+        ex.CqrsResult.Should().Be(expected: cqrsResult);
     }
 }

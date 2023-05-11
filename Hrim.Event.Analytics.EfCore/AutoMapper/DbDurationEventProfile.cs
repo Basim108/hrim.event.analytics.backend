@@ -3,9 +3,10 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.EfCore.AutoMapper.Converters;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 
-namespace Hrim.Event.Analytics.EfCore.AutoMapper; 
+namespace Hrim.Event.Analytics.EfCore.AutoMapper;
 
-public class DbDurationEventProfile: Profile {
+public class DbDurationEventProfile: Profile
+{
     public DbDurationEventProfile() {
         CreateMap<DbDurationEvent, DurationEvent>()
            .ForMember(business => business.StartedAt,  x => x.MapFrom<DurationStartedOnValueResolver>())

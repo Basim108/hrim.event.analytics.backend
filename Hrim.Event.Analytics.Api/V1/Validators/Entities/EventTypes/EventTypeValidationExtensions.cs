@@ -13,24 +13,23 @@ public static class EventTypeValidatorExtensions
     ///     Adds rules to update and create event_type requests
     /// </summary>
     public static void AddRulesForEventType<TRequest>(this AbstractValidator<TRequest> validator)
-        where TRequest : UserEventType
-    {
+        where TRequest : UserEventType {
         validator.RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.IS_REQUIRED)
-            .MaximumLength(Constraints.NAME_MAX_LENGTH);
+                 .NotEmpty()
+                 .WithMessage(errorMessage: ValidationMessages.IS_REQUIRED)
+                 .MaximumLength(maximumLength: Constraints.NAME_MAX_LENGTH);
 
         validator.RuleFor(x => x.Description)
-            .MaximumLength(Constraints.DESCRIPTION_MAX_LENGTH);
+                 .MaximumLength(maximumLength: Constraints.DESCRIPTION_MAX_LENGTH);
 
         validator.RuleFor(x => x.Color)
-            .NotEmpty()
-            .WithMessage(ValidationMessages.IS_REQUIRED)
-            .MaximumLength(Constraints.COLOR_MAX_LENGTH);
+                 .NotEmpty()
+                 .WithMessage(errorMessage: ValidationMessages.IS_REQUIRED)
+                 .MaximumLength(maximumLength: Constraints.COLOR_MAX_LENGTH);
 
         validator.RuleFor(x => x.Color)
-            .Matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", RegexOptions.IgnoreCase)
-            .WithMessage(ValidationMessages.IS_REQUIRED)
-            .MaximumLength(Constraints.COLOR_MAX_LENGTH);
+                 .Matches(expression: "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", options: RegexOptions.IgnoreCase)
+                 .WithMessage(errorMessage: ValidationMessages.IS_REQUIRED)
+                 .MaximumLength(maximumLength: Constraints.COLOR_MAX_LENGTH);
     }
 }

@@ -7,14 +7,14 @@
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />
+        <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests"/>
     </ItemGroup>
     <PropertyGroup>
         <DocumentationFile>Hrim.Event.Analytics.Abstractions.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="12.0.1" />
+        <PackageReference Include="MediatR" Version="12.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -24,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Hrimsoft.StringCases">
-        <HintPath>..\..\..\..\.nuget\packages\hrimsoft.stringcases\1.0.0\lib\netstandard1.0\Hrimsoft.StringCases.dll</HintPath>
-      </Reference>
+        <Reference Include="Hrimsoft.StringCases">
+            <HintPath>..\..\..\..\.nuget\packages\hrimsoft.stringcases\1.0.0\lib\netstandard1.0\Hrimsoft.StringCases.dll</HintPath>
+        </Reference>
     </ItemGroup>
 </Project>

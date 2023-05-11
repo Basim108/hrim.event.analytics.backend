@@ -14,5 +14,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 /// <returns>Null when entity is not found and an entity instance otherwise</returns>
 /// <remarks>Have in mind that this request will return an instance of entity even though IsDeleted flag is set to true</remarks>
 public record GetEventById<TEvent>(Guid Id, bool IsNotTrackable, OperationContext Context)
-    : OperationRequest(Context), IRequest<CqrsResult<TEvent?>>
+    : OperationRequest(Context: Context), IRequest<CqrsResult<TEvent?>>
     where TEvent : BaseEvent, new();

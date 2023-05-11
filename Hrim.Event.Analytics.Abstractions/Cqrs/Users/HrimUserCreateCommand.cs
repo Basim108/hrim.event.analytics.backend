@@ -9,4 +9,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 /// </param>
 /// <param name="SaveChanges">If true, then changes will be flushed to the storages</param>
 public record HrimUserCreateCommand(Guid CorrelationId, bool SaveChanges)
-    : BaseRequest(CorrelationId), IRequest<HrimUser>;
+    : BaseRequest(CorrelationId: CorrelationId), IRequest<HrimUser>;

@@ -9,9 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.EfCore;
 
-public class EventAnalyticDbContext: DbContext {
+public class EventAnalyticDbContext: DbContext
+{
     public EventAnalyticDbContext(DbContextOptions<EventAnalyticDbContext> options)
-        : base(options) { }
+        : base(options: options) { }
 
     public DbSet<UserEventType>       UserEventTypes       { get; set; }
     public DbSet<DbDurationEvent>     DurationEvents       { get; set; }
@@ -21,8 +22,8 @@ public class EventAnalyticDbContext: DbContext {
     public DbSet<HrimTag>             HrimTags             { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        modelBuilder.HasDefaultSchema("hrim_analytics");
-        modelBuilder.HasPostgresExtension("uuid-ossp"); // enables guid generation functions e.g. uuid_generate_v4
+        modelBuilder.HasDefaultSchema(schema: "hrim_analytics");
+        modelBuilder.HasPostgresExtension(name: "uuid-ossp"); // enables guid generation functions e.g. uuid_generate_v4
 
         modelBuilder.ApplyConfiguration(new HrimUserDbConfig());
         modelBuilder.ApplyConfiguration(new ExternalUserProfileDbConfig());

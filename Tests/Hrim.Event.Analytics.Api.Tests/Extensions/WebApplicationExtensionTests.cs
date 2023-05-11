@@ -17,8 +17,8 @@ public class WebApplicationExtensionTests
         var appConfig = new ConfigurationBuilder()
                        .AddInMemoryCollection(new Dictionary<string, string>())
                        .Build();
-        var ex = Assert.Throws<ConfigurationException>(() => WebApplicationExtensions.UseEventAnalyticsCors(null, appConfig));
-        ex.Section.Should().Be("root");
-        ex.Key.Should().Be("ALLOWED_ORIGINS");
+        var ex = Assert.Throws<ConfigurationException>(() => WebApplicationExtensions.UseEventAnalyticsCors(app: null, appConfig: appConfig));
+        ex.Section.Should().Be(expected: "root");
+        ex.Key.Should().Be(expected: "ALLOWED_ORIGINS");
     }
 }

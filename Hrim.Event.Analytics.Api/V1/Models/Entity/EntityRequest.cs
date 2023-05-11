@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Models;
 
-public class EntityRequest : ByIdRequest
+public class EntityRequest: ByIdRequest
 {
     [FromQuery(Name = "entity_type")]
     [ModelBinder(typeof(JsonModelBinder<EntityType>))]

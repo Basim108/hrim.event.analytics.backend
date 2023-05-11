@@ -11,31 +11,31 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
 [ExcludeFromCodeCoverage]
-public class AllEventsAccessorControllerTests : BaseCqrsTests
+public class AllEventsAccessorControllerTests: BaseCqrsTests
 {
     private readonly AllEventsAccessorController _controller;
-    private readonly UserEventType _eventType;
-    private readonly ByPeriodRequest _request;
+    private readonly UserEventType               _eventType;
+    private readonly ByPeriodRequest             _request;
 
-    public AllEventsAccessorControllerTests()
-    {
+    public AllEventsAccessorControllerTests() {
         var accessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
-        _controller = new AllEventsAccessorController(accessor, Mediator);
+        _controller = new AllEventsAccessorController(requestAccessor: accessor, mediator: Mediator);
 
-        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
-        _request = new ByPeriodRequest
-        {
-            Start = DateTime.Now.Date.AddDays(-1).ToDateOnly(),
-            End = DateTime.Now.Date.AddDays(1).ToDateOnly()
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}");
+        _request = new ByPeriodRequest {
+            Start = DateTime.Now.Date.AddDays(value: -1).ToDateOnly(),
+            End   = DateTime.Now.Date.AddDays(value: 1).ToDateOnly()
         };
     }
 
     [Fact]
-    public async Task Having_No_Occurrence_Should_Returns_EmptyList()
-    {
-        TestData.Events.CreateManyDurationEvents(3, OperatorUserId,
-            _request.Start, _request.End, _eventType.Id);
-        var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
+    public async Task Having_No_Occurrence_Should_Returns_EmptyList() {
+        TestData.Events.CreateManyDurationEvents(count: 3,
+                                                 userId: OperatorUserId,
+                                                 start: _request.Start,
+                                                 end: _request.End,
+                                                 eventTypeId: _eventType.Id);
+        var result = await _controller.GetUserEventsAsync(request: _request, cancellationToken: CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Durations.Should().NotBeEmpty();
@@ -44,11 +44,13 @@ public class AllEventsAccessorControllerTests : BaseCqrsTests
     }
 
     [Fact]
-    public async Task Having_No_Duration_Should_Returns_EmptyList()
-    {
-        TestData.Events.CreateManyOccurrenceEvents(3, OperatorUserId,
-            _request.Start, _request.End, _eventType.Id);
-        var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
+    public async Task Having_No_Duration_Should_Returns_EmptyList() {
+        TestData.Events.CreateManyOccurrenceEvents(count: 3,
+                                                   userId: OperatorUserId,
+                                                   start: _request.Start,
+                                                   end: _request.End,
+                                                   eventTypeId: _eventType.Id);
+        var result = await _controller.GetUserEventsAsync(request: _request, cancellationToken: CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Occurrences.Should().NotBeEmpty();
@@ -57,30 +59,34 @@ public class AllEventsAccessorControllerTests : BaseCqrsTests
     }
 
     [Fact]
-    public async Task Having_Durations_And_Occurrence_Should_Return_Correct()
-    {
-        TestData.Events.CreateManyDurationEvents(3, OperatorUserId,
-            _request.Start, _request.End, _eventType.Id);
-        TestData.Events.CreateManyOccurrenceEvents(3, OperatorUserId,
-            _request.Start, _request.End, _eventType.Id);
-        var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
+    public async Task Having_Durations_And_Occurrence_Should_Return_Correct() {
+        TestData.Events.CreateManyDurationEvents(count: 3,
+                                                 userId: OperatorUserId,
+                                                 start: _request.Start,
+                                                 end: _request.End,
+                                                 eventTypeId: _eventType.Id);
+        TestData.Events.CreateManyOccurrenceEvents(count: 3,
+                                                   userId: OperatorUserId,
+                                                   start: _request.Start,
+                                                   end: _request.End,
+                                                   eventTypeId: _eventType.Id);
+        var result = await _controller.GetUserEventsAsync(request: _request, cancellationToken: CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Occurrences.Should().NotBeEmpty();
         result.Durations.Should().NotBeEmpty();
         result.Request.Should().NotBeNull();
-        result.Request.Start.Should().Be(_request.Start);
-        result.Request.End.Should().Be(_request.End);
+        result.Request.Start.Should().Be(expected: _request.Start);
+        result.Request.End.Should().Be(expected: _request.End);
     }
 
     [Fact]
-    public async Task Having_No_Events_Should_Returns_RequestInfo()
-    {
-        var result = await _controller.GetUserEventsAsync(_request, CancellationToken.None);
+    public async Task Having_No_Events_Should_Returns_RequestInfo() {
+        var result = await _controller.GetUserEventsAsync(request: _request, cancellationToken: CancellationToken.None);
 
         result.Should().NotBeNull();
         result.Request.Should().NotBeNull();
-        result.Request.Start.Should().Be(_request.Start);
-        result.Request.End.Should().Be(_request.End);
+        result.Request.Start.Should().Be(expected: _request.Start);
+        result.Request.End.Should().Be(expected: _request.End);
     }
 }

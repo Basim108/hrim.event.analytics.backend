@@ -11,5 +11,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 /// </param>
 /// <returns> Code(404) NotFound; EntityIsNotDeleted; Ok </returns>
 public record RestoreEntityCommand<TEntity>(Guid Id, bool SaveChanges, OperationContext Context)
-    : OperationRequest(Context), IRequest<CqrsResult<TEntity?>>
+    : OperationRequest(Context: Context), IRequest<CqrsResult<TEntity?>>
     where TEntity : HrimEntity, new();

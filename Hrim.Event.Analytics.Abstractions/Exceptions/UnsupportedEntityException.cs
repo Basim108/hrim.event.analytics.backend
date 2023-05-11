@@ -4,27 +4,24 @@ using System.Runtime.Serialization;
 namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 
 [Serializable]
-public class UnsupportedEntityException : Exception
+public class UnsupportedEntityException: Exception
 {
     public UnsupportedEntityException(Type entityType)
-        : base(CoreLogs.UNSUPPORTED_ENTITY + entityType.FullName)
-    {
+        : base(CoreLogs.UNSUPPORTED_ENTITY + entityType.FullName) {
         EntityType = entityType;
     }
 
     protected UnsupportedEntityException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
+        : base(info: info, context: context) {
         EntityType = info.GetValue(nameof(EntityType), typeof(Type)) as Type;
     }
 
     public Type? EntityType { get; }
 
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
+    public override void GetObjectData(SerializationInfo info, StreamingContext context) {
         if (info == null)
             throw new ArgumentNullException(nameof(info));
-        base.GetObjectData(info, context);
+        base.GetObjectData(info: info, context: context);
         info.AddValue(nameof(EntityType), EntityType!);
     }
 }

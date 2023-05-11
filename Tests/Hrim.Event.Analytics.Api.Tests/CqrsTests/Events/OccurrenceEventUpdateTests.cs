@@ -9,74 +9,69 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
 [ExcludeFromCodeCoverage]
-public class OccurrenceEventUpdateTests : BaseCqrsTests
+public class OccurrenceEventUpdateTests: BaseCqrsTests
 {
-    private readonly UserEventType _eventType;
+    private readonly UserEventType                _eventType;
     private readonly OccurrenceEventUpdateRequest _updateRequest;
 
-    public OccurrenceEventUpdateTests()
-    {
-        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
-        _updateRequest = new OccurrenceEventUpdateRequest
-        {
-            OccurredAt = DateTimeOffset.Now,
+    public OccurrenceEventUpdateTests() {
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
+        _updateRequest = new OccurrenceEventUpdateRequest {
+            OccurredAt  = DateTimeOffset.Now,
             EventTypeId = _eventType.Id
         };
     }
 
     [Fact]
-    public async Task Update_OccurrenceEvent()
-    {
-        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
-            _eventType.Id,
-            false,
-            _updateRequest.OccurredAt);
+    public async Task Update_OccurrenceEvent() {
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
+                                                            eventTypeId: _eventType.Id,
+                                                            isDeleted: false,
+                                                            occurredAt: _updateRequest.OccurredAt);
 
         var forUpdate = new OccurrenceEventUpdateRequest();
-        dbEvent.CopyTo(forUpdate);
-        forUpdate.OccurredAt = DateTimeOffset.Now.AddHours(-1);
-        var beforeSend = DateTime.UtcNow;
-        var updateCommand = new OccurrenceEventUpdateCommand(forUpdate, true, OperatorContext);
+        dbEvent.CopyTo(another: forUpdate);
+        forUpdate.OccurredAt = DateTimeOffset.Now.AddHours(hours: -1);
+        var beforeSend    = DateTime.UtcNow;
+        var updateCommand = new OccurrenceEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(updateCommand);
+        var cqrsResult = await Mediator.Send(request: updateCommand);
 
-        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorUserId, forUpdate, beforeSend);
+        cqrsResult.CheckSuccessfullyUpdatedEntity(operatorId: OperatorUserId, forUpdate: forUpdate, beforeSend: beforeSend);
         cqrsResult.Result!.OccurredAt.Should().Be(forUpdate.OccurredAt.TruncateToMilliseconds());
     }
 
     [Fact]
-    public async Task Update_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt()
-    {
-        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
-            _eventType.Id,
-            true,
-            _updateRequest.OccurredAt);
+    public async Task Update_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt() {
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
+                                                            eventTypeId: _eventType.Id,
+                                                            isDeleted: true,
+                                                            occurredAt: _updateRequest.OccurredAt);
 
         var forUpdate = new OccurrenceEventUpdateRequest();
-        dbEvent.CopyTo(forUpdate);
+        dbEvent.CopyTo(another: forUpdate);
         forUpdate.IsDeleted = null;
-        var updateCommand = new OccurrenceEventUpdateCommand(forUpdate, true, OperatorContext);
+        var updateCommand = new OccurrenceEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(updateCommand);
+        var cqrsResult = await Mediator.Send(request: updateCommand);
 
         cqrsResult.CheckUpdateOrCreationOfSoftDeletedEntity();
     }
 
     [Fact]
-    public async Task Update_OccurrenceEvent_With_Wrong_ConcurrentToken()
-    {
-        var dbEvent = TestData.Events.CreateOccurrenceEvent(OperatorUserId,
-            _eventType.Id,
-            false,
-            _updateRequest.OccurredAt);
+    public async Task Update_OccurrenceEvent_With_Wrong_ConcurrentToken() {
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
+                                                            eventTypeId: _eventType.Id,
+                                                            isDeleted: false,
+                                                            occurredAt: _updateRequest.OccurredAt);
 
         var forUpdate = new OccurrenceEventUpdateRequest();
-        dbEvent.CopyTo(forUpdate);
+        dbEvent.CopyTo(another: forUpdate);
         forUpdate.ConcurrentToken = 4;
-        var updateCommand = new OccurrenceEventUpdateCommand(forUpdate, true, OperatorContext);
+        var updateCommand = new OccurrenceEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(updateCommand);
+        var cqrsResult = await Mediator.Send(request: updateCommand);
 
-        cqrsResult.CheckConcurrentConflictUpdate(forUpdate);
+        cqrsResult.CheckConcurrentConflictUpdate(forUpdate: forUpdate);
     }
 }

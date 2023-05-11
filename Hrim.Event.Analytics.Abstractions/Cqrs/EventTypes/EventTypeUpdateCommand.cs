@@ -16,4 +16,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 /// </returns>
 /// <remarks>In case you need to set IsDeleted flag to false, use <see cref="RestoreEntityCommand{TEntity}" /> CQRS command</remarks>
 public record EventTypeUpdateCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
-    : OperationRequest(Context), IRequest<CqrsResult<UserEventType?>>;
+    : OperationRequest(Context: Context), IRequest<CqrsResult<UserEventType?>>;

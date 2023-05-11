@@ -8,32 +8,28 @@ using Microsoft.Extensions.Options;
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 
 [ExcludeFromCodeCoverage]
-public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public class TestAuthHandler: AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    public const string NAME = "Test user";
+    public const string NAME        = "Test user";
     public const string PICTURE_URI = "https://cdn.com/avatar.png";
 
     public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder,
-        ISystemClock clock)
-        : base(options, logger, encoder, clock)
-    {
-    }
+                           ILoggerFactory                               logger,
+                           UrlEncoder                                   encoder,
+                           ISystemClock                                 clock)
+        : base(options: options, logger: logger, encoder: encoder, clock: clock) { }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-    {
-        var claims = new[]
-        {
-            new Claim("sub", $"facebook|{UsersData.EXTERNAL_ID}"),
-            new Claim("https://hrimsoft.us.auth0.com.example.com/email", UsersData.EMAIL)
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync() {
+        var claims = new[] {
+            new Claim(type: "sub",                                             $"facebook|{UsersData.EXTERNAL_ID}"),
+            new Claim(type: "https://hrimsoft.us.auth0.com.example.com/email", value: UsersData.EMAIL)
         };
-        var identity = new ClaimsIdentity(claims, "IntegrationTest");
-        var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, "IntegrationTest");
+        var identity  = new ClaimsIdentity(claims: claims, authenticationType: "IntegrationTest");
+        var principal = new ClaimsPrincipal(identity: identity);
+        var ticket    = new AuthenticationTicket(principal: principal, authenticationScheme: "IntegrationTest");
 
-        var result = AuthenticateResult.Success(ticket);
+        var result = AuthenticateResult.Success(ticket: ticket);
 
-        return Task.FromResult(result);
+        return Task.FromResult(result: result);
     }
 }

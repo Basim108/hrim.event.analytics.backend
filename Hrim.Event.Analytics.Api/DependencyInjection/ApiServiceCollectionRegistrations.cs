@@ -8,7 +8,6 @@ using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Swagger.Configuration;
 using Hrim.Event.Analytics.Api.V1.Validators.Entities.Events;
 using Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
-using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
 using Hrim.Event.Analytics.Infrastructure.DependencyInjection;
 using Hrimsoft.StringCases;
@@ -19,20 +18,18 @@ namespace Hrim.Event.Analytics.Api.DependencyInjection;
 
 public static class ApiServiceCollectionRegistrations
 {
-    public static void AddEventAnalyticsServices(this IServiceCollection services, IConfiguration appConfig)
-    {
+    public static void AddEventAnalyticsServices(this IServiceCollection services, IConfiguration appConfig) {
         services.AddCors();
         services.AddControllers()
-            .AddHrimsoftJsonOptions();
-        services.AddFluentValidationAutoValidation(_ =>
-        {
+                .AddHrimsoftJsonOptions();
+        services.AddFluentValidationAutoValidation(_ => {
             ValidatorOptions.Global.LanguageManager.Enabled = false;
             ValidatorOptions.Global.DisplayNameResolver = (_, member, _)
                 => member?.Name.ToSnakeCase();
             ValidatorOptions.Global.PropertyNameResolver = (_, member, _)
                 => member?.Name.ToSnakeCase();
         });
-        services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+        services.AddValidatorsFromAssembly(assembly: typeof(Program).Assembly);
         services.AddApiSwagger();
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
@@ -43,7 +40,7 @@ public static class ApiServiceCollectionRegistrations
         services.AddTransient<IValidator<UserEventType>, EventTypeAsyncValidator>();
 
         services.AddEventAnalyticsInfrastructure();
-        services.AddEventAnalyticsStorage(appConfig, typeof(Program).Assembly.GetName().Name!);
+        services.AddEventAnalyticsStorage(appConfig: appConfig, typeof(Program).Assembly.GetName().Name!);
 
         services.AddHealthChecks();
     }

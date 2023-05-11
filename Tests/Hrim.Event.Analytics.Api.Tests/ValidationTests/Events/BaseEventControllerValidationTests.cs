@@ -16,7 +16,8 @@ using Newtonsoft.Json;
 namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
 [ExcludeFromCodeCoverage]
-[SuppressMessage("Usage",
+[SuppressMessage(category: "Usage",
+                 checkId:
                  "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public abstract class BaseEventControllerValidationTests: BaseEntityControllerTests, IDisposable
 {
@@ -28,13 +29,13 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     protected BaseEventControllerValidationTests(WebAppFactory<Program> factory) {
         _serviceScope = factory.Services.CreateScope();
         var context = _serviceScope.ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-        _testData = new TestData(context);
+        _testData = new TestData(context: context);
         var apiRequestAccessor = _serviceScope.ServiceProvider.GetRequiredService<IApiRequestAccessor>();
-        _operatorId = apiRequestAccessor.GetInternalUserIdAsync(CancellationToken.None).Result;
+        _operatorId = apiRequestAccessor.GetInternalUserIdAsync(cancellation: CancellationToken.None).Result;
     }
 
     public void Dispose() {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
@@ -50,13 +51,13 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
     public async Task Create_Given_NonExistent_EventTypeId_Returns_BadRequest(string eventTypeId) {
         var createRequest = GetBaseEventCreateRequest();
-        createRequest.EventTypeId = Guid.Parse(eventTypeId);
+        createRequest.EventTypeId = Guid.Parse(input: eventTypeId);
 
-        var response = await Client!.PostAsync("", TestUtils.PrepareJson(createRequest));
+        var response = await Client!.PostAsync(requestUri: "", TestUtils.PrepareJson(instance: createRequest));
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent);
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors
@@ -72,14 +73,14 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     public async Task Update_Given_Wrong_CreatedById_Returns_BadRequest(string createdById) {
         var updateRequest = GetBaseEventUpdateRequest();
         updateRequest.CreatedById = Guid.Empty;
-        var payload = JsonConvert.SerializeObject(updateRequest, JsonSettings)
-                                 .Replace(Guid.Empty.ToString(), createdById);
+        var payload = JsonConvert.SerializeObject(value: updateRequest, settings: JsonSettings)
+                                 .Replace(Guid.Empty.ToString(), newValue: createdById);
 
-        var response = await Client!.PutAsync("", new StringContent(payload, Encoding.UTF8, "application/json"));
+        var response = await Client!.PutAsync(requestUri: "", new StringContent(content: payload, encoding: Encoding.UTF8, mediaType: "application/json"));
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent);
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors
@@ -91,16 +92,16 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     [Theory]
     [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
     public async Task Update_Given_NonExistent_CreatedById_Returns_BadRequest(string createdById) {
-        var eventType     = _testData.Events.CreateEventType(_operatorId, $"Headache-{Guid.NewGuid()}");
+        var eventType     = _testData.Events.CreateEventType(userId: _operatorId, $"Headache-{Guid.NewGuid()}");
         var updateRequest = GetBaseEventUpdateRequest();
         updateRequest.EventTypeId = eventType.Id;
-        updateRequest.CreatedById = Guid.Parse(createdById);
+        updateRequest.CreatedById = Guid.Parse(input: createdById);
 
-        var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
+        var response = await Client!.PutAsync(requestUri: "", TestUtils.PrepareJson(instance: updateRequest));
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent);
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors
@@ -113,13 +114,13 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
     public async Task Update_Given_NonExistent_EventTypeId_Returns_BadRequest(string eventTypeId) {
         var updateRequest = GetBaseEventUpdateRequest();
-        updateRequest.EventTypeId = Guid.Parse(eventTypeId);
+        updateRequest.EventTypeId = Guid.Parse(input: eventTypeId);
 
-        var response = await Client!.PutAsync("", TestUtils.PrepareJson(updateRequest));
+        var response = await Client!.PutAsync(requestUri: "", TestUtils.PrepareJson(instance: updateRequest));
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(responseContent);
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent);
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors

@@ -4,9 +4,6 @@
 // unless prior written permission is obtained from EPAM Systems, Inc
 
 using FluentAssertions;
-using Hrim.Event.Analytics.Abstractions.Cqrs;
-using Hrim.Event.Analytics.Abstractions.Entities.Events;
-using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
 
 namespace Hrim.Event.Analytics.Api.Tests.Exceptions;
@@ -15,9 +12,9 @@ public class UnsupportedEntityExceptionTests
 {
     [Fact]
     public void Should_Set_Message_and_EntityType_Property() {
-        var entityType = typeof(String);
-        var ex   = new UnsupportedEntityException(entityType);
+        var entityType = typeof(string);
+        var ex         = new UnsupportedEntityException(entityType: entityType);
         ex.Message.Should().Be($"Unsupported entity of type: {entityType.FullName}");
-        ex.EntityType.Should().Be(entityType);
+        ex.EntityType.Should().Be(expected: entityType);
     }
 }

@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.DependencyInjection;
-using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.EfCore;
 using MediatR;
@@ -16,65 +15,62 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests;
 
 /// <inheritdoc />
 [ExcludeFromCodeCoverage]
-public abstract class BaseCqrsTests : IDisposable
+public abstract class BaseCqrsTests: IDisposable
 {
-    private readonly   IServiceScope       _serviceScope;
     protected readonly IApiRequestAccessor _apiRequestAccessor = Substitute.For<IApiRequestAccessor>();
-    protected BaseCqrsTests()
-    {
+    private readonly   IServiceScope       _serviceScope;
+
+    protected BaseCqrsTests() {
         var appConfig = new ConfigurationBuilder()
-            // .AddInMemoryCollection(new Dictionary<string, string>() { })
-            .AddJsonFile("appsettings.Tests.json")
-            .Build();
+                        // .AddInMemoryCollection(new Dictionary<string, string>() { })
+                       .AddJsonFile(path: "appsettings.Tests.json")
+                       .Build();
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddEventAnalyticsServices(appConfig);
+        services.AddEventAnalyticsServices(appConfig: appConfig);
 
         services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));
         services.AddDbContext<EventAnalyticDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
         var operatorId = Guid.NewGuid();
         services.CleanUpCurrentRegistrations(typeof(IApiRequestAccessor));
-        services.AddScoped(_ =>
-        {
+        services.AddScoped(_ => {
             var claims = new List<Claim> {
-                new("sub", $"facebook|{UsersData.EXTERNAL_ID}"),
-                new("https://hrimsoft.us.auth0.com.example.com/email", UsersData.EMAIL)
+                new(type: "sub", $"facebook|{UsersData.EXTERNAL_ID}"),
+                new(type: "https://hrimsoft.us.auth0.com.example.com/email", value: UsersData.EMAIL)
             };
             var correlationId = Guid.NewGuid();
-            _apiRequestAccessor.GetInternalUserIdAsync(Arg.Any<CancellationToken>()).Returns(operatorId);
-            _apiRequestAccessor.GetUserClaims().Returns(claims);
-            _apiRequestAccessor.GetCorrelationId().Returns(correlationId);
-            _apiRequestAccessor.GetOperationContext().Returns(new OperationContext(claims, correlationId));
+            _apiRequestAccessor.GetInternalUserIdAsync(Arg.Any<CancellationToken>()).Returns(returnThis: operatorId);
+            _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
+            _apiRequestAccessor.GetCorrelationId().Returns(returnThis: correlationId);
+            _apiRequestAccessor.GetOperationContext().Returns(new OperationContext(userClaims: claims, correlationId: correlationId));
             return _apiRequestAccessor;
         });
-        _serviceScope = services.BuildServiceProvider().CreateScope();
+        _serviceScope   = services.BuildServiceProvider().CreateScope();
         ServiceProvider = _serviceScope.ServiceProvider;
 
         Mediator = ServiceProvider.GetRequiredService<IMediator>();
         var context = ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-        TestData = new TestData(context);
+        TestData = new TestData(context: context);
         var apiRequestAccessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         OperatorContext = apiRequestAccessor.GetOperationContext();
         OperatorUserId  = operatorId;
-        TestData.Users.EnsureUserExistence(OperatorUserId);
+        TestData.Users.EnsureUserExistence(id: OperatorUserId);
     }
 
     protected IMediator        Mediator        { get; }
     protected IServiceProvider ServiceProvider { get; }
     protected TestData         TestData        { get; }
-    protected OperationContext OperatorContext { get; set;  }
-    
+    protected OperationContext OperatorContext { get; set; }
+
     protected Guid OperatorUserId { get; }
 
-    public void Dispose()
-    {
-        Dispose(true);
+    public void Dispose() {
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
-    {
+    protected virtual void Dispose(bool disposing) {
         if (disposing) _serviceScope.Dispose();
     }
 }

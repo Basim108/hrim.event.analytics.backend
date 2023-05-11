@@ -6,7 +6,6 @@
 using AutoMapper;
 using FluentAssertions;
 using Hrim.Event.Analytics.EfCore.AutoMapper.Converters;
-using NSubstitute;
 
 namespace Hrim.Event.Analytics.Api.Tests.Converters;
 
@@ -20,17 +19,17 @@ public class NullableDateTimeOffsetConverterTests
     [Fact]
     public void Should_Convert_From_DateTimeOffset() {
         var now    = DateTimeOffset.Now;
-        var result = _converter.Convert(now, _context);
+        var result = _converter.Convert(source: now, context: _context);
         result.Should().NotBeNull();
-        result!.Value.Year.Should().Be(now.Year);
-        result.Value.Month.Should().Be(now.Month);
-        result.Value.Day.Should().Be(now.Day);
+        result!.Value.Year.Should().Be(expected: now.Year);
+        result.Value.Month.Should().Be(expected: now.Month);
+        result.Value.Day.Should().Be(expected: now.Day);
     }
-    
+
     [Fact]
     public void Should_Convert_From_Null() {
         var now    = DateTimeOffset.Now;
-        var result = _converter.Convert(null, _context);
+        var result = _converter.Convert(source: null, context: _context);
         result.Should().BeNull();
     }
 }

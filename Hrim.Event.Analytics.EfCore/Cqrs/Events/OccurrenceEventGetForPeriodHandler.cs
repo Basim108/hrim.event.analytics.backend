@@ -20,7 +20,7 @@ public class OccurrenceEventGetForPeriodHandler: IRequestHandler<OccurrenceEvent
     }
 
     public async Task<IList<ViewOccurrenceEvent>> Handle(OccurrenceEventGetForPeriod request, CancellationToken cancellationToken) {
-        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         var dbEntities = await _context.OccurrenceEvents
                                        .Include(x => x.EventType)
                                        .Where(x => x.CreatedById == operatorUserId
@@ -28,17 +28,17 @@ public class OccurrenceEventGetForPeriodHandler: IRequestHandler<OccurrenceEvent
                                                 && x.OccurredOn  <= request.End
                                                 && x.IsDeleted   != true)
                                        .AsNoTracking()
-                                       .ToListAsync(cancellationToken);
-        var result = dbEntities.Select(x => new ViewOccurrenceEvent(x.Id,
-                                                                    x.OccurredOn.CombineWithTime(x.OccurredAt),
-                                                                    new ViewEventType(x.EventType!.Id,
-                                                                                      x.EventType.Name,
-                                                                                      x.EventType.Description,
-                                                                                      x.EventType.Color,
-                                                                                      x.EventType.IsPublic,
+                                       .ToListAsync(cancellationToken: cancellationToken);
+        var result = dbEntities.Select(x => new ViewOccurrenceEvent(Id: x.Id,
+                                                                    x.OccurredOn.CombineWithTime(time: x.OccurredAt),
+                                                                    new ViewEventType(Id: x.EventType!.Id,
+                                                                                      Name: x.EventType.Name,
+                                                                                      Description: x.EventType.Description,
+                                                                                      Color: x.EventType.Color,
+                                                                                      IsPublic: x.EventType.IsPublic,
                                                                                       x.EventType.IsDeleted ?? false,
-                                                                                      true),
-                                                                    x.ConcurrentToken))
+                                                                                      IsMine: true),
+                                                                    ConcurrentToken: x.ConcurrentToken))
                                .ToList();
         return result;
     }

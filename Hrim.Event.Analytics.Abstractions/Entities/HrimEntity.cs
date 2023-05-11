@@ -21,12 +21,11 @@ public abstract class HrimEntity
     public long ConcurrentToken { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(HrimEntity another)
-    {
-        another.Id = Id;
-        another.CreatedAt = CreatedAt;
-        another.UpdatedAt = UpdatedAt;
-        another.IsDeleted = IsDeleted;
+    public void CopyTo(HrimEntity another) {
+        another.Id              = Id;
+        another.CreatedAt       = CreatedAt;
+        another.UpdatedAt       = UpdatedAt;
+        another.IsDeleted       = IsDeleted;
         another.ConcurrentToken = ConcurrentToken;
     }
 }

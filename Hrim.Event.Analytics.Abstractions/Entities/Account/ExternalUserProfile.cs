@@ -6,7 +6,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Account;
 ///     Entity present a user from a specific identity provider such as Google, Facebook, etc
 /// </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class ExternalUserProfile : HrimEntity
+public class ExternalUserProfile: HrimEntity
 {
     /// <summary>
     ///     An id of event analytics user
@@ -44,17 +44,16 @@ public class ExternalUserProfile : HrimEntity
     public string? LastName { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(ExternalUserProfile another)
-    {
-        base.CopyTo(another);
-        another.LastName = LastName;
-        another.FirstName = FirstName;
-        another.FullName = FullName;
-        another.LastLogin = LastLogin;
-        another.Email = Email;
-        another.Idp = Idp;
+    public void CopyTo(ExternalUserProfile another) {
+        base.CopyTo(another: another);
+        another.LastName       = LastName;
+        another.FirstName      = FirstName;
+        another.FullName       = FullName;
+        another.LastLogin      = LastLogin;
+        another.Email          = Email;
+        another.Idp            = Idp;
         another.ExternalUserId = ExternalUserId;
-        another.HrimUserId = HrimUserId;
-        another.HrimUser = HrimUser;
+        another.HrimUserId     = HrimUserId;
+        another.HrimUser       = HrimUser;
     }
 }

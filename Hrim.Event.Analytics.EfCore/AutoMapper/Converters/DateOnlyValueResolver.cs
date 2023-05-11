@@ -5,47 +5,86 @@ using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 namespace Hrim.Event.Analytics.EfCore.AutoMapper.Converters;
 
 public class DurationStartedOnValueResolver: IValueResolver<DbDurationEvent, DurationEvent, DateTimeOffset>,
-                                             IValueResolver<DurationEvent, DbDurationEvent, DateOnly>{
-    public DateTimeOffset Resolve(DbDurationEvent source, DurationEvent destination, DateTimeOffset destMember, ResolutionContext context)
-        => new DateTimeOffset(source.StartedOn.Year, source.StartedOn.Month, source.StartedOn.Day,
-                              source.StartedAt.Hour, source.StartedAt.Minute, source.StartedAt.Second,
-                              source.StartedAt.Millisecond,
-                              source.StartedAt.Offset);
+                                             IValueResolver<DurationEvent, DbDurationEvent, DateOnly>
+{
+    public DateTimeOffset Resolve(DbDurationEvent   source,
+                                  DurationEvent     destination,
+                                  DateTimeOffset    destMember,
+                                  ResolutionContext context) {
+        return new DateTimeOffset(year: source.StartedOn.Year,
+                                  month: source.StartedOn.Month,
+                                  day: source.StartedOn.Day,
+                                  hour: source.StartedAt.Hour,
+                                  minute: source.StartedAt.Minute,
+                                  second: source.StartedAt.Second,
+                                  millisecond: source.StartedAt.Millisecond,
+                                  offset: source.StartedAt.Offset);
+    }
 
-    public DateOnly Resolve(DurationEvent source, DbDurationEvent destination, DateOnly destMember, ResolutionContext context)
-        => new DateOnly(source.StartedAt.Year,
-                        source.StartedAt.Month,
-                        source.StartedAt.Day);
+    public DateOnly Resolve(DurationEvent     source,
+                            DbDurationEvent   destination,
+                            DateOnly          destMember,
+                            ResolutionContext context) {
+        return new DateOnly(year: source.StartedAt.Year,
+                            month: source.StartedAt.Month,
+                            day: source.StartedAt.Day);
+    }
 }
 
 public class DurationFinishedOnValueResolver: IValueResolver<DbDurationEvent, DurationEvent, DateTimeOffset?>,
-                                              IValueResolver<DurationEvent, DbDurationEvent, DateOnly?> {
-    public DateTimeOffset? Resolve(DbDurationEvent source, DurationEvent destination, DateTimeOffset? destMember, ResolutionContext context)
-        => source.FinishedOn == null || source.FinishedAt == null
-               ? null
-               : new DateTimeOffset(source.FinishedOn.Value.Year, source.FinishedOn.Value.Month, source.FinishedOn.Value.Day,
-                                    source.FinishedAt.Value.Hour, source.FinishedAt.Value.Minute, source.FinishedAt.Value.Second,
-                                    source.FinishedAt.Value.Millisecond,
-                                    source.FinishedAt.Value.Offset);
+                                              IValueResolver<DurationEvent, DbDurationEvent, DateOnly?>
+{
+    public DateTimeOffset? Resolve(DbDurationEvent   source,
+                                   DurationEvent     destination,
+                                   DateTimeOffset?   destMember,
+                                   ResolutionContext context) {
+        return source.FinishedOn == null || source.FinishedAt == null
+                   ? null
+                   : new DateTimeOffset(year: source.FinishedOn.Value.Year,
+                                        month: source.FinishedOn.Value.Month,
+                                        day: source.FinishedOn.Value.Day,
+                                        hour: source.FinishedAt.Value.Hour,
+                                        minute: source.FinishedAt.Value.Minute,
+                                        second: source.FinishedAt.Value.Second,
+                                        millisecond: source.FinishedAt.Value.Millisecond,
+                                        offset: source.FinishedAt.Value.Offset);
+    }
 
-    public DateOnly? Resolve(DurationEvent source, DbDurationEvent destination, DateOnly? destMember, ResolutionContext context)
-        => source.FinishedAt == null
-               ? null
-               : new DateOnly(source.FinishedAt.Value.Year,
-                              source.FinishedAt.Value.Month,
-                              source.FinishedAt.Value.Day);
+    public DateOnly? Resolve(DurationEvent     source,
+                             DbDurationEvent   destination,
+                             DateOnly?         destMember,
+                             ResolutionContext context) {
+        return source.FinishedAt == null
+                   ? null
+                   : new DateOnly(year: source.FinishedAt.Value.Year,
+                                  month: source.FinishedAt.Value.Month,
+                                  day: source.FinishedAt.Value.Day);
+    }
 }
 
 public class OccurrenceOnValueResolver: IValueResolver<DbOccurrenceEvent, OccurrenceEvent, DateTimeOffset>,
-                                        IValueResolver<OccurrenceEvent, DbOccurrenceEvent, DateOnly>{
-    public DateTimeOffset Resolve(DbOccurrenceEvent source, OccurrenceEvent destination, DateTimeOffset destMember, ResolutionContext context)
-        => new DateTimeOffset(source.OccurredOn.Year, source.OccurredOn.Month, source.OccurredOn.Day,
-                              source.OccurredAt.Hour, source.OccurredAt.Minute, source.OccurredAt.Second,
-                              source.OccurredAt.Millisecond,
-                              source.OccurredAt.Offset);
+                                        IValueResolver<OccurrenceEvent, DbOccurrenceEvent, DateOnly>
+{
+    public DateTimeOffset Resolve(DbOccurrenceEvent source,
+                                  OccurrenceEvent   destination,
+                                  DateTimeOffset    destMember,
+                                  ResolutionContext context) {
+        return new DateTimeOffset(year: source.OccurredOn.Year,
+                                  month: source.OccurredOn.Month,
+                                  day: source.OccurredOn.Day,
+                                  hour: source.OccurredAt.Hour,
+                                  minute: source.OccurredAt.Minute,
+                                  second: source.OccurredAt.Second,
+                                  millisecond: source.OccurredAt.Millisecond,
+                                  offset: source.OccurredAt.Offset);
+    }
 
-    public DateOnly Resolve(OccurrenceEvent source, DbOccurrenceEvent destination, DateOnly destMember, ResolutionContext context)
-        => new DateOnly(source.OccurredAt.Year,
-                        source.OccurredAt.Month,
-                        source.OccurredAt.Day);
+    public DateOnly Resolve(OccurrenceEvent   source,
+                            DbOccurrenceEvent destination,
+                            DateOnly          destMember,
+                            ResolutionContext context) {
+        return new DateOnly(year: source.OccurredAt.Year,
+                            month: source.OccurredAt.Month,
+                            day: source.OccurredAt.Day);
+    }
 }

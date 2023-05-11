@@ -8,8 +8,8 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
 
 public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQuery, Guid>
 {
-    private readonly ILogger<GetInternalUserIdQueryHandler> _logger;
     private readonly EventAnalyticDbContext                 _context;
+    private readonly ILogger<GetInternalUserIdQueryHandler> _logger;
 
     public GetInternalUserIdQueryHandler(ILogger<GetInternalUserIdQueryHandler> logger,
                                          EventAnalyticDbContext                 context) {
@@ -23,7 +23,7 @@ public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQue
         if (request.Context == null)
             throw new ArgumentNullException(nameof(request), nameof(request.Context));
 
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<Guid> HandleAsync(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
@@ -31,14 +31,13 @@ public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQue
         var email      = request.Context.Email;
 
         IQueryable<ExternalUserProfile> query = _context.ExternalUserProfiles;
-        query = string.IsNullOrWhiteSpace(email)
+        query = string.IsNullOrWhiteSpace(value: email)
                     ? query.Where(x => x.ExternalUserId == externalId)
                     : query.Where(x => x.ExternalUserId == externalId || x.Email == email);
 
-        var existedList = await query.Select(x => x.HrimUserId).Distinct().ToListAsync(cancellationToken);
-        if (existedList.Count > 1) {
-            _logger.LogWarning(EfCoreLogs.THERE_ARE_MANY_USERS_FOUND_BY_CLAIMS);
-        }
+        var existedList = await query.Select(x => x.HrimUserId).Distinct().ToListAsync(cancellationToken: cancellationToken);
+        if (existedList.Count > 1)
+            _logger.LogWarning(message: EfCoreLogs.THERE_ARE_MANY_USERS_FOUND_BY_CLAIMS);
         return existedList.Count == 0
                    ? Guid.Empty
                    : existedList.First();

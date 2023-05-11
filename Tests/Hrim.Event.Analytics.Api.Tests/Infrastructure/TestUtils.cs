@@ -9,26 +9,37 @@ namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 [ExcludeFromCodeCoverage]
 public static class TestUtils
 {
-    public static readonly DateTimeOffset DayStart = new(2022, 01, 01, 0, 0, 0, TimeSpan.Zero);
-    public static readonly DateTimeOffset DayEnd = new(2022, 01, 01, 23, 59, 59, TimeSpan.Zero);
+    public static readonly DateTimeOffset DayStart = new(year: 2022,
+                                                         month: 01,
+                                                         day: 01,
+                                                         hour: 0,
+                                                         minute: 0,
+                                                         second: 0,
+                                                         offset: TimeSpan.Zero);
+
+    public static readonly DateTimeOffset DayEnd = new(year: 2022,
+                                                       month: 01,
+                                                       day: 01,
+                                                       hour: 23,
+                                                       minute: 59,
+                                                       second: 59,
+                                                       offset: TimeSpan.Zero);
 
     /// <summary>
     ///     Cleans up previous registrations of a type
     /// </summary>
-    public static void CleanUpCurrentRegistrations(this IServiceCollection services, Type type)
-    {
+    public static void CleanUpCurrentRegistrations(this IServiceCollection services, Type type) {
         var descriptors = services.Where(d => d.ServiceType == type)
-            .ToList();
-        descriptors.ForEach(x => services.Remove(x));
+                                  .ToList();
+        descriptors.ForEach(x => services.Remove(item: x));
     }
 
     /// <summary>
     ///     Create string content from an instance
     /// </summary>
-    public static StringContent PrepareJson<T>(T instance)
-    {
-        return new StringContent(JsonConvert.SerializeObject(instance, JsonSettingsFactory.Get()),
-            Encoding.UTF8,
-            "application/json");
+    public static StringContent PrepareJson<T>(T instance) {
+        return new StringContent(JsonConvert.SerializeObject(value: instance, JsonSettingsFactory.Get()),
+                                 encoding: Encoding.UTF8,
+                                 mediaType: "application/json");
     }
 }

@@ -4,8 +4,6 @@
 // unless prior written permission is obtained from EPAM Systems, Inc
 
 using FluentAssertions;
-using Hrim.Event.Analytics.Abstractions.Cqrs;
-using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
 
@@ -16,8 +14,8 @@ public class UnexpectedCqrsStatusCodeExceptionTests
     [Fact]
     public void Should_Set_Message_and_StatusCode_Property() {
         var code = CqrsResultCode.Created;
-        var ex   = new UnexpectedCqrsStatusCodeException(code);
+        var ex   = new UnexpectedCqrsStatusCodeException(statusCode: code);
         ex.Message.Should().Be($"Unexpected CqrsResultCode={code}");
-        ex.StatusCode.Should().Be(code);
+        ex.StatusCode.Should().Be(expected: code);
     }
 }

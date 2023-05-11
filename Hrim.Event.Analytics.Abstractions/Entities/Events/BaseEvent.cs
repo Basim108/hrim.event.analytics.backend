@@ -6,7 +6,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Events;
 /// <summary>
 ///     Properties shared with all types of events
 /// </summary>
-public abstract class BaseEvent : HrimEntity, IHasOwner
+public abstract class BaseEvent: HrimEntity, IHasOwner
 {
     /// <summary>
     ///     A user who created an instance of this event type
@@ -29,12 +29,11 @@ public abstract class BaseEvent : HrimEntity, IHasOwner
     public Guid CreatedById { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(BaseEvent another)
-    {
-        base.CopyTo(another);
+    public void CopyTo(BaseEvent another) {
+        base.CopyTo(another: another);
         another.EventTypeId = EventTypeId;
-        another.EventType = EventType;
+        another.EventType   = EventType;
         another.CreatedById = CreatedById;
-        another.CreatedBy = CreatedBy;
+        another.CreatedBy   = CreatedBy;
     }
 }

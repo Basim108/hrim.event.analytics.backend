@@ -6,22 +6,30 @@ public static class DateOnlyExtensions
     /// <summary>
     ///     Combines date from DateOnly and time with timezone from DateTimeOffset
     /// </summary>
-    public static DateTimeOffset CombineWithTime(this DateOnly date, DateTimeOffset time)
-    {
-        return new(date.Year, date.Month, date.Day,
-            time.Hour, time.Minute, time.Second, time.Millisecond,
-            time.Offset);
+    public static DateTimeOffset CombineWithTime(this DateOnly date, DateTimeOffset time) {
+        return new DateTimeOffset(year: date.Year,
+                                  month: date.Month,
+                                  day: date.Day,
+                                  hour: time.Hour,
+                                  minute: time.Minute,
+                                  second: time.Second,
+                                  millisecond: time.Millisecond,
+                                  offset: time.Offset);
     }
 
     /// <summary>
     ///     Combines date from DateOnly and time with timezone from DateTimeOffset
     /// </summary>
-    public static DateTimeOffset? CombineWithTime(this DateOnly? date, DateTimeOffset? time)
-    {
+    public static DateTimeOffset? CombineWithTime(this DateOnly? date, DateTimeOffset? time) {
         return date == null || time == null
-            ? null
-            : new DateTimeOffset(date.Value.Year, date.Value.Month, date.Value.Day,
-                time.Value.Hour, time.Value.Minute, time.Value.Second, time.Value.Millisecond,
-                time.Value.Offset);
+                   ? null
+                   : new DateTimeOffset(year: date.Value.Year,
+                                        month: date.Value.Month,
+                                        day: date.Value.Day,
+                                        hour: time.Value.Hour,
+                                        minute: time.Value.Minute,
+                                        second: time.Value.Second,
+                                        millisecond: time.Value.Millisecond,
+                                        offset: time.Value.Offset);
     }
 }

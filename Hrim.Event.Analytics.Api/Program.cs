@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args: args);
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console()
-    .ReadFrom.Configuration(ctx.Configuration));
+                                       .ReadFrom.Configuration(configuration: ctx.Configuration));
 
 builder.Services.AddMediatR(cfg => {
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.RegisterServicesFromAssembly(assembly: typeof(Program).Assembly);
 });
-builder.Services.AddEventAnalyticsServices(builder.Configuration);
-builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
+builder.Services.AddEventAnalyticsServices(appConfig: builder.Configuration);
+builder.Services.AddEventAnalyticsAuthentication(appConfig: builder.Configuration);
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
@@ -23,11 +23,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options => {
 var app = builder.Build();
 
 app.UseForwardedHeaders();
-app.UseEventAnalyticsCors(builder.Configuration);
+app.UseEventAnalyticsCors(appConfig: builder.Configuration);
 
 app.UseSerilogRequestLogging();
-app.Use(async (context, next) =>
-{
+app.Use(async (context, next) => {
     context.Request.EnableBuffering();
     await next();
 });
@@ -35,10 +34,10 @@ app.UseCorrelationId();
 app.UseHttpContextLogging();
 app.UseRouting();
 
-app.MapHealthChecks("/health", new HealthCheckOptions
-{
-    AllowCachingResponses = false
-});
+app.MapHealthChecks(pattern: "/health",
+                    new HealthCheckOptions {
+                        AllowCachingResponses = false
+                    });
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -58,6 +57,5 @@ namespace Hrim.Event.Analytics.Api
 {
     /// <summary> for integration tests </summary>
     public class Program
-    {
-    }
+    { }
 }

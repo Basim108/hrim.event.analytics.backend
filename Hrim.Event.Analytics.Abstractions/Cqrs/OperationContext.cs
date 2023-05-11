@@ -6,6 +6,11 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs;
 /// <summary></summary>
 public record OperationContext
 {
+    private string? _externalId;
+
+    private ExternalIdp? _idp;
+    private string?      _operatorEmail;
+
     /// <summary> </summary>
     /// <param name="userClaims"></param>
     /// <param name="correlationId"></param>
@@ -15,17 +20,17 @@ public record OperationContext
     }
 
     /// <summary>
-    /// Claims from jwt api access token
+    ///     Claims from jwt api access token
     /// </summary>
     public IEnumerable<Claim> UserClaims { get; init; }
 
     /// <summary>
-    /// Id that will be passed through the whole sequence of commands, queries, jobs, etc
+    ///     Id that will be passed through the whole sequence of commands, queries, jobs, etc
     /// </summary>
     public Guid CorrelationId { get; init; }
 
     /// <summary> Operator Email taken from jwt claims </summary>
-    public string? Email => _operatorEmail ??= UserClaims.FirstOrDefault(x => x.Type.Contains("email"))?.Value;
+    public string? Email => _operatorEmail ??= UserClaims.FirstOrDefault(x => x.Type.Contains(value: "email"))?.Value;
 
     /// <summary> External User Identifier </summary>
     public string ExternalId() {
@@ -41,16 +46,12 @@ public record OperationContext
         return _idp!.Value;
     }
 
-    private ExternalIdp? _idp;
-    private string?      _externalId;
-    private string?      _operatorEmail;
-
     private void ProcessSubjectClaim() {
-        var subjectParts = UserClaims.First(x => x.Type == "sub").Value.Split('|');
+        var subjectParts = UserClaims.First(x => x.Type == "sub").Value.Split(separator: '|');
         _externalId ??= subjectParts[1];
-        _idp = subjectParts[0].StartsWith("google")
+        _idp = subjectParts[0].StartsWith(value: "google")
                    ? ExternalIdp.Google
-                   : subjectParts[0].StartsWith("facebook")
+                   : subjectParts[0].StartsWith(value: "facebook")
                        ? ExternalIdp.Facebook
                        : ExternalIdp.Auth0;
     }

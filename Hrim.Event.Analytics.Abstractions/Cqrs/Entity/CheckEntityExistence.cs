@@ -10,12 +10,12 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 ///     <see cref="BaseRequest" />
 /// </param>
 public record CheckEntityExistence(Guid Id, EntityType EntityType, Guid CorrelationId)
-    : BaseRequest(CorrelationId), IRequest<CqrsVoidResult>;
+    : BaseRequest(CorrelationId: CorrelationId), IRequest<CqrsVoidResult>;
 
 /// <summary> Checks the existence of a user in the storage </summary>
 public record CheckUserExistence(Guid Id, Guid CorrelationId)
-    : CheckEntityExistence(Id, EntityType.HrimUser, CorrelationId);
+    : CheckEntityExistence(Id: Id, EntityType: EntityType.HrimUser, CorrelationId: CorrelationId);
 
 /// <summary> Checks the existence of a user event type in the storage </summary>
 public record CheckEventTypeExistence(Guid Id, Guid CorrelationId)
-    : CheckEntityExistence(Id, EntityType.EventType, CorrelationId);
+    : CheckEntityExistence(Id: Id, EntityType: EntityType.EventType, CorrelationId: CorrelationId);

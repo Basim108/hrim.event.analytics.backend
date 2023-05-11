@@ -8,13 +8,12 @@ public class TestData
 {
     public readonly EventAnalyticDbContext DbContext;
 
-    public TestData(EventAnalyticDbContext context)
-    {
+    public TestData(EventAnalyticDbContext context) {
         DbContext = context;
-        Events = new EventsData(context);
-        Users = new UsersData(context);
+        Events    = new EventsData(context: context);
+        Users     = new UsersData(context: context);
     }
 
     public EventsData Events { get; }
-    public UsersData Users { get; }
+    public UsersData  Users  { get; }
 }

@@ -11,20 +11,18 @@ namespace Hrim.Event.Analytics.Api.Services;
 /// </summary>
 public static class JsonSettingsFactory
 {
-    public static JsonSerializerSettings Get()
-    {
-        return new()
-        {
-            NullValueHandling = NullValueHandling.Ignore,
+    public static JsonSerializerSettings Get() {
+        return new JsonSerializerSettings {
+            NullValueHandling    = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            TypeNameHandling = TypeNameHandling.Objects,
-            ContractResolver = new DefaultContractResolver
-            {
+            TypeNameHandling     = TypeNameHandling.Objects,
+            ContractResolver = new DefaultContractResolver {
                 NamingStrategy = new SnakeCaseNamingStrategy()
             },
-            Converters = new List<JsonConverter>
-            {
-                new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy() }
+            Converters = new List<JsonConverter> {
+                new StringEnumConverter {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                }
             }
         };
     }

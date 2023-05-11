@@ -9,59 +9,53 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
 [ExcludeFromCodeCoverage]
-public class DurationEventUpdateTests : BaseCqrsTests
+public class DurationEventUpdateTests: BaseCqrsTests
 {
     private readonly UserEventType _eventType;
 
-    public DurationEventUpdateTests()
-    {
-        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Headache-{Guid.NewGuid()}");
-    }
+    public DurationEventUpdateTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}"); }
 
     [Fact]
-    public async Task Update_StartedAt()
-    {
-        var dbEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
+    public async Task Update_StartedAt() {
+        var dbEvent = TestData.Events.CreateDurationEvent(userId: OperatorUserId, eventTypeId: _eventType.Id);
 
         var forUpdate = new DurationEventUpdateRequest();
-        dbEvent.CopyTo(forUpdate);
-        forUpdate.StartedAt = DateTimeOffset.Now.AddHours(-1);
-        var beforeSend = DateTime.UtcNow;
-        var updateCommand = new DurationEventUpdateCommand(forUpdate, true, OperatorContext);
+        dbEvent.CopyTo(another: forUpdate);
+        forUpdate.StartedAt = DateTimeOffset.Now.AddHours(hours: -1);
+        var beforeSend    = DateTime.UtcNow;
+        var updateCommand = new DurationEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(updateCommand);
+        var cqrsResult = await Mediator.Send(request: updateCommand);
 
-        cqrsResult.CheckSuccessfullyUpdatedEntity(OperatorUserId, forUpdate, beforeSend);
+        cqrsResult.CheckSuccessfullyUpdatedEntity(operatorId: OperatorUserId, forUpdate: forUpdate, beforeSend: beforeSend);
         cqrsResult.Result!.StartedAt.Should().Be(forUpdate.StartedAt.TruncateToMilliseconds());
     }
 
     [Fact]
-    public async Task Update_StartedAt_With_Same_But_Soft_Deleted_OccurredAt()
-    {
-        var dbEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id, true);
+    public async Task Update_StartedAt_With_Same_But_Soft_Deleted_OccurredAt() {
+        var dbEvent = TestData.Events.CreateDurationEvent(userId: OperatorUserId, eventTypeId: _eventType.Id, isDeleted: true);
 
         var forUpdate = new DurationEventUpdateRequest();
-        dbEvent.CopyTo(forUpdate);
+        dbEvent.CopyTo(another: forUpdate);
         forUpdate.IsDeleted = null;
-        var updateCommand = new DurationEventUpdateCommand(forUpdate, true, OperatorContext);
+        var updateCommand = new DurationEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(updateCommand);
+        var cqrsResult = await Mediator.Send(request: updateCommand);
 
         cqrsResult.CheckUpdateOrCreationOfSoftDeletedEntity();
     }
 
     [Fact]
-    public async Task Update_StartedAt_With_Wrong_ConcurrentToken()
-    {
-        var dbEvent = TestData.Events.CreateDurationEvent(OperatorUserId, _eventType.Id);
+    public async Task Update_StartedAt_With_Wrong_ConcurrentToken() {
+        var dbEvent = TestData.Events.CreateDurationEvent(userId: OperatorUserId, eventTypeId: _eventType.Id);
 
         var forUpdate = new DurationEventUpdateRequest();
-        dbEvent.CopyTo(forUpdate);
+        dbEvent.CopyTo(another: forUpdate);
         forUpdate.ConcurrentToken = 4;
-        var updateCommand = new DurationEventUpdateCommand(forUpdate, true, OperatorContext);
+        var updateCommand = new DurationEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(updateCommand);
+        var cqrsResult = await Mediator.Send(request: updateCommand);
 
-        cqrsResult.CheckConcurrentConflictUpdate(forUpdate);
+        cqrsResult.CheckConcurrentConflictUpdate(forUpdate: forUpdate);
     }
 }

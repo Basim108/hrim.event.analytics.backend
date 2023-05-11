@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
-[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
+[SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
 public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, CqrsResult<TEvent?>>
     where TEvent : BaseEvent, new()
 {
@@ -35,48 +35,44 @@ public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, 
     public Task<CqrsResult<TEvent?>> Handle(GetEventById<TEvent> request, CancellationToken cancellationToken) {
         if (request.Id == Guid.Empty)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Id)}");
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<CqrsResult<TEvent?>> HandleAsync(GetEventById<TEvent> request, CancellationToken cancellationToken) {
-        using var entityIdScope = _logger.BeginScope(CoreLogs.HRIM_ENTITY_ID, request.Id);
+        using var entityIdScope = _logger.BeginScope(messageFormat: CoreLogs.HRIM_ENTITY_ID, request.Id);
         try {
             BaseEvent? db;
             switch (new TEvent()) {
                 case DurationEvent:
                     var durationQuery = _context.DurationEvents.AsQueryable();
-                    if (request.IsNotTrackable) {
+                    if (request.IsNotTrackable)
                         durationQuery = durationQuery.AsNoTracking();
-                    }
-                    db = await durationQuery.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+                    db = await durationQuery.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
                     break;
                 case OccurrenceEvent:
                     var occurrenceQuery = _context.OccurrenceEvents.AsQueryable();
-                    if (request.IsNotTrackable) {
+                    if (request.IsNotTrackable)
                         occurrenceQuery = occurrenceQuery.AsNoTracking();
-                    }
-                    db = await occurrenceQuery.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+                    db = await occurrenceQuery.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
                     break;
                 default:
                     throw new UnsupportedEntityException(typeof(TEvent));
             }
-            if (db == null) {
-                return new CqrsResult<TEvent?>(null, CqrsResultCode.NotFound);
-            }
-            var result = _mapper.Map<TEvent>(db);
-            if (result.IsDeleted == true) {
-                return new CqrsResult<TEvent?>(result, CqrsResultCode.EntityIsDeleted);
-            }
-            var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+            if (db == null)
+                return new CqrsResult<TEvent?>(Result: null, StatusCode: CqrsResultCode.NotFound);
+            var result = _mapper.Map<TEvent>(source: db);
+            if (result.IsDeleted == true)
+                return new CqrsResult<TEvent?>(Result: result, StatusCode: CqrsResultCode.EntityIsDeleted);
+            var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
             if (result.CreatedById != operatorUserId) {
-                _logger.LogWarning(EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, typeof(TEvent).Name);
-                return new CqrsResult<TEvent?>(result, CqrsResultCode.Forbidden);
+                _logger.LogWarning(message: EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, typeof(TEvent).Name);
+                return new CqrsResult<TEvent?>(Result: result, StatusCode: CqrsResultCode.Forbidden);
             }
-            return new CqrsResult<TEvent?>(result, CqrsResultCode.Ok);
+            return new CqrsResult<TEvent?>(Result: result, StatusCode: CqrsResultCode.Ok);
         }
         catch (TimeoutException ex) {
-            _logger.LogWarning(EfCoreLogs.OPERATION_TIMEOUT, HrimOperations.Read, ex.Message);
-            return new CqrsResult<TEvent?>(null, CqrsResultCode.Locked);
+            _logger.LogWarning(message: EfCoreLogs.OPERATION_TIMEOUT, HrimOperations.Read, ex.Message);
+            return new CqrsResult<TEvent?>(Result: null, StatusCode: CqrsResultCode.Locked);
         }
     }
 }

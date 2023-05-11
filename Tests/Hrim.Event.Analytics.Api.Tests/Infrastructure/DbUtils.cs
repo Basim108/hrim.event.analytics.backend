@@ -13,11 +13,10 @@ public static class DbUtils
     /// <summary>
     ///     Creates a new DbContext with unique database name
     /// </summary>
-    public static EventAnalyticDbContext GetDbContext()
-    {
+    public static EventAnalyticDbContext GetDbContext() {
         var builder = new DbContextOptionsBuilder<EventAnalyticDbContext>();
         builder.UseInMemoryDatabase(Guid.NewGuid().ToString());
-        var dbContext = new EventAnalyticDbContext(builder.Options);
+        var dbContext = new EventAnalyticDbContext(options: builder.Options);
         dbContext.Database.EnsureDeleted();
         dbContext.Database.EnsureCreated();
         return dbContext;

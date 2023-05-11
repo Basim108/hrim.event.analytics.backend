@@ -10,29 +10,26 @@ namespace Hrim.Event.Analytics.Api.Extensions;
 public static class WebApplicationExtensions
 {
     /// <summary> Setups CORS </summary>
-    public static void UseEventAnalyticsCors(this WebApplication app, IConfiguration appConfig)
-    {
-        var allowedOrigins = appConfig["ALLOWED_ORIGINS"];
-        if (string.IsNullOrEmpty(allowedOrigins))
-            throw new ConfigurationException(null, "ALLOWED_ORIGINS");
-        var origins = allowedOrigins.Split(";", StringSplitOptions.RemoveEmptyEntries);
+    public static void UseEventAnalyticsCors(this WebApplication app, IConfiguration appConfig) {
+        var allowedOrigins = appConfig[key: "ALLOWED_ORIGINS"];
+        if (string.IsNullOrEmpty(value: allowedOrigins))
+            throw new ConfigurationException(sectionName: null, key: "ALLOWED_ORIGINS");
+        var origins = allowedOrigins.Split(separator: ";", options: StringSplitOptions.RemoveEmptyEntries);
         app.UseCors(x =>
-                        x.WithOrigins(origins)
+                        x.WithOrigins(origins: origins)
                          .WithMethods("POST", "PUT", "GET", "DELETE", "PATCH")
                          .AllowCredentials()
                          .AllowAnyHeader());
     }
 
     /// <summary> Setup swagger </summary>
-    public static void UseEventAnalyticsSwagger(this WebApplication app)
-    {
+    public static void UseEventAnalyticsSwagger(this WebApplication app) {
         if (app.Environment.IsProduction())
             return;
         app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
+        app.UseSwaggerUI(c => {
             var cfg = SwaggerConfig.MakeEventAnalytics();
-            c.SwaggerEndpoint($"{cfg.Version}/swagger.json", cfg.Title);
+            c.SwaggerEndpoint($"{cfg.Version}/swagger.json", name: cfg.Title);
         });
     }
 }

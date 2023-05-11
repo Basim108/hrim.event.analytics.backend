@@ -19,21 +19,21 @@ public class EntityControllerTests: IClassFixture<WebAppFactory<Program>>, IDisp
 {
     private readonly HttpClient             _client;
     private readonly JsonSerializerSettings _jsonSettings;
+    private readonly IApiRequestAccessor    _requestAccessor;
     private readonly IServiceScope          _serviceScope;
     private readonly TestData               _testData;
-    private readonly IApiRequestAccessor    _requestAccessor;
 
     public EntityControllerTests(WebAppFactory<Program> factory) {
         _jsonSettings    = JsonSettingsFactory.Get();
-        _client          = factory.GetClient("v1/entity/");
+        _client          = factory.GetClient(baseUrl: "v1/entity/");
         _serviceScope    = factory.Services.CreateScope();
         _requestAccessor = _serviceScope.ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         var context = _serviceScope.ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-        _testData = new TestData(context);
+        _testData = new TestData(context: context);
     }
 
     public void Dispose() {
-        Dispose(true);
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
@@ -47,20 +47,20 @@ public class EntityControllerTests: IClassFixture<WebAppFactory<Program>>, IDisp
     [InlineData(EntityType.DurationEvent)]
     [InlineData(EntityType.OccurrenceEvent)]
     public async Task SoftDelete_Given_User_Should_Set_IsDeleted(EntityType entityType) {
-        var operatorId = await _requestAccessor.GetInternalUserIdAsync(CancellationToken.None);
+        var operatorId = await _requestAccessor.GetInternalUserIdAsync(cancellation: CancellationToken.None);
         HrimEntity entity = entityType switch {
-            EntityType.HrimUser        => _testData.Users.EnsureUserExistence(operatorId, false),
-            EntityType.EventType       => _testData.Events.CreateEventType(operatorId, $"name: {Guid.NewGuid()}", false),
-            EntityType.DurationEvent   => _testData.Events.CreateDurationEvent(operatorId, isDeleted: false),
-            EntityType.OccurrenceEvent => _testData.Events.CreateOccurrenceEvent(operatorId, isDeleted: false),
+            EntityType.HrimUser        => _testData.Users.EnsureUserExistence(id: operatorId),
+            EntityType.EventType       => _testData.Events.CreateEventType(userId: operatorId, $"name: {Guid.NewGuid()}"),
+            EntityType.DurationEvent   => _testData.Events.CreateDurationEvent(userId: operatorId, isDeleted: false),
+            EntityType.OccurrenceEvent => _testData.Events.CreateOccurrenceEvent(userId: operatorId, isDeleted: false),
             _                          => throw new Exception($"Unsupported entity type: {entityType.ToString()}")
         };
         var url      = $"{entity.Id}?entity_type={entityType}";
-        var response = await _client.DeleteAsync(url);
+        var response = await _client.DeleteAsync(requestUri: url);
 
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var respondedEntity = JsonConvert.DeserializeObject<TestEntity>(responseContent, _jsonSettings);
+        var respondedEntity = JsonConvert.DeserializeObject<TestEntity>(value: responseContent, settings: _jsonSettings);
         respondedEntity.Should().NotBeNull();
         respondedEntity!.IsDeleted.Should().BeTrue();
     }
@@ -71,20 +71,20 @@ public class EntityControllerTests: IClassFixture<WebAppFactory<Program>>, IDisp
     [InlineData(EntityType.DurationEvent)]
     [InlineData(EntityType.OccurrenceEvent)]
     public async Task Restore_Given_User_Should_Set_IsDeleted(EntityType entityType) {
-        var operatorId = await _requestAccessor.GetInternalUserIdAsync(CancellationToken.None);
+        var operatorId = await _requestAccessor.GetInternalUserIdAsync(cancellation: CancellationToken.None);
         HrimEntity entity = entityType switch {
-            EntityType.HrimUser        => _testData.Users.EnsureUserExistence(operatorId, true),
-            EntityType.EventType       => _testData.Events.CreateEventType(operatorId, $"name: {Guid.NewGuid()}", true),
-            EntityType.DurationEvent   => _testData.Events.CreateDurationEvent(operatorId, isDeleted: true),
-            EntityType.OccurrenceEvent => _testData.Events.CreateOccurrenceEvent(operatorId, isDeleted: true),
+            EntityType.HrimUser        => _testData.Users.EnsureUserExistence(id: operatorId, isDeleted: true),
+            EntityType.EventType       => _testData.Events.CreateEventType(userId: operatorId, $"name: {Guid.NewGuid()}", isDeleted: true),
+            EntityType.DurationEvent   => _testData.Events.CreateDurationEvent(userId: operatorId, isDeleted: true),
+            EntityType.OccurrenceEvent => _testData.Events.CreateOccurrenceEvent(userId: operatorId, isDeleted: true),
             _                          => throw new Exception($"Unsupported entity type: {entityType.ToString()}")
         };
         var url      = $"{entity.Id}?entity_type={entityType}";
-        var response = await _client.PatchAsync(url, null);
+        var response = await _client.PatchAsync(requestUri: url, content: null);
 
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
-        var respondedEntity = JsonConvert.DeserializeObject<TestEntity>(responseContent, _jsonSettings);
+        var respondedEntity = JsonConvert.DeserializeObject<TestEntity>(value: responseContent, settings: _jsonSettings);
         respondedEntity.Should().NotBeNull();
         respondedEntity!.IsDeleted.Should().NotBeTrue();
     }

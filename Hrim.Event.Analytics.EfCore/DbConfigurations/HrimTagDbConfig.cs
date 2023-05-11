@@ -5,10 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
-public class HrimTagDbConfig: IEntityTypeConfiguration<HrimTag> {
+public class HrimTagDbConfig: IEntityTypeConfiguration<HrimTag>
+{
     public void Configure(EntityTypeBuilder<HrimTag> builder) {
-        builder.ToTable("hrim_tags", 
-                        t => t.HasComment("A tag that could be linked to an instance of any entity"));
+        builder.ToTable(name: "hrim_tags",
+                        t => t.HasComment(comment: "A tag that could be linked to an instance of any entity"));
 
         builder.HasIndex(x => x.CreatedById)
                .IncludeProperties(x => x.Tag);
@@ -21,7 +22,7 @@ public class HrimTagDbConfig: IEntityTypeConfiguration<HrimTag> {
 
         builder.Property(p => p.CreatedById)
                .HasColumnName(nameof(HrimTag.CreatedBy).ToSnakeCase())
-               .HasComment("A user id who created a tag")
+               .HasComment(comment: "A user id who created a tag")
                .IsRequired();
         builder.HasOne(x => x.CreatedBy);
     }

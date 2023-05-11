@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
 
-[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
+[SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
 public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUserProfileRegistration, ExternalUserProfile>
 {
     private readonly EventAnalyticDbContext _context;
@@ -25,7 +25,7 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
         if (request.Profile == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Profile)}");
 
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<ExternalUserProfile> HandleAsync(ExternalUserProfileRegistration request,
@@ -35,11 +35,11 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
 
         IQueryable<ExternalUserProfile> query = _context.ExternalUserProfiles
                                                         .Include(x => x.HrimUser);
-        query = string.IsNullOrWhiteSpace(email)
+        query = string.IsNullOrWhiteSpace(value: email)
                     ? query.Where(x => x.ExternalUserId == externalId)
                     : query.Where(x => x.ExternalUserId == externalId || x.Email == email);
 
-        var existedList = await query.ToListAsync(cancellationToken);
+        var existedList = await query.ToListAsync(cancellationToken: cancellationToken);
 
         ExternalUserProfile? result              = null;
         var                  shouldCreateProfile = existedList.Count == 0;
@@ -62,9 +62,9 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
         }
         // create inner user without saving
         var user = result?.HrimUser
-                ?? await _mediator.Send(new HrimUserCreateCommand(request.Context.CorrelationId,
+                ?? await _mediator.Send(new HrimUserCreateCommand(CorrelationId: request.Context.CorrelationId,
                                                                   SaveChanges: false),
-                                        cancellationToken);
+                                        cancellationToken: cancellationToken);
         if (shouldCreateProfile) {
             result = new ExternalUserProfile {
                 HrimUser        = user,
@@ -78,7 +78,7 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
                 CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
                 ConcurrentToken = 1
             };
-            _context.ExternalUserProfiles.Add(result);
+            _context.ExternalUserProfiles.Add(entity: result);
         }
         else {
             result!.Email    = email;
@@ -86,7 +86,7 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
             result.LastLogin = DateTime.UtcNow.TruncateToMicroseconds();
             result.ConcurrentToken++;
         }
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken: cancellationToken);
         return result;
     }
 }

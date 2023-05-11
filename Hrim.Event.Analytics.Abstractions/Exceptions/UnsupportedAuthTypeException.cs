@@ -4,17 +4,15 @@ using System.Runtime.Serialization;
 namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 
 [Serializable]
-public class UnsupportedAuthTypeException : Exception
+public class UnsupportedAuthTypeException: Exception
 {
     public UnsupportedAuthTypeException(string? authType)
-        : base(CoreLogs.UNSUPPORTED_AUTH_TYPE + Sanitize(authType))
-    {
-        AuthenticationType = Sanitize(authType);
+        : base(CoreLogs.UNSUPPORTED_AUTH_TYPE + Sanitize(authType: authType)) {
+        AuthenticationType = Sanitize(authType: authType);
     }
 
     protected UnsupportedAuthTypeException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
+        : base(info: info, context: context) {
         AuthenticationType = info.GetString(nameof(AuthenticationType));
     }
 
@@ -23,16 +21,12 @@ public class UnsupportedAuthTypeException : Exception
     /// </summary>
     public string? AuthenticationType { get; }
 
-    private static string Sanitize(string? authType)
-    {
-        return string.IsNullOrWhiteSpace(authType) ? "null or white space" : authType;
-    }
+    private static string Sanitize(string? authType) { return string.IsNullOrWhiteSpace(value: authType) ? "null or white space" : authType; }
 
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
+    public override void GetObjectData(SerializationInfo info, StreamingContext context) {
         if (info == null)
             throw new ArgumentNullException(nameof(info));
-        base.GetObjectData(info, context);
+        base.GetObjectData(info: info, context: context);
         info.AddValue(nameof(AuthenticationType), AuthenticationType!);
     }
 }

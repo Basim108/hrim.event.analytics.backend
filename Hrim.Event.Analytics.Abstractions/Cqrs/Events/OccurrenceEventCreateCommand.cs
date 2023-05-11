@@ -14,4 +14,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 ///     Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
 /// </returns>
 public record OccurrenceEventCreateCommand(OccurrenceEvent EventInfo, bool SaveChanges, OperationContext Context)
-    : OperationRequest(Context), IRequest<CqrsResult<OccurrenceEvent?>>;
+    : OperationRequest(Context: Context), IRequest<CqrsResult<OccurrenceEvent?>>;

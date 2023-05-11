@@ -5,7 +5,8 @@ using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 
 namespace Hrim.Event.Analytics.EfCore.AutoMapper;
 
-public class DbOccurrenceEventProfile: Profile {
+public class DbOccurrenceEventProfile: Profile
+{
     public DbOccurrenceEventProfile() {
         CreateMap<DbOccurrenceEvent, OccurrenceEvent>()
            .ForMember(business => business.OccurredAt, x => x.MapFrom<OccurrenceOnValueResolver>())

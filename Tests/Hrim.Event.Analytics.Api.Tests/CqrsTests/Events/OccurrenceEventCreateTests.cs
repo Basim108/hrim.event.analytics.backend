@@ -9,61 +9,60 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
 [ExcludeFromCodeCoverage]
-public class OccurrenceEventCreateTests : BaseCqrsTests
+public class OccurrenceEventCreateTests: BaseCqrsTests
 {
     private readonly OccurrenceEventCreateCommand _createCommand;
     private readonly OccurrenceEventCreateRequest _createRequest;
-    private readonly UserEventType _eventType;
+    private readonly UserEventType                _eventType;
 
-    public OccurrenceEventCreateTests()
-    {
-        _eventType = TestData.Events.CreateEventType(OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
-        _createRequest = new OccurrenceEventCreateRequest
-        {
-            OccurredAt = DateTimeOffset.Now,
+    public OccurrenceEventCreateTests() {
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
+        _createRequest = new OccurrenceEventCreateRequest {
+            OccurredAt  = DateTimeOffset.Now,
             EventTypeId = _eventType.Id
         };
-        _createCommand = new OccurrenceEventCreateCommand(_createRequest, true, OperatorContext);
+        _createCommand = new OccurrenceEventCreateCommand(EventInfo: _createRequest, SaveChanges: true, Context: OperatorContext);
     }
 
     [Fact]
-    public async Task Create_OccurrenceEvent()
-    {
+    public async Task Create_OccurrenceEvent() {
         var beforeSend = DateTime.UtcNow;
 
-        var cqrsResult = await Mediator.Send(_createCommand);
+        var cqrsResult = await Mediator.Send(request: _createCommand);
 
-        cqrsResult.CheckSuccessfullyCreatedEntity(OperatorUserId, beforeSend);
+        cqrsResult.CheckSuccessfullyCreatedEntity(operatorId: OperatorUserId, beforeSend: beforeSend);
         cqrsResult.Result!.OccurredAt.Should().Be(_createRequest.OccurredAt.TruncateToMilliseconds());
     }
 
     [Fact]
-    public async Task Create_OccurrenceEvent_With_Same_OccurredAt_And_EventType()
-    {
+    public async Task Create_OccurrenceEvent_With_Same_OccurredAt_And_EventType() {
         var dbEntity =
-            TestData.Events.CreateOccurrenceEvent(OperatorUserId, _eventType.Id, false,
-                _createRequest.OccurredAt);
+            TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
+                                                  eventTypeId: _eventType.Id,
+                                                  isDeleted: false,
+                                                  occurredAt: _createRequest.OccurredAt);
         var createRequest = new OccurrenceEventCreateRequest();
-        dbEntity.CopyTo(createRequest);
-        var command = new OccurrenceEventCreateCommand(createRequest, true, OperatorContext);
-        var cqrsResult = await Mediator.Send(command);
+        dbEntity.CopyTo(another: createRequest);
+        var command    = new OccurrenceEventCreateCommand(EventInfo: createRequest, SaveChanges: true, Context: OperatorContext);
+        var cqrsResult = await Mediator.Send(request: command);
 
         cqrsResult.CheckCreationOfSameEntity();
     }
 
     [Fact]
-    public async Task Create_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt()
-    {
-        TestData.Events.CreateOccurrenceEvent(OperatorUserId, _eventType.Id, true, _createRequest.OccurredAt);
+    public async Task Create_OccurrenceEvent_With_Same_But_Soft_Deleted_OccurredAt() {
+        TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId, eventTypeId: _eventType.Id, isDeleted: true, occurredAt: _createRequest.OccurredAt);
         var dbEntity =
-            TestData.Events.CreateOccurrenceEvent(OperatorUserId, _eventType.Id, false,
-                _createRequest.OccurredAt);
+            TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
+                                                  eventTypeId: _eventType.Id,
+                                                  isDeleted: false,
+                                                  occurredAt: _createRequest.OccurredAt);
         var createRequest = new OccurrenceEventCreateRequest();
-        dbEntity.CopyTo(createRequest);
+        dbEntity.CopyTo(another: createRequest);
         createRequest.IsDeleted = null;
-        var command = new OccurrenceEventCreateCommand(createRequest, true, OperatorContext);
+        var command = new OccurrenceEventCreateCommand(EventInfo: createRequest, SaveChanges: true, Context: OperatorContext);
 
-        var cqrsResult = await Mediator.Send(command);
+        var cqrsResult = await Mediator.Send(request: command);
 
         cqrsResult.CheckUpdateOrCreationOfSoftDeletedEntity();
     }

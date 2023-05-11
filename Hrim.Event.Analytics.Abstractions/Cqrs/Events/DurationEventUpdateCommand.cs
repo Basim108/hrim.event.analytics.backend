@@ -14,4 +14,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 ///     Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
 /// </returns>
 public record DurationEventUpdateCommand(DurationEvent EventInfo, bool SaveChanges, OperationContext Context)
-    : OperationRequest(Context), IRequest<CqrsResult<DurationEvent?>>;
+    : OperationRequest(Context: Context), IRequest<CqrsResult<DurationEvent?>>;

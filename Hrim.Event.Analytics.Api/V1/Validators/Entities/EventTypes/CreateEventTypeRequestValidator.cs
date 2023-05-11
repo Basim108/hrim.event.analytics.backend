@@ -4,11 +4,10 @@ using Hrim.Event.Analytics.Api.V1.Models;
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
 
 /// <inheritdoc />
-public class CreateEventTypeRequestValidator : AbstractValidator<CreateEventTypeRequest>
+public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeRequest>
 {
     /// <summary> </summary>
-    public CreateEventTypeRequestValidator()
-    {
+    public CreateEventTypeRequestValidator() {
         this.AddRulesForEntityCreateRequests();
         this.AddRulesForEventType();
     }

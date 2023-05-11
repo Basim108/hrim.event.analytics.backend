@@ -15,12 +15,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Events;
 
-[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
+[SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
 public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreateCommand, CqrsResult<OccurrenceEvent?>>
 {
+    private readonly EventAnalyticDbContext                _context;
     private readonly ILogger<OccurrenceEventCreateHandler> _logger;
     private readonly IMapper                               _mapper;
-    private readonly EventAnalyticDbContext                _context;
     private readonly IApiRequestAccessor                   _requestAccessor;
 
     public OccurrenceEventCreateHandler(ILogger<OccurrenceEventCreateHandler> logger,
@@ -37,30 +37,30 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
         if (request.EventInfo == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.EventInfo)}");
 
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<CqrsResult<OccurrenceEvent?>> HandleAsync(OccurrenceEventCreateCommand request, CancellationToken cancellationToken) {
-        var mappedEventInfo = _mapper.Map<DbOccurrenceEvent>(request.EventInfo);
-        var operatorUserId  = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        var mappedEventInfo = _mapper.Map<DbOccurrenceEvent>(source: request.EventInfo);
+        var operatorUserId  = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         var existed = await _context.OccurrenceEvents
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId
                                                            && x.OccurredOn  == mappedEventInfo.OccurredOn
                                                            && x.OccurredAt  == mappedEventInfo.OccurredAt
                                                            && x.EventTypeId == mappedEventInfo.EventTypeId,
-                                                         cancellationToken);
+                                                         cancellationToken: cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
-                _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(OccurrenceEvent));
-                var existedBusiness = _mapper.Map<OccurrenceEvent>(existed);
-                return new CqrsResult<OccurrenceEvent?>(existedBusiness, CqrsResultCode.EntityIsDeleted);
+                _logger.LogInformation(message: EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(OccurrenceEvent));
+                var existedBusiness = _mapper.Map<OccurrenceEvent>(source: existed);
+                return new CqrsResult<OccurrenceEvent?>(Result: existedBusiness, StatusCode: CqrsResultCode.EntityIsDeleted);
             }
-            _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(OccurrenceEvent), existed.ToString());
-            var info = string.Format(CoreLogs.ENTITY_WITH_2_PROPERTIES_ALREADY_EXISTS,
+            _logger.LogInformation(message: EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(OccurrenceEvent), existed.ToString());
+            var info = string.Format(format: CoreLogs.ENTITY_WITH_2_PROPERTIES_ALREADY_EXISTS,
                                      nameof(OccurrenceEvent.EventTypeId).ToSnakeCase(),
                                      nameof(OccurrenceEvent.OccurredAt).ToSnakeCase());
-            return new CqrsResult<OccurrenceEvent?>(null, CqrsResultCode.Conflict, info);
+            return new CqrsResult<OccurrenceEvent?>(Result: null, StatusCode: CqrsResultCode.Conflict, Info: info);
         }
         var entityToCreate = new DbOccurrenceEvent {
             OccurredOn      = mappedEventInfo.OccurredOn,
@@ -70,11 +70,10 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
-        _context.OccurrenceEvents.Add(entityToCreate);
-        if (request.SaveChanges) {
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        var createdEvent = _mapper.Map<OccurrenceEvent>(entityToCreate);
-        return new CqrsResult<OccurrenceEvent?>(createdEvent, CqrsResultCode.Created);
+        _context.OccurrenceEvents.Add(entity: entityToCreate);
+        if (request.SaveChanges)
+            await _context.SaveChangesAsync(cancellationToken: cancellationToken);
+        var createdEvent = _mapper.Map<OccurrenceEvent>(source: entityToCreate);
+        return new CqrsResult<OccurrenceEvent?>(Result: createdEvent, StatusCode: CqrsResultCode.Created);
     }
 }

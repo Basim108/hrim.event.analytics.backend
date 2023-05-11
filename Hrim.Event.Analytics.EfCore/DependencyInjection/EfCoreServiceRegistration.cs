@@ -16,7 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Hrim.Event.Analytics.EfCore.DependencyInjection;
 
-public static class EfCoreServiceRegistration {
+public static class EfCoreServiceRegistration
+{
     public static void AddEventAnalyticsStorage(this IServiceCollection services, IConfiguration appConfig, string migrationAssembly) {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<EventTypeCreateHandler>());
         services.AddTransient<IRequestHandler<SoftDeleteEntityCommand<UserEventType>, CqrsResult<UserEventType?>>, SoftDeleteEntityCommandHandler<UserEventType>>();
@@ -39,6 +40,6 @@ public static class EfCoreServiceRegistration {
 
         services.AddAutoMapper(typeof(DbDurationEventProfile),
                                typeof(DbOccurrenceEventProfile));
-        services.AddNpgsqlContext<EventAnalyticDbContext>(appConfig, migrationAssembly);
+        services.AddNpgsqlContext<EventAnalyticDbContext>(appConfig: appConfig, migrationAssembly: migrationAssembly);
     }
 }

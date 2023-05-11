@@ -11,4 +11,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 /// <param name="Profile">profile to create</param>
 /// <returns>a profile that was registered with a created or linked hrim user</returns>
 public record ExternalUserProfileRegistration(OperationContext Context, UserProfileModel Profile)
-    : OperationRequest(Context), IRequest<ExternalUserProfile>;
+    : OperationRequest(Context: Context), IRequest<ExternalUserProfile>;

@@ -6,7 +6,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 ///     Event types created by user
 ///     <br />https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
 /// </summary>
-public class UserEventType : HrimEntity, IHasOwner
+public class UserEventType: HrimEntity, IHasOwner
 {
     /// <summary>
     ///     Event type name, e.g. 'nice mood', 'headache', etc
@@ -39,14 +39,13 @@ public class UserEventType : HrimEntity, IHasOwner
     public Guid CreatedById { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(UserEventType another)
-    {
-        base.CopyTo(another);
-        another.Name = Name;
+    public void CopyTo(UserEventType another) {
+        base.CopyTo(another: another);
+        another.Name        = Name;
         another.Description = Description;
-        another.Color = Color;
+        another.Color       = Color;
         another.CreatedById = CreatedById;
-        another.CreatedBy = CreatedBy;
-        another.IsPublic = IsPublic;
+        another.CreatedBy   = CreatedBy;
+        another.IsPublic    = IsPublic;
     }
 }

@@ -13,11 +13,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
-[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
+[SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
 public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, CqrsResult<UserEventType?>>
 {
-    private readonly ILogger<EventTypeCreateHandler> _logger;
     private readonly EventAnalyticDbContext          _context;
+    private readonly ILogger<EventTypeCreateHandler> _logger;
     private readonly IApiRequestAccessor             _requestAccessor;
 
     public EventTypeCreateHandler(ILogger<EventTypeCreateHandler> logger,
@@ -34,29 +34,29 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
         if (request.Context == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
 
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<CqrsResult<UserEventType?>> HandleAsync(EventTypeCreateCommand request, CancellationToken cancellationToken) {
-        using var eventTypeNameScope = _logger.BeginScope("EventTypeName={EventTypeName}", request.EventType.Name);
-        var       operatorUserId     = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        using var eventTypeNameScope = _logger.BeginScope(messageFormat: "EventTypeName={EventTypeName}", request.EventType.Name);
+        var       operatorUserId     = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         var existed = await _context.UserEventTypes
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId && x.Name == request.EventType.Name,
-                                                         cancellationToken);
+                                                         cancellationToken: cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
-                _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(UserEventType));
-                return new CqrsResult<UserEventType?>(existed, CqrsResultCode.EntityIsDeleted);
+                _logger.LogInformation(message: EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(UserEventType));
+                return new CqrsResult<UserEventType?>(Result: existed, StatusCode: CqrsResultCode.EntityIsDeleted);
             }
-            _logger.LogInformation(EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(UserEventType), existed.ToString());
-            var info = string.Format(CoreLogs.ENTITY_WITH_PROPERTY_ALREADY_EXISTS,
+            _logger.LogInformation(message: EfCoreLogs.CANNOT_CREATE_IS_ALREADY_EXISTED, nameof(UserEventType), existed.ToString());
+            var info = string.Format(format: CoreLogs.ENTITY_WITH_PROPERTY_ALREADY_EXISTS,
                                      nameof(UserEventType.Name).ToSnakeCase());
-            return new CqrsResult<UserEventType?>(null, CqrsResultCode.Conflict, info);
+            return new CqrsResult<UserEventType?>(Result: null, StatusCode: CqrsResultCode.Conflict, Info: info);
         }
         var entityToCreate = new UserEventType {
             Name = request.EventType.Name,
-            Description = string.IsNullOrWhiteSpace(request.EventType.Description)
+            Description = string.IsNullOrWhiteSpace(value: request.EventType.Description)
                               ? null
                               : request.EventType.Description.Trim(),
             Color           = request.EventType.Color,
@@ -65,10 +65,9 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
-        _context.UserEventTypes.Add(entityToCreate);
-        if (request.SaveChanges) {
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        return new CqrsResult<UserEventType?>(entityToCreate, CqrsResultCode.Created);
+        _context.UserEventTypes.Add(entity: entityToCreate);
+        if (request.SaveChanges)
+            await _context.SaveChangesAsync(cancellationToken: cancellationToken);
+        return new CqrsResult<UserEventType?>(Result: entityToCreate, StatusCode: CqrsResultCode.Created);
     }
 }

@@ -20,9 +20,9 @@ public class UsersData
 
     public HrimUser EnsureUserExistence(Guid        id,
                                         bool        isDeleted  = false,
-                                        string      externalId = UsersData.EXTERNAL_ID,
+                                        string      externalId = EXTERNAL_ID,
                                         ExternalIdp idp        = ExternalIdp.Facebook,
-                                        string?     email      = UsersData.EMAIL) {
+                                        string?     email      = EMAIL) {
         var existed = _context.HrimUsers.FirstOrDefault(x => x.Id == id);
         if (existed != null) {
             if (existed.IsDeleted != isDeleted) {
@@ -38,7 +38,7 @@ public class UsersData
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
-        var externalProfile = new ExternalUserProfile() {
+        var externalProfile = new ExternalUserProfile {
             ExternalUserId  = externalId,
             Email           = email,
             Idp             = idp,
@@ -50,8 +50,8 @@ public class UsersData
         };
         if (isDeleted)
             user.IsDeleted = true;
-        _context.ExternalUserProfiles.Add(externalProfile);
-        _context.HrimUsers.Add(user);
+        _context.ExternalUserProfiles.Add(entity: externalProfile);
+        _context.HrimUsers.Add(entity: user);
         _context.SaveChanges();
         return user;
     }
@@ -77,7 +77,7 @@ public class UsersData
             LastLogin       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
-        _context.ExternalUserProfiles.Add(profile);
+        _context.ExternalUserProfiles.Add(entity: profile);
         if (isDeleted)
             user.IsDeleted = true;
         _context.SaveChanges();

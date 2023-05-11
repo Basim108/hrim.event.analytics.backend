@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
-[SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly")]
+[SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
 public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, IList<ViewEventType>>
 {
     private readonly EventAnalyticDbContext _context;
@@ -23,22 +23,19 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
         if (request.Context == null)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Context)}");
 
-        return HandleAsync(request, cancellationToken);
+        return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<IList<ViewEventType>> HandleAsync(EventTypeGetAllMine request, CancellationToken cancellationToken) {
         var query = _context.UserEventTypes.AsQueryable();
 
-        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
-        if (request.IncludeOthersPublic) {
-            query = query.Where(x => x.IsPublic || (!x.IsPublic && x.CreatedById == operatorUserId));
-        }
-        else {
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
+        if (request.IncludeOthersPublic)
+            query = query.Where(x => x.IsPublic || !x.IsPublic && x.CreatedById == operatorUserId);
+        else
             query = query.Where(x => x.CreatedById == operatorUserId);
-        }
-        if (!request.IncludeDeleted) {
+        if (!request.IncludeDeleted)
             query = query.Where(x => x.IsDeleted != true);
-        }
         var result = await query.AsNoTracking()
                                 .Select(x => new ViewEventType(x.Id,
                                                                x.Name,
@@ -47,7 +44,7 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
                                                                x.IsPublic,
                                                                x.IsDeleted   == true,
                                                                x.CreatedById == operatorUserId))
-                                .ToListAsync(cancellationToken);
+                                .ToListAsync(cancellationToken: cancellationToken);
         return result;
     }
 }

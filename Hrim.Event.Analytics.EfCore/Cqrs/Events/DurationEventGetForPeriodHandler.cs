@@ -20,7 +20,7 @@ public class DurationEventGetForPeriodHandler: IRequestHandler<DurationEventGetF
     }
 
     public async Task<IList<ViewDurationEvent>> Handle(DurationEventGetForPeriod request, CancellationToken cancellationToken) {
-        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellationToken);
+        var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         var dbEntities = await _context.DurationEvents
                                        .Include(x => x.EventType)
                                        .Where(x => x.CreatedById == operatorUserId
@@ -29,18 +29,18 @@ public class DurationEventGetForPeriodHandler: IRequestHandler<DurationEventGetF
                                                  || x.StartedOn < request.End    && x.FinishedOn >= request.End)
                                                 && x.IsDeleted != true)
                                        .AsNoTracking()
-                                       .ToListAsync(cancellationToken);
-        var result = dbEntities.Select(x => new ViewDurationEvent(x.Id,
-                                                                  x.StartedOn.CombineWithTime(x.StartedAt),
-                                                                  x.FinishedOn?.CombineWithTime(x.FinishedAt!.Value),
-                                                                  new ViewEventType(x.EventType!.Id,
-                                                                                    x.EventType.Name,
-                                                                                    x.EventType.Description,
-                                                                                    x.EventType.Color,
-                                                                                    x.EventType.IsPublic,
+                                       .ToListAsync(cancellationToken: cancellationToken);
+        var result = dbEntities.Select(x => new ViewDurationEvent(Id: x.Id,
+                                                                  x.StartedOn.CombineWithTime(time: x.StartedAt),
+                                                                  x.FinishedOn?.CombineWithTime(time: x.FinishedAt!.Value),
+                                                                  new ViewEventType(Id: x.EventType!.Id,
+                                                                                    Name: x.EventType.Name,
+                                                                                    Description: x.EventType.Description,
+                                                                                    Color: x.EventType.Color,
+                                                                                    IsPublic: x.EventType.IsPublic,
                                                                                     x.EventType.IsDeleted ?? false,
-                                                                                    true),
-                                                                  x.ConcurrentToken))
+                                                                                    IsMine: true),
+                                                                  ConcurrentToken: x.ConcurrentToken))
                                .ToList();
         return result;
     }
