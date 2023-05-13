@@ -47,7 +47,10 @@ public record OperationContext
     }
 
     private void ProcessSubjectClaim() {
-        var subjectParts = UserClaims.First(x => x.Type == "sub").Value.Split(separator: '|');
+        var subjectClaim = UserClaims.FirstOrDefault(x => x.Type == "sub");
+        if (subjectClaim == null)
+            throw new ArgumentException("There is no subject claim", "SubjectClaim");
+        var subjectParts = subjectClaim.Value.Split(separator: '|');
         _externalId ??= subjectParts[1];
         _idp = subjectParts[0].StartsWith(value: "google")
                    ? ExternalIdp.Google

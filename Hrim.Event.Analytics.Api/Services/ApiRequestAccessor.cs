@@ -11,14 +11,17 @@ namespace Hrim.Event.Analytics.Api.Services;
 
 public class ApiRequestAccessor: IApiRequestAccessor
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IMediator            _mediator;
+    private readonly IHttpContextAccessor        _httpContextAccessor;
+    private readonly ILogger<ApiRequestAccessor> _logger;
+    private readonly IMediator                   _mediator;
 
     private Guid _internalUserId;
 
-    public ApiRequestAccessor(IHttpContextAccessor httpContextAccessor,
-                              IMediator            mediator) {
+    public ApiRequestAccessor(IHttpContextAccessor        httpContextAccessor,
+                              ILogger<ApiRequestAccessor> logger,
+                              IMediator                   mediator) {
         _httpContextAccessor = httpContextAccessor;
+        _logger              = logger;
         _mediator            = mediator;
     }
 
@@ -28,6 +31,9 @@ public class ApiRequestAccessor: IApiRequestAccessor
 
     public IEnumerable<Claim> GetUserClaims() {
         var isNotAuthorized = !(_httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false);
+        if (isNotAuthorized) {
+            _logger.LogWarning("Getting user claims while user is not authorized");
+        }
         return isNotAuthorized
                    ? Enumerable.Empty<Claim>()
                    : _httpContextAccessor.HttpContext!.User.Claims;

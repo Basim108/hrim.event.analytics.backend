@@ -2,6 +2,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
@@ -24,6 +25,7 @@ public class UserProfileController: ControllerBase
     ///     Access to user profile built for a user from authorization context
     /// </summary>
     [HttpPost(template: "me")]
+    [Authorize]
     public async Task<IActionResult> RegisterMeAsync(UserProfileModel userProfile, CancellationToken cancellation) {
         var operationContext = _accessor.GetOperationContext();
         await _mediator.Send(new ExternalUserProfileRegistration(Context: operationContext, Profile: userProfile), cancellationToken: cancellation);
