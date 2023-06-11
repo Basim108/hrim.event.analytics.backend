@@ -21,7 +21,7 @@ public class TestAuthHandler: AuthenticationHandler<AuthenticationSchemeOptions>
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync() {
         var claims = new[] {
-            new Claim(type: "sub",                                             $"facebook|{UsersData.EXTERNAL_ID}"),
+            new Claim(type: "ClaimTypes.NameIdentifier",                       $"facebook|{UsersData.EXTERNAL_ID}"),
             new Claim(type: "https://hrimsoft.us.auth0.com.example.com/email", value: UsersData.EMAIL)
         };
         var identity  = new ClaimsIdentity(claims: claims, authenticationType: "IntegrationTest");

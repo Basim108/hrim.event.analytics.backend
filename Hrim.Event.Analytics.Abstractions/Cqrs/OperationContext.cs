@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Exceptions;
+using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Abstractions.Cqrs;
 
@@ -47,9 +49,11 @@ public record OperationContext
     }
 
     private void ProcessSubjectClaim() {
-        var subjectClaim = UserClaims.FirstOrDefault(x => x.Type == "sub");
-        if (subjectClaim == null)
-            throw new ArgumentException("There is no subject claim", "SubjectClaim");
+        var subjectClaim = UserClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+        if (subjectClaim == null) {
+            var claimsJson = JsonConvert.SerializeObject(UserClaims);
+            throw new HrimsoftException("There is no subject claim: " + claimsJson);
+        }
         var subjectParts = subjectClaim.Value.Split(separator: '|');
         _externalId ??= subjectParts[1];
         _idp = subjectParts[0].StartsWith(value: "google")

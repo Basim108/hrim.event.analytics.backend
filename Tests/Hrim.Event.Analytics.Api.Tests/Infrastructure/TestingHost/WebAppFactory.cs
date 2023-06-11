@@ -33,7 +33,7 @@ public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>
             services.AddScoped(_ => {
                 var apiRequestAccessor = Substitute.For<IApiRequestAccessor>();
                 var claims = new List<Claim> {
-                    new(type: "sub", $"facebook|{UsersData.EXTERNAL_ID}"),
+                    new(type: ClaimTypes.NameIdentifier, $"facebook|{UsersData.EXTERNAL_ID}"),
                     new(type: "https://hrimsoft.us.auth0.com.example.com/email", value: UsersData.EMAIL)
                 };
                 var correlationId = Guid.NewGuid();

@@ -27,7 +27,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
     [Fact]
     public async Task First_Login_Should_Register() {
         var claims = new List<Claim> {
-            new(type: "sub", $"facebook|{UsersData.EXTERNAL_ID}-new"),
+            new(type: ClaimTypes.NameIdentifier, $"facebook|{UsersData.EXTERNAL_ID}-new"),
             new(type: "https://hrimsoft.us.auth0.com.example.com/email", UsersData.EMAIL + ".new")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
@@ -71,7 +71,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 
         var googleUserId = Guid.NewGuid().ToString();
         var claims = new List<Claim> {
-            new(type: "sub", $"google|{googleUserId}"),
+            new(type: ClaimTypes.NameIdentifier, $"google|{googleUserId}"),
             new(type: "https://hrimsoft.us.auth0.com.example.com/email", value: email)
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
@@ -102,7 +102,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
                                                       $"{userId}@mailinator.com");
         var anotherProfile = user.ExternalProfiles.First();
         var claims = new List<Claim> {
-            new(type: "sub", $"facebook|{externalId}"),
+            new(type: ClaimTypes.NameIdentifier, $"facebook|{externalId}"),
             new(type: "https://hrimsoft.us.auth0.com.example.com/email", email + ".new")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
@@ -132,7 +132,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
                                                       email: null);
         var anotherProfile = user.ExternalProfiles.First();
         var claims = new List<Claim> {
-            new(type: "sub", $"facebook|{externalId}")
+            new(type: ClaimTypes.NameIdentifier, $"facebook|{externalId}")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
         _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
@@ -155,7 +155,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
     public async Task Given_Google_Subject_Should_Register_Correct_Idp() {
         var externalId = Guid.NewGuid().ToString();
         var claims = new List<Claim> {
-            new(type: "sub", $"google-auth0|{externalId}")
+            new(type: ClaimTypes.NameIdentifier, $"google-auth0|{externalId}")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
         _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
