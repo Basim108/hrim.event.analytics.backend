@@ -10,8 +10,6 @@ public static class CoreLogs
     public const string UNSUPPORTED_AUTH_TYPE       = "Unsupported authentication type: ";
     public const string FINISH_HANDLING             = "Finish handling";
     public const string START_HANDLING              = "Start handling";
-    public const string SERVICE_START_HANDLING      = "Start handling InnerService={InnerService}";
-    public const string SERVICE_FINISH_HANDLING     = "Finish handling InnerService={InnerService}";
     public const string CQRS_COMMAND                = "CqrsCommand={CqrsCommand}";
     public const string USER_ID                     = "UserId={UserId}";
     public const string CORRELATION_ID              = "CorrelationId={CorrelationId}";

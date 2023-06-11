@@ -6,5 +6,7 @@ namespace Hrim.Event.Analytics.Infrastructure.DependencyInjection;
 
 public static class InfrastructureServiceRegistrations
 {
-    public static void AddEventAnalyticsInfrastructure(this IServiceCollection services) { services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PrePostLogWrapper<,>)); }
+    public static void AddEventAnalyticsInfrastructure(this IServiceCollection services) {
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PrePostLogWrapper<,>));
+    }
 }

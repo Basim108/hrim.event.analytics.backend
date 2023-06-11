@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Hrim.Event.Analytics.Abstractions;
 
 #pragma warning disable CS1591
 
@@ -10,7 +11,8 @@ namespace Hrim.Event.Analytics.Api.Middleware;
 [ExcludeFromCodeCoverage]
 public class CorrelationMiddleware
 {
-    public const     string                         CORRELATION_ID_HEADER = "X-Correlation-ID";
+    public const string CORRELATION_ID_HEADER = "X-Correlation-ID";
+
     private readonly ILogger<CorrelationMiddleware> _logger;
 
     private readonly RequestDelegate _next;
@@ -25,17 +27,20 @@ public class CorrelationMiddleware
         var correlationHeader = context.Request.Headers[key: CORRELATION_ID_HEADER];
         var correlationId     = GetCorrelationId(header: correlationHeader);
 
-        using var correlationScope = _logger.BeginScope(messageFormat: "CorrelationId={CorrelationId}", correlationId);
-        if (context.Response.Headers.ContainsKey(key: CORRELATION_ID_HEADER))
-            context.Response.Headers[key: CORRELATION_ID_HEADER] = correlationId.ToString();
-        else
-            context.Response.Headers.Add(key: CORRELATION_ID_HEADER, correlationId.ToString());
+        using var correlationScope = _logger.BeginScope(CoreLogs.CORRELATION_ID, correlationId);
+        context.Response.Headers[CORRELATION_ID_HEADER] = correlationId.ToString();
         await _next(context: context);
     }
 
-    private static Guid GetCorrelationId(string? header) {
-        return string.IsNullOrWhiteSpace(value: header)
-                   ? Guid.NewGuid()
-                   : Guid.Parse(input: header);
+    private Guid GetCorrelationId(string? header) {
+        try {
+            return string.IsNullOrWhiteSpace(value: header)
+                       ? Guid.NewGuid()
+                       : Guid.Parse(input: header);
+        }
+        catch (FormatException ex) {
+            _logger.LogWarning(ex, "Failed to parse correlation id header");
+            return Guid.NewGuid();
+        }
     }
 }

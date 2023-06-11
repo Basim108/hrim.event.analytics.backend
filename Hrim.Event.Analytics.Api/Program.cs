@@ -5,11 +5,9 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args: args);
-
-builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console()
-                                       .ReadFrom.Configuration(configuration: ctx.Configuration));
 
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(assembly: typeof(Program).Assembly);
@@ -19,13 +17,30 @@ builder.Services.AddEventAnalyticsAuthentication(appConfig: builder.Configuratio
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
-
+builder.Host.UseSerilog((context, services, configuration) => {
+    var loggerCfg = configuration.ReadFrom.Configuration(context.Configuration);
+    if (context.HostingEnvironment.IsDevelopment()) {
+        loggerCfg.MinimumLevel.Verbose();
+    }
+    else {
+        loggerCfg.ReadFrom.Services(services)
+                 .Enrich.WithProperty("ThreadId", Environment.CurrentManagedThreadId)
+                 .Enrich.WithProperty("AspNetEnvironment", context.HostingEnvironment.EnvironmentName);
+    }
+    if (context.HostingEnvironment.IsDevelopment()) {
+        configuration.WriteTo.Console();
+    }
+    else {
+        configuration.WriteTo.Console(new RenderedCompactJsonFormatter());
+    }
+});
 var app = builder.Build();
 
 app.UseForwardedHeaders();
 app.UseEventAnalyticsCors(appConfig: builder.Configuration);
 
 app.UseSerilogRequestLogging();
+
 app.Use(async (context, next) => {
     context.Request.EnableBuffering();
     await next();

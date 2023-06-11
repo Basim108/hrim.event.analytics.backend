@@ -15,13 +15,11 @@ public class PrePostLogWrapper<TRequest, TResponse>: IPipelineBehavior<TRequest,
                                         RequestHandlerDelegate<TResponse> next,
                                         CancellationToken                 cancellationToken) {
         using var commandScope = _logger.BeginScope(messageFormat: CoreLogs.CQRS_COMMAND, typeof(TRequest).Name);
-        if (_logger.IsEnabled(logLevel: LogLevel.Debug))
-            _logger.LogDebug(message: CoreLogs.START_HANDLING);
+        _logger.LogDebug(message: CoreLogs.START_HANDLING);
 
         var response = await next().ConfigureAwait(continueOnCapturedContext: false);
 
-        if (_logger.IsEnabled(logLevel: LogLevel.Debug))
-            _logger.LogDebug(message: CoreLogs.FINISH_HANDLING);
+        _logger.LogDebug(message: CoreLogs.FINISH_HANDLING);
         return response;
     }
 }

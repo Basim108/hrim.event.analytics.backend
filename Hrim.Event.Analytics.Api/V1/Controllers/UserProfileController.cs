@@ -24,7 +24,7 @@ public class UserProfileController: ControllerBase
     /// <summary>
     ///     Access to user profile built for a user from authorization context
     /// </summary>
-    [HttpPost(template: "me")]
+    [HttpPost("me")]
     [Authorize]
     public async Task<IActionResult> RegisterMeAsync(UserProfileModel userProfile, CancellationToken cancellation) {
         var operationContext = _accessor.GetOperationContext();

@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,17 +26,7 @@ public class AuthController: ControllerBase
         _logger              = logger;
         _appConfig           = appConfig;
     }
-
-    /// <summary> Authenticate with the Facebook </summary>
-    [HttpGet(template: "facebook/login")]
-    [Authorize(AuthenticationSchemes = FacebookDefaults.AuthenticationScheme)]
-    public Task<ActionResult> FacebookLoginAsync(string returnUri) { return ProcessRedirectToReturnUriAsync(userReturnUri: returnUri); }
-
-    /// <summary> Authenticate with Google </summary>
-    [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
-    [HttpGet(template: "google/login")]
-    public Task<ActionResult> GoogleLoginAsync(string returnUri) { return ProcessRedirectToReturnUriAsync(userReturnUri: returnUri); }
-
+    
     /// <summary> Invoke user logout </summary>
     [HttpGet(template: "logout")]
     [Authorize]
@@ -68,10 +56,10 @@ public class AuthController: ControllerBase
             }
         }
         catch (UriFormatException ex) {
-            _logger.LogError(message: ApiLogs.RETURN_URI_IS_IN_WRONG_FORMAT, ex.ToString());
+            _logger.LogError(message: ApiLogs.RETURN_URI_IS_IN_WRONG_FORMAT, ex);
         }
         catch (Exception ex) {
-            _logger.LogError(message: ApiLogs.RETURN_URI_PROCESSING_ERROR, ex.ToString());
+            _logger.LogError(message: ApiLogs.RETURN_URI_PROCESSING_ERROR, ex);
         }
 
         if (User.Identity?.IsAuthenticated ?? false)
