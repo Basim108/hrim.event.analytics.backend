@@ -15,7 +15,7 @@ builder.Services.AddMediatR(cfg => {
 builder.Services.AddEventAnalyticsServices(appConfig: builder.Configuration);
 builder.Services.AddEventAnalyticsAuthentication(appConfig: builder.Configuration);
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders = ForwardedHeaders.All;
 });
 builder.Host.UseSerilog((context, services, configuration) => {
     var loggerCfg = configuration.ReadFrom.Configuration(context.Configuration);
