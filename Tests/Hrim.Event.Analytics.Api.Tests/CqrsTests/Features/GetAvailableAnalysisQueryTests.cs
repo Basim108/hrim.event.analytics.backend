@@ -44,4 +44,17 @@ public class GetAvailableAnalysisQueryTests: BaseCqrsTests
         resultList.Count.Should().Be(1);
         resultList.Any(x => x.Code == FeatureCodes.COUNT_ANALYSIS).Should().BeTrue();
     }
+    
+    [Fact]
+    public async Task Should_Project_Code_And_Description() {
+        TestData.Features.EnsureExistence( "FEAT_GAP",   FeatureCodes.GAP_ANALYSIS,   false);
+        TestData.Features.EnsureExistence( "FEAT_COUNT", FeatureCodes.COUNT_ANALYSIS, true, "explanation");
+
+        var resultList = (await Mediator.Send(_query, CancellationToken.None)).ToList();
+
+        resultList.Should().NotBeNullOrEmpty();
+        resultList.Count.Should().Be(1);
+        resultList[0].Code.Should().Be(FeatureCodes.COUNT_ANALYSIS);
+        resultList[0].Description.Should().Be("explanation");
+    }
 }

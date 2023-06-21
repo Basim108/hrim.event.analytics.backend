@@ -13,6 +13,7 @@ public class FeaturesData
     public HrimFeature EnsureExistence(string      varName,
                                        string      code,
                                        bool        isOn,
+                                       string      description = "",
                                        FeatureType featureType = FeatureType.Analysis,
                                        bool        isDeleted   = false) {
         var feature = new HrimFeature {
@@ -21,6 +22,7 @@ public class FeaturesData
             Code         = code,
             IsOn         = isOn,
             FeatureType  = featureType,
+            Description  = description,
             IsDeleted    = isDeleted
         };
         _context.HrimFeatures.Add(feature);
