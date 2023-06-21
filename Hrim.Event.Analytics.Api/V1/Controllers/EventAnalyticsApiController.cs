@@ -61,6 +61,8 @@ public class EventAnalyticsApiController<TEntity>: ControllerBase
         var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
         if (validationResult.IsValid)
             return;
-        foreach (var error in validationResult.Errors) ModelState.AddModelError(key: error.PropertyName, errorMessage: error.ErrorMessage);
+        foreach (var error in validationResult.Errors) {
+            ModelState.AddModelError(key: error.PropertyName, errorMessage: error.ErrorMessage);
+        }
     }
 }
