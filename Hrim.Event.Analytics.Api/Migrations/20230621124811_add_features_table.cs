@@ -18,6 +18,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
                     is_on = table.Column<bool>(type: "boolean", nullable: false, comment: "When a feature is off then its hangfire jobs, in case existed, should not be proceeded or scheduled.\nand in case feature represents an analysis (e.g. count, gap) this analysis should not appear in the list of available analysis."),
+                    variable_name = table.Column<string>(type: "text", nullable: false, comment: "Environment variable name that controls is this feature set on/off"),
+                    code = table.Column<string>(type: "text", nullable: false, comment: "Feature code"),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: true),

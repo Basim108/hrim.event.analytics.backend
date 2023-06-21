@@ -7,7 +7,9 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7151;http://localhost:5038",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "FEAT_COUNT_ANALYSIS": "On",
+        "FEAT_GAP_ANALYSIS": "Off"
       }
     }
   }

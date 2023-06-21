@@ -13,7 +13,17 @@ public class HrimFeatureDbConfig: IEntityTypeConfiguration<HrimFeature>
 for example, analysis based on event-types, tags, events, etc"));
 
         builder.AddEntityProperties();
+
+        builder.Property(p => p.Code)
+               .HasColumnName(nameof(HrimFeature.Code).ToSnakeCase())
+               .HasComment("Feature code")
+               .IsRequired();
         
+        builder.Property(p => p.VariableName)
+               .HasColumnName(nameof(HrimFeature.VariableName).ToSnakeCase())
+               .HasComment("Environment variable name that controls is this feature set on/off")
+               .IsRequired();
+                
         builder.Property(p => p.IsOn)
                .HasColumnName(nameof(HrimFeature.IsOn).ToSnakeCase())
                .HasComment(@"When a feature is off then its hangfire jobs, in case existed, should not be proceeded or scheduled.

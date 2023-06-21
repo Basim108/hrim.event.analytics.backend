@@ -1,6 +1,7 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Entity;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
@@ -9,6 +10,7 @@ using Hrim.Event.Analytics.EfCore.AutoMapper;
 using Hrim.Event.Analytics.EfCore.Cqrs.Entity;
 using Hrim.Event.Analytics.EfCore.Cqrs.Events;
 using Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
+using Hrim.Event.Analytics.EfCore.Cqrs.Features;
 using Hrimsoft.Data.PostgreSql;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +39,7 @@ public static class EfCoreServiceRegistration
 
         services.AddTransient<IRequestHandler<CheckUserExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
         services.AddTransient<IRequestHandler<CheckEventTypeExistence, CqrsVoidResult>, CheckEntityExistenceHandler>();
+        services.AddTransient<IRequestHandler<SetupFeatures, Unit>, SetupFeaturesHandler>();
 
         services.AddAutoMapper(typeof(DbDurationEventProfile),
                                typeof(DbOccurrenceEventProfile));

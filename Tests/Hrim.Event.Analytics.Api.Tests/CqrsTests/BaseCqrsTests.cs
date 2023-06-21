@@ -22,7 +22,7 @@ public abstract class BaseCqrsTests: IDisposable
 
     protected BaseCqrsTests() {
         var appConfig = new ConfigurationBuilder()
-                        // .AddInMemoryCollection(new Dictionary<string, string>() { })
+                       .AddInMemoryCollection(new Dictionary<string, string>() { })
                        .AddJsonFile(path: "appsettings.Tests.json")
                        .Build();
         var services = new ServiceCollection();

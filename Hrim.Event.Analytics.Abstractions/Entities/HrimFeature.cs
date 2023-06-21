@@ -11,4 +11,12 @@ public class HrimFeature: HrimEntity
     /// By default a feature is off
     /// </summary>
     public bool IsOn { get; set; }
+    
+    /// <summary>
+    /// Environment variable name that controls is this feature set on/off
+    /// </summary>
+    public string VariableName { get; set; }
+    
+    /// <summary> Feature code </summary>
+    public string Code { get; set; }
 }

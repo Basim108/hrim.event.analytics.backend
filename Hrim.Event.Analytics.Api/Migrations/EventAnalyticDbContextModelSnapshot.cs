@@ -216,6 +216,12 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("id")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("code")
+                        .HasComment("Feature code");
+
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
                         .HasColumnType("bigint")
@@ -240,6 +246,12 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("updated_at")
                         .HasComment("Date and UTC time of entity instance last update ");
+
+                    b.Property<string>("VariableName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("variable_name")
+                        .HasComment("Environment variable name that controls is this feature set on/off");
 
                     b.HasKey("Id");
 
