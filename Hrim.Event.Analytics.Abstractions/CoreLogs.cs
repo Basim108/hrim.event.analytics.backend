@@ -14,6 +14,8 @@ public static class CoreLogs
     public const string USER_ID                     = "UserId={UserId}";
     public const string CORRELATION_ID              = "CorrelationId={CorrelationId}";
 
+    public const string ENV_VARIABLE_IS_EMPTY = "EnvironmentVariable={EnvironmentVariable} is empty";
+
     public const string ENTITY_WITH_PROPERTY_ALREADY_EXISTS =
         "Entity with the same value of '{0}' property is already exists.";
 

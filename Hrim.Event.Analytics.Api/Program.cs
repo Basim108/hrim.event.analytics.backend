@@ -1,6 +1,8 @@
+using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
+using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -60,10 +62,14 @@ app.UseAuthorization();
 if (!app.Environment.IsProduction())
     app.UseEventAnalyticsSwagger();
 
-var dbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
+var sp        = app.Services.CreateScope().ServiceProvider;
+var mediator  = sp.GetRequiredService<IMediator>();
+var dbContext = sp.GetRequiredService<EventAnalyticDbContext>();
 if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
     await dbContext.Database.MigrateAsync();
 
+await mediator.Send(new SetupFeatures());
+    
 app.MapControllers();
 app.Run();
 
