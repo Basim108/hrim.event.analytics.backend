@@ -63,6 +63,7 @@ public class AuthController: ControllerBase
         catch (Exception ex) {
             _logger.LogError(message: ApiLogs.RETURN_URI_PROCESSING_ERROR, ex);
         }
+        // TODO: add logout
         return StatusCode((int)HttpStatusCode.Forbidden, value: ApiLogs.RETURN_URI_IS_NOT_ALLOWED);
     }
 }

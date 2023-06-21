@@ -1,3 +1,5 @@
+using Hrim.Event.Analytics.Abstractions.Enums;
+
 namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary>
@@ -11,12 +13,15 @@ public class HrimFeature: HrimEntity
     /// By default a feature is off
     /// </summary>
     public bool IsOn { get; set; }
+
+    /// <summary> Type of the feature </summary>
+    public FeatureType FeatureType { get; set; }
     
     /// <summary>
     /// Environment variable name that controls is this feature set on/off
     /// </summary>
-    public string VariableName { get; set; }
-    
+    public string VariableName { get; set; } = string.Empty;
+
     /// <summary> Feature code </summary>
-    public string Code { get; set; }
+    public string Code { get; set; } = string.Empty;
 }

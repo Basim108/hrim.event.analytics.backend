@@ -13,7 +13,13 @@ public class HrimFeatureDbConfig: IEntityTypeConfiguration<HrimFeature>
 for example, analysis based on event-types, tags, events, etc"));
 
         builder.AddEntityProperties();
-
+        
+        builder.Property(p => p.FeatureType)
+               .HasColumnName(nameof(HrimFeature.FeatureType).ToSnakeCase())
+               .HasComment(@"Could be one of:
+Analysis")
+               .IsRequired();
+        
         builder.Property(p => p.Code)
                .HasColumnName(nameof(HrimFeature.Code).ToSnakeCase())
                .HasComment("Feature code")

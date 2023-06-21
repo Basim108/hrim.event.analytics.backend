@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20230621124811_add_features_table")]
+    [Migration("20230621145707_add_features_table")]
     partial class add_features_table
     {
         /// <inheritdoc />
@@ -235,6 +235,11 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("created_at")
                         .HasComment("Date and UTC time of entity instance creation");
+
+                    b.Property<int>("FeatureType")
+                        .HasColumnType("integer")
+                        .HasColumnName("feature_type")
+                        .HasComment("Could be one of:\nAnalysis");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean")

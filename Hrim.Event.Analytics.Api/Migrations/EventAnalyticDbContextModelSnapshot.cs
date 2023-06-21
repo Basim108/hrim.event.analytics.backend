@@ -233,6 +233,11 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("created_at")
                         .HasComment("Date and UTC time of entity instance creation");
 
+                    b.Property<int>("FeatureType")
+                        .HasColumnType("integer")
+                        .HasColumnName("feature_type")
+                        .HasComment("Could be one of:\nAnalysis");
+
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
