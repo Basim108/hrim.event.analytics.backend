@@ -1,8 +1,12 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
+using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Services;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Features;
+using Hrim.Event.Analytics.Api.Cqrs.Features;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Swagger.Configuration;
@@ -11,6 +15,7 @@ using Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
 using Hrim.Event.Analytics.Infrastructure.DependencyInjection;
 using Hrimsoft.StringCases;
+using MediatR;
 
 #pragma warning disable CS1591
 
@@ -38,6 +43,9 @@ public static class ApiServiceCollectionRegistrations
         services.AddTransient<IValidator<DurationEvent>, EventAsyncValidator>();
         services.AddTransient<IValidator<OccurrenceEvent>, EventAsyncValidator>();
         services.AddTransient<IValidator<UserEventType>, EventTypeAsyncValidator>();
+        services.AddTransient<IValidator<HrimFeature>, EmptyAsyncValidator<HrimFeature>>();
+        
+        services.AddTransient<IRequestHandler<GetAvailableAnalysisQuery, IEnumerable<AvailableAnalysis>>, GetAvailableAnalysisQueryHandler>();
 
         services.AddEventAnalyticsInfrastructure();
         services.AddEventAnalyticsStorage(appConfig: appConfig, typeof(Program).Assembly.GetName().Name!);

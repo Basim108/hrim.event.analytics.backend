@@ -17,6 +17,9 @@ public class HrimFeature: HrimEntity
     /// <summary> Type of the feature </summary>
     public FeatureType FeatureType { get; set; }
     
+    /// <summary> Feature description </summary>
+    public string? Description { get; set; }
+    
     /// <summary>
     /// Environment variable name that controls is this feature set on/off
     /// </summary>

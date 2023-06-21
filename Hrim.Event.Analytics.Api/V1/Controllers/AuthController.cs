@@ -26,24 +26,16 @@ public class AuthController: ControllerBase
         _logger              = logger;
         _appConfig           = appConfig;
     }
-    
+
     /// <summary> Invoke user logout </summary>
     [HttpGet(template: "logout")]
     [Authorize]
     public async Task<ActionResult> LogoutAsync(string returnUri) {
-        var httpContext = _httpContextAccessor.HttpContext;
-        if (httpContext != null)
-            await httpContext.SignOutAsync();
-        return await ProcessRedirectToReturnUriAsync(userReturnUri: returnUri);
+        await _httpContextAccessor.HttpContext?.SignOutAsync()!;
+        return ProcessRedirectToReturnUriAsync(userReturnUri: returnUri);
     }
 
-    private async Task LogoutAsync() {
-        var httpContext = _httpContextAccessor.HttpContext;
-        if (httpContext != null)
-            await httpContext.SignOutAsync();
-    }
-
-    private async Task<ActionResult> ProcessRedirectToReturnUriAsync(string userReturnUri) {
+    private ActionResult ProcessRedirectToReturnUriAsync(string userReturnUri) {
         if (string.IsNullOrWhiteSpace(value: userReturnUri))
             return Ok();
         try {
@@ -63,7 +55,6 @@ public class AuthController: ControllerBase
         catch (Exception ex) {
             _logger.LogError(message: ApiLogs.RETURN_URI_PROCESSING_ERROR, ex);
         }
-        // TODO: add logout
         return StatusCode((int)HttpStatusCode.Forbidden, value: ApiLogs.RETURN_URI_IS_NOT_ALLOWED);
     }
 }
