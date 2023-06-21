@@ -9,6 +9,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Hrim user profile endpoints </summary>
 [ApiController]
+[Authorize]
 [Route(template: "v1/user-profile")]
 public class UserProfileController: ControllerBase
 {
@@ -25,7 +26,6 @@ public class UserProfileController: ControllerBase
     ///     Access to user profile built for a user from authorization context
     /// </summary>
     [HttpPost("me")]
-    [Authorize]
     public async Task<IActionResult> RegisterMeAsync(UserProfileModel userProfile, CancellationToken cancellation) {
         var operationContext = _accessor.GetOperationContext();
         await _mediator.Send(new ExternalUserProfileRegistration(Context: operationContext, Profile: userProfile), cancellationToken: cancellation);

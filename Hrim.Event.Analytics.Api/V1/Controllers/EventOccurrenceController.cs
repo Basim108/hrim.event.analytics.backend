@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Filters;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Controllers;
@@ -13,6 +14,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 ///     Manage user event types with this crud controller
 /// </summary>
 [ApiController]
+[Authorize]
 [Route(template: "v1/event/occurrence")]
 public class EventOccurrenceController: EventBaseController<OccurrenceEvent>
 {
