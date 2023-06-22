@@ -56,9 +56,10 @@ public class EventTypeControllerValidationTests: BaseEntityControllerTests
 
     [Fact]
     public async Task Create_Given_NonExisting_CreatById_Returns_BadRequest() {
-        GetCreateRequest().CreatedById = Guid.NewGuid();
+        var entityToCreate = GetCreateRequest();
+        entityToCreate.CreatedById = Guid.NewGuid();
 
-        var response = await Client!.PostAsync(requestUri: "", TestUtils.PrepareJson(GetCreateRequest()));
+        var response = await Client!.PostAsync(requestUri: "", TestUtils.PrepareJson(entityToCreate));
 
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();

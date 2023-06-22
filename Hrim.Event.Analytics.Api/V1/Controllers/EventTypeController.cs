@@ -19,13 +19,16 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Route(template: "v1/event-type")]
 public class EventTypeController: EventAnalyticsApiController<UserEventType>
 {
-    private readonly IMediator _mediator;
+    private readonly IValidator<UserEventType> _validator;
+    private readonly IMediator                 _mediator;
 
     /// <summary> </summary>
     public EventTypeController(IApiRequestAccessor       requestAccessor,
                                IValidator<UserEventType> validator,
-                               IMediator                 mediator): base(requestAccessor: requestAccessor, validator: validator) {
-        _mediator = mediator;
+                               IMediator                 mediator)
+        : base(requestAccessor) {
+        _validator = validator;
+        _mediator  = mediator;
     }
 
     /// <summary> Get all user event types </summary>
@@ -48,7 +51,8 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request,
                                                                CancellationToken      cancellationToken) {
-        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
+        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+        ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
         var cqrsResult = await _mediator.Send(new EventTypeCreateCommand(EventType: request, SaveChanges: true, Context: OperationContext),
@@ -61,7 +65,8 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request,
                                                                CancellationToken      cancellationToken) {
-        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
+        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+        ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
         var cqrsResult = await _mediator.Send(new EventTypeUpdateCommand(EventType: request, SaveChanges: true, Context: OperationContext),

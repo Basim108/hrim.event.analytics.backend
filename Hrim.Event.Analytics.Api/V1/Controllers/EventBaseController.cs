@@ -19,8 +19,8 @@ public class EventBaseController<TEvent>: EventAnalyticsApiController<TEvent>
 
     /// <summary> </summary>
     public EventBaseController(IApiRequestAccessor requestAccessor,
-                               IValidator<TEvent>  validator,
-                               IMediator           mediator): base(requestAccessor: requestAccessor, validator: validator) {
+                               IMediator           mediator)
+        : base(requestAccessor) {
         _mediator = mediator;
     }
 

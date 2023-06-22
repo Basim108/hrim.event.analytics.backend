@@ -9,13 +9,15 @@ public class TestData
     public EventAnalyticDbContext DbContext { get; private set; }
 
     public TestData(EventAnalyticDbContext context) {
-        DbContext = context;
-        Events    = new EventsData(context: context);
-        Users     = new UsersData(context: context);
-        Features  = new FeaturesData(context: context);
+        DbContext           = context;
+        Events              = new EventsData(context: context);
+        Users               = new UsersData(context: context);
+        Features            = new FeaturesData(context: context);
+        AnalysisByEventType = new AnalysisByEventTypeData(context: context);
     }
 
-    public EventsData   Events   { get; }
-    public UsersData    Users    { get; }
-    public FeaturesData Features { get; }
+    public EventsData              Events              { get; }
+    public UsersData               Users               { get; }
+    public FeaturesData            Features            { get; }
+    public AnalysisByEventTypeData AnalysisByEventType { get; }
 }

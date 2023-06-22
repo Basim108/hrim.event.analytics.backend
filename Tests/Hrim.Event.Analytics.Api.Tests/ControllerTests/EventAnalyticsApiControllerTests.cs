@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 using FluentAssertions;
-using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
@@ -20,8 +19,7 @@ public class EventAnalyticsApiControllerTests
     private readonly EventAnalyticsApiController<UserEventType> _controller;
 
     public EventAnalyticsApiControllerTests() {
-        _controller = new EventAnalyticsApiController<UserEventType>(Substitute.For<IApiRequestAccessor>(),
-                                                                     Substitute.For<IValidator<UserEventType>>());
+        _controller = new EventAnalyticsApiController<UserEventType>(Substitute.For<IApiRequestAccessor>());
     }
 
     private MethodInfo GetProcessCqrsResult() {

@@ -6,4 +6,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 /// <summary>
 /// Access a list of available (IsOn) analysis features
 /// </summary>
-public record GetAvailableAnalysisQuery(): IRequest<IEnumerable<AvailableAnalysis>>;
+public record GetAvailableAnalysisQuery(): IRequest<List<AvailableAnalysis>>;
