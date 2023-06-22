@@ -1,5 +1,6 @@
 ﻿using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
+using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore.DbConfigurations;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
@@ -21,6 +22,8 @@ public class EventAnalyticDbContext: DbContext
     public DbSet<ExternalUserProfile> ExternalUserProfiles { get; set; }
     public DbSet<HrimTag>             HrimTags             { get; set; }
     public DbSet<HrimFeature>         HrimFeatures         { get; set; }
+    
+    public DbSet<AnalysisByEventType> AnalysisByEventType  { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.HasDefaultSchema(schema: "hrim_analytics");
@@ -33,5 +36,6 @@ public class EventAnalyticDbContext: DbContext
         modelBuilder.ApplyConfiguration(new OccurenceEventDbConfig());
         modelBuilder.ApplyConfiguration(new HrimTagDbConfig());
         modelBuilder.ApplyConfiguration(new HrimFeatureDbConfig());
+        modelBuilder.ApplyConfiguration(new AnalysisByEventTypeDbConfig());
     }
 }
