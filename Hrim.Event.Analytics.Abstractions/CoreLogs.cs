@@ -8,6 +8,7 @@ public static class CoreLogs
     public const string UNEXPECTED_CQRS_RESULT      = "Unexpected CqrsResult={CqrsResult}";
     public const string UNSUPPORTED_ENTITY          = "Unsupported entity of type: ";
     public const string UNSUPPORTED_AUTH_TYPE       = "Unsupported authentication type: ";
+    public const string UNSUPPORTED_ANALYSIS        = "Unsupported analysis code: ";
     public const string FINISH_HANDLING             = "Finish handling";
     public const string START_HANDLING              = "Start handling";
     public const string CQRS_COMMAND                = "CqrsCommand={CqrsCommand}";

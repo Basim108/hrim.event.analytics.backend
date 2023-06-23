@@ -37,4 +37,11 @@ public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEven
                                           cancellationToken);
         return ProcessCqrsResult(cqrsResult: result);
     }
+    
+    [HttpPost("/event-type/{eventTypeId}")]
+    public async Task<ActionResult<List<AnalysisByEventType>>> UpdateSettingsForEventType(Guid eventTypeId, List<AnalysisByEventType> analysis, CancellationToken cancellationToken) {
+        var result = await _mediator.Send(new UpdateAnalysisForEventType(eventTypeId, analysis, OperationContext),
+                                          cancellationToken);
+        return ProcessCqrsResult(cqrsResult: result);
+    }
 }

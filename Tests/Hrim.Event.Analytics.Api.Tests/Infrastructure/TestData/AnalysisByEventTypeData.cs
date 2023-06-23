@@ -1,5 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.EfCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 
@@ -25,4 +26,7 @@ public class AnalysisByEventTypeData
         _context.SaveChanges();
         return analysis;
     }
+    
+    public Task<AnalysisByEventType?> GetAsync(Guid eventTypeId, string analysisCode) 
+        => _context.AnalysisByEventType.FirstOrDefaultAsync(x => x.EventTypeId == eventTypeId && x.AnalysisCode == analysisCode);
 }
