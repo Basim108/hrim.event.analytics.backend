@@ -18,14 +18,16 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Route(template: "v1/event/occurrence")]
 public class EventOccurrenceController: EventBaseController<OccurrenceEvent>
 {
-    private readonly IMediator _mediator;
+    private readonly IValidator<OccurrenceEvent> _validator;
+    private readonly IMediator                   _mediator;
 
     /// <summary> </summary>
     public EventOccurrenceController(IApiRequestAccessor         requestAccessor,
                                      IValidator<OccurrenceEvent> validator,
                                      IMediator                   mediator)
-        : base(requestAccessor: requestAccessor, validator: validator, mediator: mediator) {
-        _mediator = mediator;
+        : base(requestAccessor, mediator) {
+        _validator = validator;
+        _mediator  = mediator;
     }
 
     /// <summary> Get occurrence events for a period </summary>
@@ -42,7 +44,8 @@ public class EventOccurrenceController: EventBaseController<OccurrenceEvent>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<OccurrenceEvent>> CreateOccurrenceAsync(OccurrenceEventCreateRequest request,
                                                                            CancellationToken            cancellationToken) {
-        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
+        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+        ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
         var cqrsResult = await _mediator.Send(new OccurrenceEventCreateCommand(EventInfo: request, SaveChanges: true, Context: OperationContext),
@@ -55,7 +58,8 @@ public class EventOccurrenceController: EventBaseController<OccurrenceEvent>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<OccurrenceEvent>> UpdateOccurrenceAsync(OccurrenceEventUpdateRequest request,
                                                                            CancellationToken            cancellationToken) {
-        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
+        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+        ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
         var cqrsResult = await _mediator.Send(new OccurrenceEventUpdateCommand(EventInfo: request, SaveChanges: true, Context: OperationContext),

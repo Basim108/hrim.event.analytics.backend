@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrim.Event.Analytics.Api.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7D399349-AC68-4981-9EEA-DEBD9DCEF9A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hrim.Event.Analytics.Analysis", "Hrim.Event.Analytics.Analysis\Hrim.Event.Analytics.Analysis.csproj", "{7C49ABA1-D7C5-4F9E-ABAE-BCEEF8F08687}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{AC9D2EC6-D494-4970-8CFF-7481B60B839C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC9D2EC6-D494-4970-8CFF-7481B60B839C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC9D2EC6-D494-4970-8CFF-7481B60B839C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C49ABA1-D7C5-4F9E-ABAE-BCEEF8F08687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C49ABA1-D7C5-4F9E-ABAE-BCEEF8F08687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C49ABA1-D7C5-4F9E-ABAE-BCEEF8F08687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C49ABA1-D7C5-4F9E-ABAE-BCEEF8F08687}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AC9D2EC6-D494-4970-8CFF-7481B60B839C} = {7D399349-AC68-4981-9EEA-DEBD9DCEF9A3}

@@ -18,14 +18,16 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Route(template: "v1/event/duration")]
 public class EventDurationController: EventBaseController<DurationEvent>
 {
-    private readonly IMediator _mediator;
+    private readonly IValidator<DurationEvent> _validator;
+    private readonly IMediator                 _mediator;
 
     /// <summary> </summary>
     public EventDurationController(IApiRequestAccessor       requestAccessor,
                                    IValidator<DurationEvent> validator,
                                    IMediator                 mediator)
-        : base(requestAccessor: requestAccessor, validator: validator, mediator: mediator) {
-        _mediator = mediator;
+        : base(requestAccessor, mediator) {
+        _validator = validator;
+        _mediator  = mediator;
     }
 
     /// <summary> Get duration events for a period </summary>
@@ -42,7 +44,8 @@ public class EventDurationController: EventBaseController<DurationEvent>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<DurationEvent>> CreateDurationAsync(DurationEventCreateRequest request,
                                                                        CancellationToken          cancellationToken) {
-        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
+        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+        ValidateRequest(validationResult, cancellationToken: cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
         var cqrsResult = await _mediator.Send(new DurationEventCreateCommand(EventInfo: request, SaveChanges: true, Context: OperationContext),
@@ -55,7 +58,8 @@ public class EventDurationController: EventBaseController<DurationEvent>
     [SetOwnerTypeFilter]
     public async Task<ActionResult<DurationEvent>> UpdateDurationAsync(DurationEventUpdateRequest request,
                                                                        CancellationToken          cancellationToken) {
-        await ValidateRequestAsync(request: request, cancellationToken: cancellationToken);
+        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+        ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
         var cqrsResult = await _mediator.Send(new DurationEventUpdateCommand(EventInfo: request, SaveChanges: true, Context: OperationContext),

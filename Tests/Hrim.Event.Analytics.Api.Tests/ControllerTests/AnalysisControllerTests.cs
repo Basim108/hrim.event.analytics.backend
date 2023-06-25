@@ -1,8 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
-using FluentValidation;
 using Hrim.Event.Analytics.Abstractions;
-using Hrim.Event.Analytics.Abstractions.Entities;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.Tests.CqrsTests;
 using Hrim.Event.Analytics.Api.V1.Controllers;
@@ -18,7 +16,6 @@ public class AnalysisControllerTests: BaseCqrsTests
 
     public AnalysisControllerTests() {
         _controller = new AnalysisController(ServiceProvider.GetRequiredService<IApiRequestAccessor>(),
-                                             ServiceProvider.GetRequiredService<IValidator<HrimFeature>>(),
                                              ServiceProvider.GetRequiredService<IMediator>());
     }
 
@@ -27,7 +24,7 @@ public class AnalysisControllerTests: BaseCqrsTests
         TestData.Features.EnsureExistence("FEAT_GAP",   FeatureCodes.GAP_ANALYSIS,   false);
         TestData.Features.EnsureExistence("FEAT_COUNT", FeatureCodes.COUNT_ANALYSIS, true, "explanation");
 
-        var resultList = (await _controller.GetAllAsync(CancellationToken.None)).ToList();
+        var resultList = await _controller.GetAllAsync(CancellationToken.None);
 
         resultList.Should().NotBeNullOrEmpty();
         resultList.Count.Should().Be(1);

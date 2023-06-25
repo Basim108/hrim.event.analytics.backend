@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
@@ -16,14 +17,17 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, CqrsResult<UserEventType?>>
 {
     private readonly EventAnalyticDbContext          _context;
+    private readonly IMediator                       _mediator;
     private readonly ILogger<EventTypeUpdateHandler> _logger;
     private readonly IApiRequestAccessor             _requestAccessor;
 
     public EventTypeUpdateHandler(ILogger<EventTypeUpdateHandler> logger,
                                   EventAnalyticDbContext          context,
+                                  IMediator                       mediator,
                                   IApiRequestAccessor             requestAccessor) {
         _logger          = logger;
         _context         = context;
+        _mediator        = mediator;
         _requestAccessor = requestAccessor;
     }
 
@@ -90,6 +94,27 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
             if (request.SaveChanges)
                 await _context.SaveChangesAsync(cancellationToken: cancellationToken);
         }
+        await UpdateAnalysisAsync(request, existed, cancellationToken);
         return new CqrsResult<UserEventType?>(Result: existed, StatusCode: CqrsResultCode.Ok);
+    }
+
+    private async Task UpdateAnalysisAsync(EventTypeUpdateCommand request, UserEventType existed, CancellationToken cancellationToken) {
+        if (request.EventType.AnalysisSettings is not null && request.EventType.AnalysisSettings.Count > 0) {
+            var analysisCreateResult = await _mediator.Send(new UpdateAnalysisForEventType(existed.Id,
+                                                                                           request.EventType.AnalysisSettings,
+                                                                                           request.Context),
+                                                            cancellationToken);
+            switch (analysisCreateResult.StatusCode) {
+                case CqrsResultCode.Ok:
+                    existed.AnalysisSettings = analysisCreateResult.Result;
+                    break;
+                default:
+                    _logger.LogError(EfCoreLogs.WRONG_CREATE_ANALYSIS_RESPONSE,
+                                     existed.Id,
+                                     analysisCreateResult.StatusCode,
+                                     request.EventType.AnalysisSettings);
+                    break;
+            }
+        }
     }
 }

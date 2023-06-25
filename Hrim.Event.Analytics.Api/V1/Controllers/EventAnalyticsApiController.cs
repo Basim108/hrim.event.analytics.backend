@@ -1,5 +1,5 @@
 using System.Net;
-using FluentValidation;
+using FluentValidation.Results;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
@@ -17,13 +17,10 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 public class EventAnalyticsApiController<TEntity>: ControllerBase
 {
     private readonly IApiRequestAccessor _requestAccessor;
-    private readonly IValidator<TEntity> _validator;
 
     /// <summary> </summary>
-    public EventAnalyticsApiController(IApiRequestAccessor requestAccessor,
-                                       IValidator<TEntity> validator) {
+    public EventAnalyticsApiController(IApiRequestAccessor requestAccessor) {
         _requestAccessor = requestAccessor;
-        _validator       = validator;
     }
 
     /// <summary>
@@ -50,15 +47,13 @@ public class EventAnalyticsApiController<TEntity>: ControllerBase
             case CqrsResultCode.Ok:
                 return Ok(value: cqrsResult.Result);
         }
-
         throw new UnexpectedCqrsResultException<TEntity?>(cqrsResult: cqrsResult);
     }
 
     /// <summary>
     ///     Provide async validation for any kind of events
     /// </summary>
-    protected async Task ValidateRequestAsync(TEntity request, CancellationToken cancellationToken) {
-        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+    protected void ValidateRequest(ValidationResult validationResult, CancellationToken cancellationToken) {
         if (validationResult.IsValid)
             return;
         foreach (var error in validationResult.Errors) {

@@ -1,9 +1,7 @@
 using FluentValidation;
 using Hrim.Event.Analytics.Abstractions.Entities;
-using Hrim.Event.Analytics.Abstractions.Services;
-using MediatR;
 
-namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
+namespace Hrim.Event.Analytics.Api.V1.Validators;
 
 /// <summary> An empty validator does nothing </summary>
 /// <typeparam name="TEntity"></typeparam>

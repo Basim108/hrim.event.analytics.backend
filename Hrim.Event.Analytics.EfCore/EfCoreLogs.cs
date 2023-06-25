@@ -13,6 +13,7 @@ public static class EfCoreLogs
     public const string CANNOT_UPDATE_ENTITY_IS_DELETED = "Cannot update entity as it is deleted: EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.";
     public const string ENTITY_NOT_FOUND_BY_ID = "Entity was not found by id EntityType={EntityType}";
     public const string THERE_ARE_MANY_USERS_FOUND_BY_CLAIMS = "There are many internal users found by claims";
+    public const string WRONG_CREATE_ANALYSIS_RESPONSE = "Wrong create analysis response. EventTypeId={EventTypeId}, CqrsStatusCode={CqrsStatusCode}, AnalysisList={AnalysisList}";
 
     public const string CANNOT_SOFT_DELETE_ENTITY_IS_DELETED =
         "Cannot soft delete entity as it is already deleted: EntityConcurrentToken={EntityConcurrentToken}, EntityType={EntityType}.";
