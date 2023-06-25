@@ -50,7 +50,7 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
             var resultList       = new List<AnalysisByEventType>(request.Analysis.Count);
             var hasGlobalChanges = false;
             foreach (var incoming in request.Analysis) {
-                var db = settings.FirstOrDefault(x => x.AnalysisCode == incoming.AnalysisCode);
+                var db = settings.Find(x => x.AnalysisCode == incoming.AnalysisCode);
                 if (db is null) {
                     db               = CreateAnalysis(request.EventTypeId, incoming);
                     hasGlobalChanges = true;
