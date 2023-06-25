@@ -39,6 +39,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Hrim.Event.Analytics.Abstractions\Hrim.Event.Analytics.Abstractions.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.Analysis\Hrim.Event.Analytics.Analysis.csproj" />
         <ProjectReference Include="..\Hrim.Event.Analytics.EfCore\Hrim.Event.Analytics.EfCore.csproj" />
         <ProjectReference Include="..\Hrim.Event.Analytics.Infrastructure\Hrim.Event.Analytics.Infrastructure.csproj" />
     </ItemGroup>
@@ -47,7 +48,6 @@
         <Folder Include="Cqrs\Features\" />
         <Folder Include="Migrations" />
         <Folder Include="V1\Models\Analysis\" />
-        <Folder Include="V1\Validators\Entities\Analysis\" />
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Hrim.Event.Analytics.Api.Tests" />

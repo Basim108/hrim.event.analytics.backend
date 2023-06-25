@@ -9,10 +9,10 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 public class AnalysisByEventType
 {
     /// <summary> Events of this event type will be analysed </summary>
-    public UserEventType EventType { get; set; }
+    public UserEventType? EventType { get; set; }
     
     /// <summary> Events of this event type id will be analysed </summary>
-    public Guid EventTypeId { get; set; }
+    public Guid? EventTypeId { get; set; }
 
     /// <summary> Code of analysis </summary>
     public string AnalysisCode { get; set; }

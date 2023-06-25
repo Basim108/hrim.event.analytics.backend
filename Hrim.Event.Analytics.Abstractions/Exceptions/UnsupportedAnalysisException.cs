@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 #pragma warning disable CS1591
 namespace Hrim.Event.Analytics.Abstractions.Exceptions;
 
+[ExcludeFromCodeCoverage]
 [Serializable]
 public class UnsupportedAnalysisException: Exception
 {
