@@ -1,7 +1,10 @@
+using Hangfire;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
+using Hrim.Event.Analytics.EfCore.DependencyInjection;
+using Hrim.Event.Analytics.JobWorker.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -14,8 +17,12 @@ var builder = WebApplication.CreateBuilder(args: args);
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(assembly: typeof(Program).Assembly);
 });
-builder.Services.AddEventAnalyticsServices(appConfig: builder.Configuration);
-builder.Services.AddEventAnalyticsAuthentication(appConfig: builder.Configuration);
+builder.Services.AddEventAnalyticsServices(builder.Configuration);
+builder.Services.AddEventAnalyticsStorage(builder.Configuration, typeof(Program).Assembly.GetName().Name!);
+builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
+builder.Services.AddEventAnalyticsHangfire(builder.Configuration);
+builder.Services.AddHangfireDashboardAuthorization(builder.Configuration);
+
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
     options.ForwardedHeaders = ForwardedHeaders.All;
 });
@@ -42,6 +49,8 @@ app.UseForwardedHeaders();
 app.UseEventAnalyticsCors(appConfig: builder.Configuration);
 
 app.UseSerilogRequestLogging();
+app.UseStaticFiles();
+var sp = app.Services.CreateScope().ServiceProvider;
 
 app.Use(async (context, next) => {
     context.Request.EnableBuffering();
@@ -58,18 +67,18 @@ app.MapHealthChecks(pattern: "/health",
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAnalyticsHangfireDashboard(sp, app.Environment);
 
 if (!app.Environment.IsProduction())
     app.UseEventAnalyticsSwagger();
 
-var sp        = app.Services.CreateScope().ServiceProvider;
 var mediator  = sp.GetRequiredService<IMediator>();
 var dbContext = sp.GetRequiredService<EventAnalyticDbContext>();
 if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
     await dbContext.Database.MigrateAsync();
 
 await mediator.Send(new SetupFeatures());
-    
+
 app.MapControllers();
 app.Run();
 

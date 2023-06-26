@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>0809b1e8-97dc-4182-b660-084b5d3b3510</UserSecretsId>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Hangfire" Version="1.8.2" />
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.8.2" />
+        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
+        <PackageReference Include="Hangfire.PostgreSql" Version="1.19.12" />
+        <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="Hrimsoft.Core">
+        <HintPath>..\..\..\..\.nuget\packages\hrimsoft.core\0.0.11\lib\netstandard2.0\Hrimsoft.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Hrim.Event.Analytics.EfCore\Hrim.Event.Analytics.EfCore.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Filters\" />
+    </ItemGroup>
+
+</Project>

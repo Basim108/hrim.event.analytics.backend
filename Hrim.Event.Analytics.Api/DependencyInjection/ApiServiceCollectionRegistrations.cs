@@ -50,7 +50,6 @@ public static class ApiServiceCollectionRegistrations
         services.AddTransient<IRequestHandler<GetAvailableAnalysisQuery, List<AvailableAnalysis>>, GetAvailableAnalysisQueryHandler>();
 
         services.AddEventAnalyticsInfrastructure();
-        services.AddEventAnalyticsStorage(appConfig: appConfig, typeof(Program).Assembly.GetName().Name!);
 
         services.AddHealthChecks();
     }

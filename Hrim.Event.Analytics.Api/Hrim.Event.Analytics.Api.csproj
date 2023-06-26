@@ -42,6 +42,7 @@
         <ProjectReference Include="..\Hrim.Event.Analytics.Analysis\Hrim.Event.Analytics.Analysis.csproj" />
         <ProjectReference Include="..\Hrim.Event.Analytics.EfCore\Hrim.Event.Analytics.EfCore.csproj" />
         <ProjectReference Include="..\Hrim.Event.Analytics.Infrastructure\Hrim.Event.Analytics.Infrastructure.csproj" />
+        <ProjectReference Include="..\Hrim.Event.Analytics.JobWorker\Hrim.Event.Analytics.JobWorker.csproj" />
     </ItemGroup>
 
     <ItemGroup>
