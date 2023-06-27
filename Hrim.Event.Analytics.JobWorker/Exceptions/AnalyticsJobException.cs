@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Hrim.Event.Analytics.JobWorker.Exceptions;
 
+[ExcludeFromCodeCoverage]
 [Serializable]
 public class AnalyticsJobException: Exception
 {

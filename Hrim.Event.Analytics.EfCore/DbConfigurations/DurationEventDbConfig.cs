@@ -45,5 +45,10 @@ public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent>
                .HasColumnName(nameof(DbDurationEvent.FinishedAt).ToSnakeCase())
                .HasComment(comment: "Time with end-user timezone when an event finished")
                .HasColumnType(typeName: "timetz");
+        
+        builder.HasMany(x => x.AnalysisResults)
+               .WithOne()
+               .HasForeignKey(x => x.EntityId)
+               .IsRequired();
     }
 }

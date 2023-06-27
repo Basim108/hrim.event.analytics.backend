@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Account;
+using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 
 namespace Hrim.Event.Analytics.Abstractions.Entities.Events;
@@ -27,6 +28,9 @@ public abstract class BaseEvent: HrimEntity, IHasOwner
     ///     A user id who created an instance of the event type
     /// </summary>
     public Guid CreatedById { get; set; }
+    
+    /// <summary> Analysis results </summary>
+    public List<StatisticsForEvent>? AnalysisResults { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
     public void CopyTo(BaseEvent another) {

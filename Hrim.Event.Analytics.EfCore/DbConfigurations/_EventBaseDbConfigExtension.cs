@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
-public static class EventBaseDbConfig
+// ReSharper disable once InconsistentNaming
+public static class _EventBaseDbConfigExtension
 {
     public static void AddEventBaseProperties<TEntity>(this EntityTypeBuilder<TEntity> builder)
         where TEntity : BaseEvent {

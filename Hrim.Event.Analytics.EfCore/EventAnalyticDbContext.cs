@@ -22,8 +22,10 @@ public class EventAnalyticDbContext: DbContext
     public DbSet<ExternalUserProfile> ExternalUserProfiles { get; set; }
     public DbSet<HrimTag>             HrimTags             { get; set; }
     public DbSet<HrimFeature>         HrimFeatures         { get; set; }
-    
-    public DbSet<AnalysisByEventType> AnalysisByEventType  { get; set; }
+
+    public DbSet<AnalysisByEventType>    AnalysisByEventType     { get; set; }
+    public DbSet<StatisticsForEvent>     StatisticsForEvents     { get; set; }
+    public DbSet<StatisticsForEventType> StatisticsForEventTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.HasDefaultSchema(schema: "hrim_analytics");
@@ -37,5 +39,7 @@ public class EventAnalyticDbContext: DbContext
         modelBuilder.ApplyConfiguration(new HrimTagDbConfig());
         modelBuilder.ApplyConfiguration(new HrimFeatureDbConfig());
         modelBuilder.ApplyConfiguration(new AnalysisByEventTypeDbConfig());
+        modelBuilder.ApplyConfiguration(new StatisticsForEventDbConfig());
+        modelBuilder.ApplyConfiguration(new StatisticsForEventTypeDbConfig());
     }
 }

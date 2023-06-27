@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Hangfire.Dashboard;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.JobWorker.Authorization;
 
+[ExcludeFromCodeCoverage]
 public class HrimsoftDashboardAuthFilter: IDashboardAuthorizationFilter
 {
     private readonly IConfiguration                       _appConfig;

@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hrim.Event.Analytics.EfCore.DbConfigurations;
 
-public static class EntityDbConfig
+// ReSharper disable once InconsistentNaming
+public static class _EntityDbConfigExtension
 {
     private const string POSTGRES_GUID_GENERATOR = "uuid_generate_v4()";
 
