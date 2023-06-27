@@ -83,7 +83,7 @@ public static class ServiceCollectionRegistrations
                 context = sp.GetService<EventAnalyticDbContext>();
             }
             catch (InvalidOperationException) { }
-            if (context?.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory") {
+            if (context is null || context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory") {
                 configuration.UseMemoryStorage();
             }
             else {

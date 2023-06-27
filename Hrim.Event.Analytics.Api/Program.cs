@@ -1,4 +1,3 @@
-using Hangfire;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
