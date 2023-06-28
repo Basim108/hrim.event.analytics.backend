@@ -10,9 +10,12 @@
     <ItemGroup>
         <PackageReference Include="Hangfire" Version="1.8.2" />
         <PackageReference Include="Hangfire.AspNetCore" Version="1.8.2" />
-        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
+        <PackageReference Include="Hangfire.InMemory" Version="0.5.0" />
         <PackageReference Include="Hangfire.PostgreSql" Version="1.19.12" />
         <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.2.0" />
+        <PackageReference Include="Npgsql" Version="7.0.4" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />

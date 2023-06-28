@@ -6,6 +6,7 @@ using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
+using Hrim.Event.Analytics.JobWorker.Authorization;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,12 +25,15 @@ public abstract class BaseCqrsTests: IDisposable
 
     protected BaseCqrsTests() {
         var appConfig = new ConfigurationBuilder()
-                       // .AddInMemoryCollection(new Dictionary<string, string>() { })
-                       .AddJsonFile(path: "appsettings.Tests.json")
+                       // .AddInMemoryCollection(new Dictionary<string, string?> {
+                       //      { "DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "False"}
+                       //  })
+                       .AddJsonFile(path: "appsettings.Tests.json", optional:false, reloadOnChange: false)
                        .Build();
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddEventAnalyticsServices(appConfig: appConfig);
+        services.AddEventAnalyticsHangfireServer(appConfig: appConfig);
         services.AddEventAnalyticsStorage(appConfig: appConfig, typeof(Program).Assembly.GetName().Name!);
 
         services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));

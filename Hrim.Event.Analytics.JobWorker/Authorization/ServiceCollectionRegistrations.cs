@@ -1,6 +1,5 @@
 using Hangfire;
 using Hangfire.Dashboard;
-using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using Hrim.Event.Analytics.EfCore;
 using Hrimsoft.Core.Exceptions;
@@ -76,15 +75,11 @@ public static class ServiceCollectionRegistrations
                                   });
     }
 
-    public static void AddEventAnalyticsHangfire(this IServiceCollection services, IConfiguration appConfig) {
+    public static void AddEventAnalyticsHangfireServer(this IServiceCollection services, IConfiguration appConfig) {
         services.AddHangfire((sp, configuration) => {
-            EventAnalyticDbContext? context = null;
-            try {
-                context = sp.GetService<EventAnalyticDbContext>();
-            }
-            catch (InvalidOperationException) { }
-            if (context is null || context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory") {
-                configuration.UseMemoryStorage();
+            var isIntegrationTesting = !string.IsNullOrWhiteSpace(appConfig["INTEGRATION_TESTING"]);
+            if (isIntegrationTesting) {
+                GlobalConfiguration.Configuration.UseInMemoryStorage();
             }
             else {
                 var (connectionString, _, _) = ConnectionStringBuilder.Get(appConfig);

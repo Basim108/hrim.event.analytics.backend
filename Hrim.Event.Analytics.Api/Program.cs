@@ -19,7 +19,7 @@ builder.Services.AddMediatR(cfg => {
 builder.Services.AddEventAnalyticsServices(builder.Configuration);
 builder.Services.AddEventAnalyticsStorage(builder.Configuration, typeof(Program).Assembly.GetName().Name!);
 builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
-builder.Services.AddEventAnalyticsHangfire(builder.Configuration);
+builder.Services.AddEventAnalyticsHangfireServer(builder.Configuration);
 builder.Services.AddHangfireDashboardAuthorization(builder.Configuration);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
