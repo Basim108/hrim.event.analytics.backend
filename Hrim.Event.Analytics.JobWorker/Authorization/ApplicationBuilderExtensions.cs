@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using Hrim.Event.Analytics.JobWorker.JobRunners;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
