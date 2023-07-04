@@ -1,3 +1,4 @@
+using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Analysis;
 using Hrim.Event.Analytics.Analysis.Cqrs;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;

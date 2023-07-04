@@ -1,26 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
 using Hangfire;
-using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Jobs;
-using Hrim.Event.Analytics.Abstractions.Jobs.Configuration;
 using Hrim.Event.Analytics.JobWorker.Exceptions;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Hrim.Event.Analytics.JobWorker.MediatR;
+namespace Hrim.Event.Analytics.JobWorker.JobRunners;
 
 [ExcludeFromCodeCoverage]
-public class AnalyticsJobRunner: IAnalyticsJobClient
+public class AnalyticsJobClient: IAnalyticsJobClient
 {
-    private readonly ILogger<AnalyticsJobRunner> _logger;
-    private readonly IMediator                   _mediator;
+    private readonly ILogger<AnalyticsJobClient> _logger;
     private readonly IBackgroundJobClient        _hangfireJobClient;
 
-    public AnalyticsJobRunner(ILogger<AnalyticsJobRunner> logger,
-                              IMediator                   mediator,
+    public AnalyticsJobClient(ILogger<AnalyticsJobClient> logger,
                               IBackgroundJobClient        hangfireJobClient) {
         _logger            = logger;
-        _mediator          = mediator;
         _hangfireJobClient = hangfireJobClient;
     }
 
@@ -55,22 +49,6 @@ public class AnalyticsJobRunner: IAnalyticsJobClient
         catch (Exception ex) {
             _logger.LogCritical(ex, JobLogs.ENQUEUEING_JOB_ERROR, jobName);
             throw new AnalyticsJobException(jobName, JobLogs.ENQUEUEING_JOB_ERROR, ex);
-        }
-    }
-
-    /// <inheritdoc />
-    public async Task RunAsync<TRequest>(TRequest command, HrimRecurringJobOptions options, CancellationToken cancellation)
-        where TRequest : AnalyticsRecurringJob {
-        var       correlationId      = Guid.NewGuid();
-        using var jobIdScope         = _logger.BeginScope(JobLogs.JOB_ID,          options.JobId);
-        using var correlationIdScope = _logger.BeginScope(CoreLogs.CORRELATION_ID, correlationId);
-
-        try {
-            var request = command with { CorrelationId = correlationId };
-            await _mediator.Send(request, cancellation);
-        }
-        catch (Exception ex) {
-            _logger.LogError(ex, JobLogs.RECURRING_JOB_FAILED_WITH_ERROR, options.JobId);
         }
     }
 }

@@ -7,7 +7,7 @@ using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
-using Hrim.Event.Analytics.JobWorker.Authorization;
+using Hrim.Event.Analytics.JobWorker.DependencyInjection;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +36,7 @@ public abstract class BaseCqrsTests: IDisposable
         services.AddEventAnalyticsServices(appConfig: appConfig);
         services.AddEventAnalyticsAnalysisServices();
         services.AddEventAnalyticsHangfireServer(appConfig: appConfig);
+        services.AddEventAnalyticsJobWorker();
         services.AddEventAnalyticsStorage(appConfig: appConfig, typeof(Program).Assembly.GetName().Name!);
 
         services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));

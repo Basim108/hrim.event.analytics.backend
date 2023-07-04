@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions;
+using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Jobs;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
 using Hrim.Event.Analytics.EfCore;
@@ -9,9 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
-
-/// <summary> Initiate gap-analysis calculation </summary>
-public record GapAnalysisRecurringJob(Guid CorrelationId): AnalyticsRecurringJob(CorrelationId);
 
 public class GapAnalysisRecurringJobHandler: IRequestHandler<GapAnalysisRecurringJob>
 {

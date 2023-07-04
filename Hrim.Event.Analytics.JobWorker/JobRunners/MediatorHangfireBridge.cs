@@ -6,7 +6,7 @@ using Hrim.Event.Analytics.JobWorker.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Hrim.Event.Analytics.JobWorker.MediatR;
+namespace Hrim.Event.Analytics.JobWorker.JobRunners;
 
 [ExcludeFromCodeCoverage]
     public class MediatorHangfireBridge

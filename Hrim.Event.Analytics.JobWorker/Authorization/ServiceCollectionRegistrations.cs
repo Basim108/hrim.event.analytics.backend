@@ -74,26 +74,4 @@ public static class ServiceCollectionRegistrations
                                       };
                                   });
     }
-
-    public static void AddEventAnalyticsHangfireServer(this IServiceCollection services, IConfiguration appConfig) {
-        services.AddHangfire((sp, configuration) => {
-            var isIntegrationTesting = !string.IsNullOrWhiteSpace(appConfig["INTEGRATION_TESTING"]);
-            if (isIntegrationTesting) {
-                GlobalConfiguration.Configuration.UseInMemoryStorage();
-            }
-            else {
-                var (connectionString, _, _) = ConnectionStringBuilder.Get(appConfig);
-                configuration.UsePostgreSqlStorage(connectionString,
-                                                   new PostgreSqlStorageOptions { SchemaName = "hangfire" });
-            }
-            configuration.UseSerilogLogProvider();
-        });
-        services.AddHangfireServer(options => {
-            options.Queues = new[] {
-                "analysis",
-                "default",
-                "notifications"
-            };
-        });
-    }
 }

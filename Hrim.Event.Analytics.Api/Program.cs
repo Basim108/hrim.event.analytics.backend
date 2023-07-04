@@ -5,6 +5,8 @@ using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
 using Hrim.Event.Analytics.JobWorker.Authorization;
+using Hrim.Event.Analytics.JobWorker.DependencyInjection;
+using Hrim.Event.Analytics.JobWorker.JobRunners;
 using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -22,6 +24,7 @@ builder.Services.AddEventAnalyticsStorage(builder.Configuration, typeof(Program)
 builder.Services.AddEventAnalyticsAnalysisServices();
 builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
 builder.Services.AddEventAnalyticsHangfireServer(builder.Configuration);
+builder.Services.AddEventAnalyticsJobWorker();
 builder.Services.AddHangfireDashboardAuthorization(builder.Configuration);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options => {
@@ -73,12 +76,17 @@ app.UseAnalyticsHangfireDashboard(sp, app.Environment);
 if (!app.Environment.IsProduction())
     app.UseEventAnalyticsSwagger();
 
-var mediator  = sp.GetRequiredService<IMediator>();
-var dbContext = sp.GetRequiredService<EventAnalyticDbContext>();
-if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+var mediator             = sp.GetRequiredService<IMediator>();
+var dbContext            = sp.GetRequiredService<EventAnalyticDbContext>();
+var isNotIntegrationTesting = dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory"; 
+if (isNotIntegrationTesting)
     await dbContext.Database.MigrateAsync();
 
 await mediator.Send(new SetupFeatures());
+
+if (isNotIntegrationTesting) {
+    RecurringJobRunner.SetupGapAnalysisJob(sp);
+}
 
 app.MapControllers();
 app.Run();
