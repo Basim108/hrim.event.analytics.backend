@@ -16,7 +16,7 @@ public static class EntityChecks
             ownerResult.CreatedById.Should().Be(expected: operatorId.Value);
         if (beforeSend.HasValue)
             entity.CreatedAt.Should().BeAfter(expected: beforeSend.Value);
-        entity.UpdatedAt.Should().BeNull();
+        entity.UpdatedAt.Should().Be(entity.CreatedAt);
         entity.IsDeleted.Should().BeNull();
         entity.ConcurrentToken.Should().Be(expected: 1);
     }

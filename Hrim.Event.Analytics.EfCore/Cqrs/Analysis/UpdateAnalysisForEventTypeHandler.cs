@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Services;
+using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -93,12 +94,14 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
     }
 
     private AnalysisByEventType CreateAnalysis(Guid eventTypeId, AnalysisByEventType incomingTemplate) {
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var db = new AnalysisByEventType {
             EventTypeId     = eventTypeId,
             AnalysisCode    = incomingTemplate.AnalysisCode,
             IsOn            = incomingTemplate.IsOn,
             Settings        = incomingTemplate.Settings,
-            CreatedAt       = DateTime.UtcNow,
+            CreatedAt       = now,
+            UpdatedAt       = now,
             ConcurrentToken = 1
         };
         _context.AnalysisByEventType.Add(db);
@@ -108,7 +111,7 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
     private static void UpdateStoredAnalysis(AnalysisByEventType db, AnalysisByEventType incoming) {
         db.IsOn      = incoming.IsOn;
         db.Settings  = incoming.Settings;
-        db.UpdatedAt = DateTime.UtcNow;
+        db.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
         db.ConcurrentToken++;
     }
 }

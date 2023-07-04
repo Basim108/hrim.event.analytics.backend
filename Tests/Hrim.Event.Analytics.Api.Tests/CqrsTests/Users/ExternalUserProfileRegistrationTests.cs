@@ -31,8 +31,8 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
             new(type: "https://hrimsoft.us.auth0.com.example.com/email", UsersData.EMAIL + ".new")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
-        _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
-        _apiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
+        ApiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
+        ApiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
         var command = new ExternalUserProfileRegistration(Context: OperatorContext, Profile: _profile);
 
         var resultProfile = await Mediator.Send(request: command);
@@ -75,8 +75,8 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
             new(type: "https://hrimsoft.us.auth0.com.example.com/email", value: email)
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
-        _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
-        _apiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
+        ApiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
+        ApiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
         var command = new ExternalUserProfileRegistration(Context: OperatorContext, Profile: _profile);
         _beforeSend = DateTime.UtcNow;
 
@@ -106,8 +106,8 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
             new(type: "https://hrimsoft.us.auth0.com.example.com/email", email + ".new")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
-        _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
-        _apiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
+        ApiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
+        ApiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
         var command       = new ExternalUserProfileRegistration(Context: OperatorContext, Profile: _profile);
         var resultProfile = await Mediator.Send(request: command);
 
@@ -135,8 +135,8 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
             new(type: ClaimTypes.NameIdentifier, $"facebook|{externalId}")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
-        _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
-        _apiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
+        ApiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
+        ApiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
         var command       = new ExternalUserProfileRegistration(Context: OperatorContext, Profile: _profile);
         var resultProfile = await Mediator.Send(request: command);
 
@@ -158,8 +158,8 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
             new(type: ClaimTypes.NameIdentifier, $"google-auth0|{externalId}")
         };
         OperatorContext = new OperationContext(userClaims: claims, Guid.NewGuid());
-        _apiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
-        _apiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
+        ApiRequestAccessor.GetUserClaims().Returns(returnThis: claims);
+        ApiRequestAccessor.GetOperationContext().Returns(returnThis: OperatorContext);
         var command       = new ExternalUserProfileRegistration(Context: OperatorContext, Profile: _profile);
         var resultProfile = await Mediator.Send(request: command);
 

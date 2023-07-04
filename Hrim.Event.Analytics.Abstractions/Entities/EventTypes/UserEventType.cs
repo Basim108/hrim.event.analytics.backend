@@ -42,6 +42,10 @@ public class UserEventType: HrimEntity, IHasOwner
     
     /// <summary> Analysis settings related to this event type </summary>
     public List<AnalysisByEventType>? AnalysisSettings { get; set; }
+    
+    /// <summary> Analysis results </summary>
+    public List<StatisticsForEventType>? AnalysisResults { get; set; }
+
 
     /// <summary> copy all entity properties to the another entity </summary>
     public void CopyTo(UserEventType another) {

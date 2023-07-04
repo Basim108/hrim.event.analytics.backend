@@ -14,12 +14,12 @@ using NSubstitute;
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 
 [ExcludeFromCodeCoverage]
-public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>
+public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLifetime, IDisposable
     where TProgram : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
         builder.ConfigureAppConfiguration((_, configurationBuilder) => {
-            configurationBuilder.AddJsonFile(path: "appsettings.Tests.json");
+            configurationBuilder.AddJsonFile(path: "appsettings.Tests.json", optional: false, reloadOnChange: false);
         });
         builder.ConfigureServices(services => {
             services.AddAuthentication(defaultScheme: "IntegrationTest")
@@ -51,5 +51,29 @@ public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
         });
+    }
+
+    public Task InitializeAsync() { return Task.CompletedTask; }
+
+    public void Dispose() {
+        try
+        {
+            base.Dispose();
+        }
+        catch (Exception ex) {
+            if (!ex.ToString().Contains("Hangfire.Server.BackgroundProcessingServer"))
+                throw new Exception(ex.Message, ex);
+        }
+    }
+    
+    public async Task DisposeAsync() {
+        try
+        {
+            await base.DisposeAsync();
+        }
+        catch (Exception ex) {
+            if (!ex.ToString().Contains("Hangfire.Server.BackgroundProcessingServer"))
+                throw new Exception(ex.Message, ex);
+        }
     }
 }

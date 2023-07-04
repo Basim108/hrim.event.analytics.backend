@@ -41,6 +41,12 @@ public class UserEventTypeDbConfig: IEntityTypeConfiguration<UserEventType>
                .HasColumnName(nameof(UserEventType.CreatedBy).ToSnakeCase())
                .HasComment(comment: "A user who created an instance of this event type")
                .IsRequired();
+        
         builder.HasOne(x => x.CreatedBy);
+        
+        builder.HasMany(x => x.AnalysisResults)
+               .WithOne()
+               .HasForeignKey(x => x.EntityId)
+               .IsRequired();
     }
 }

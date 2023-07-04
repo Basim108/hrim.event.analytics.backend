@@ -62,12 +62,14 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
                                      nameof(OccurrenceEvent.OccurredAt).ToSnakeCase());
             return new CqrsResult<OccurrenceEvent?>(Result: null, StatusCode: CqrsResultCode.Conflict, Info: info);
         }
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var entityToCreate = new DbOccurrenceEvent {
             OccurredOn      = mappedEventInfo.OccurredOn,
             OccurredAt      = mappedEventInfo.OccurredAt,
             EventTypeId     = request.EventInfo.EventTypeId,
             CreatedById     = operatorUserId,
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+            CreatedAt       = now,
+            UpdatedAt       = now,
             ConcurrentToken = 1
         };
         _context.OccurrenceEvents.Add(entity: entityToCreate);

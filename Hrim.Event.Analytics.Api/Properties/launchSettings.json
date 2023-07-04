@@ -9,7 +9,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "FEAT_COUNT_ANALYSIS": "On",
-        "FEAT_GAP_ANALYSIS": "Off"
+        "FEAT_GAP_ANALYSIS": "Off",
+        "DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE": false
       }
     }
   }

@@ -12,8 +12,10 @@ public class HrimUserCreateHandler: IRequestHandler<HrimUserCreateCommand, HrimU
     public HrimUserCreateHandler(EventAnalyticDbContext context) { _context = context; }
 
     public async Task<HrimUser> Handle(HrimUserCreateCommand request, CancellationToken cancellationToken) {
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var result = new HrimUser {
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+            CreatedAt       = now,
+            UpdatedAt       = now,
             ConcurrentToken = 1
         };
         _context.HrimUsers.Add(entity: result);

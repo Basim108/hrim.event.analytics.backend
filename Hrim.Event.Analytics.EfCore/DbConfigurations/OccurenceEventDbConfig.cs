@@ -34,5 +34,10 @@ public class OccurenceEventDbConfig: IEntityTypeConfiguration<DbOccurrenceEvent>
                .HasComment(comment: "Time with end-user timezone when an event occurred")
                .HasColumnType(typeName: "timetz")
                .IsRequired();
+        
+        builder.HasMany(x => x.AnalysisResults)
+               .WithOne()
+               .HasForeignKey(x => x.EntityId)
+               .IsRequired();
     }
 }

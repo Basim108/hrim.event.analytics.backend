@@ -18,7 +18,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("hrim_analytics")
-                .HasAnnotation("ProductVersion", "7.0.7")
+                .HasAnnotation("ProductVersion", "7.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
@@ -183,6 +183,84 @@ namespace Hrim.Event.Analytics.Api.Migrations
                             t.HasComment("Analysis that is made around events of a particular event-type");
 
                             t.HasCheckConstraint("CK_analysis_by_event_types_concurrent_token", "concurrent_token > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEvent", b =>
+                {
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("entity_id")
+                        .HasComment("refers to an occurrence/duration event for which this calculation was made.");
+
+                    b.Property<string>("AnalysisCode")
+                        .HasColumnType("text")
+                        .HasColumnName("analysis_code")
+                        .HasComment("Code of analysis such as count, gap, etc");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id")
+                        .HasComment("The last run correlation id");
+
+                    b.Property<DateTime>("FinishedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("finished_at")
+                        .HasComment("Date and UTC time when an analysis has been finished.");
+
+                    b.Property<string>("ResultJson")
+                        .HasColumnType("text")
+                        .HasColumnName("result");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("started_at")
+                        .HasComment("Date and UTC time when an analysis has been started.");
+
+                    b.HasKey("EntityId", "AnalysisCode");
+
+                    b.ToTable("statistics_for_events", "analysis", t =>
+                        {
+                            t.HasComment("Stores results of calculation analysis for event types");
+                        });
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEventType", b =>
+                {
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("entity_id")
+                        .HasComment("refers to an event type for which this calculation was made.");
+
+                    b.Property<string>("AnalysisCode")
+                        .HasColumnType("text")
+                        .HasColumnName("analysis_code")
+                        .HasComment("Code of analysis such as count, gap, etc");
+
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id")
+                        .HasComment("The last run correlation id");
+
+                    b.Property<DateTime>("FinishedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("finished_at")
+                        .HasComment("Date and UTC time when an analysis has been finished.");
+
+                    b.Property<string>("ResultJson")
+                        .HasColumnType("text")
+                        .HasColumnName("result");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("started_at")
+                        .HasComment("Date and UTC time when an analysis has been started.");
+
+                    b.HasKey("EntityId", "AnalysisCode");
+
+                    b.ToTable("statistics_for_event_types", "analysis", t =>
+                        {
+                            t.HasComment("Stores results of calculation analysis for event types");
                         });
                 });
 
@@ -531,6 +609,30 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("EventType");
                 });
 
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEvent", b =>
+                {
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", null)
+                        .WithMany("AnalysisResults")
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", null)
+                        .WithMany("AnalysisResults")
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEventType", b =>
+                {
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", null)
+                        .WithMany("AnalysisResults")
+                        .HasForeignKey("EntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
                 {
                     b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
@@ -598,7 +700,19 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
                 {
+                    b.Navigation("AnalysisResults");
+
                     b.Navigation("AnalysisSettings");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
+                {
+                    b.Navigation("AnalysisResults");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
+                {
+                    b.Navigation("AnalysisResults");
                 });
 #pragma warning restore 612, 618
         }

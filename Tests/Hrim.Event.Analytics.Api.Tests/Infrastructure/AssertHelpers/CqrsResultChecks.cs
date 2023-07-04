@@ -64,6 +64,5 @@ public static class CqrsResultChecks
         cqrsResult.Result.Should().NotBeNull();
         cqrsResult.Result!.Id.Should().Be(expected: forUpdate.Id);
         cqrsResult.Result.ConcurrentToken.Should().Be(expected: 1);
-        cqrsResult.Result.UpdatedAt.Should().BeNull();
     }
 }
