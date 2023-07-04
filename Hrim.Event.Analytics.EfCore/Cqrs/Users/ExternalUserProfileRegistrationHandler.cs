@@ -65,6 +65,7 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
                 ?? await _mediator.Send(new HrimUserCreateCommand(CorrelationId: request.Context.CorrelationId,
                                                                   SaveChanges: false),
                                         cancellationToken: cancellationToken);
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         if (shouldCreateProfile) {
             result = new ExternalUserProfile {
                 HrimUser        = user,
@@ -74,16 +75,17 @@ public class ExternalUserProfileRegistrationHandler: IRequestHandler<ExternalUse
                 FirstName       = request.Profile.FirstName,
                 LastName        = request.Profile.LastName,
                 Idp             = request.Context.Idp(),
-                LastLogin       = DateTime.UtcNow.TruncateToMicroseconds(),
-                CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+                LastLogin       = now,
+                CreatedAt       = now,
+                UpdatedAt       = now,
                 ConcurrentToken = 1
             };
             _context.ExternalUserProfiles.Add(entity: result);
         }
         else {
             result!.Email    = email;
-            result.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
-            result.LastLogin = DateTime.UtcNow.TruncateToMicroseconds();
+            result.UpdatedAt = now;
+            result.LastLogin = now;
             result.ConcurrentToken++;
         }
         await _context.SaveChangesAsync(cancellationToken: cancellationToken);

@@ -61,6 +61,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
                                      nameof(DurationEvent.StartedAt).ToSnakeCase());
             return new CqrsResult<DurationEvent?>(Result: null, StatusCode: CqrsResultCode.Conflict, Info: info);
         }
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var entityToCreate = new DbDurationEvent {
             StartedOn       = mappedEventInfo.StartedOn,
             StartedAt       = mappedEventInfo.StartedAt,
@@ -68,7 +69,8 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
             FinishedAt      = mappedEventInfo.FinishedAt,
             EventTypeId     = request.EventInfo.EventTypeId,
             CreatedById     = operatorUserId,
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+            CreatedAt       = now,
+            UpdatedAt       = now,
             ConcurrentToken = 1
         };
         _context.DurationEvents.Add(entity: entityToCreate);

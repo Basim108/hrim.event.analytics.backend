@@ -58,6 +58,7 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
                                      nameof(UserEventType.Name).ToSnakeCase());
             return new CqrsResult<UserEventType?>(Result: null, StatusCode: CqrsResultCode.Conflict, Info: info);
         }
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var entityToCreate = new UserEventType {
             Name = request.EventType.Name,
             Description = string.IsNullOrWhiteSpace(value: request.EventType.Description)
@@ -66,7 +67,8 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
             Color           = request.EventType.Color,
             IsPublic        = request.EventType.IsPublic,
             CreatedById     = operatorUserId,
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+            CreatedAt       = now,
+            UpdatedAt       = now,
             ConcurrentToken = 1
         };
         _context.UserEventTypes.Add(entity: entityToCreate);

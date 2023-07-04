@@ -38,12 +38,14 @@ public class UsersData
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var externalProfile = new ExternalUserProfile {
             ExternalUserId  = externalId,
             Email           = email,
             Idp             = idp,
-            CreatedAt       = DateTime.UtcNow.TruncateToMilliseconds(),
-            LastLogin       = DateTime.UtcNow.TruncateToMilliseconds(),
+            CreatedAt       = now,
+            UpdatedAt       = now,
+            LastLogin       = now,
             ConcurrentToken = 1,
             HrimUser        = user,
             HrimUserId      = id
@@ -65,6 +67,7 @@ public class UsersData
         var user = EnsureUserExistence(userId ?? Guid.NewGuid());
         externalId ??= Guid.NewGuid().ToString();
         email      ??= $"{externalId}@mailinator.com";
+        var now = DateTime.UtcNow.TruncateToMicroseconds();
         var profile = new ExternalUserProfile {
             Idp             = idp,
             Email           = email,
@@ -73,8 +76,9 @@ public class UsersData
             FirstName       = FIRST_NAME,
             LastName        = LAST_NAME,
             HrimUserId      = user.Id,
-            CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
-            LastLogin       = DateTime.UtcNow.TruncateToMicroseconds(),
+            CreatedAt       = now,
+            UpdatedAt       = now,
+            LastLogin       = now,
             ConcurrentToken = 1
         };
         _context.ExternalUserProfiles.Add(entity: profile);
