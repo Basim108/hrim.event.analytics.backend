@@ -40,9 +40,9 @@ public static class _StatisticsForEntityDbConfigExtension
         builder.Property(p => p.ResultJson)
                .HasColumnName("result");
         
-        builder.Property(p => p.JobId)
-               .HasColumnName(name: nameof(StatisticsForEntity.JobId).ToSnakeCase())
-               .HasComment(comment: "The last run job id")
+        builder.Property(p => p.CorrelationId)
+               .HasColumnName(name: nameof(StatisticsForEntity.CorrelationId).ToSnakeCase())
+               .HasComment(comment: "The last run correlation id")
                .IsRequired();
     }
 }

@@ -1,8 +1,8 @@
 using Hrim.Event.Analytics.Abstractions.Jobs.Configuration;
-using MediatR;
 
 namespace Hrim.Event.Analytics.Abstractions.Jobs;
 
+/// <summary> Interface that has to be used for enqueueing jobs </summary>
 public interface IAnalyticsJobClient
 {
     /// <summary> Enqueueing a job to run asap </summary>
@@ -14,5 +14,6 @@ public interface IAnalyticsJobClient
         where TJob : IAnalyticsJob;
 
     /// <summary> Runs recurring jobs </summary>
-    Task RunAsync(IRequest command, HrimRecurringJobOptions options, CancellationToken cancellation);
+    Task RunAsync<TRequest>(TRequest command, HrimRecurringJobOptions options, CancellationToken cancellation)
+        where TRequest : AnalyticsRecurringJob;
 }

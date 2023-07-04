@@ -23,6 +23,6 @@ public class StatisticsForEntity
     /// <summary> Date and UTC time when an analysis has been finished. </summary>
     public DateTime FinishedAt { get; set; }
 
-    /// <summary> The last run job id </summary>
-    public Guid JobId { get; set; }
+    /// <summary> The last run correlation id </summary>
+    public Guid CorrelationId { get; set; }
 }

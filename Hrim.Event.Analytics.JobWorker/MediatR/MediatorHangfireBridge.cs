@@ -27,7 +27,7 @@ namespace Hrim.Event.Analytics.JobWorker.MediatR;
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            var correlationScope = string.IsNullOrWhiteSpace(request.CorrelationId)
+            var correlationScope = request.CorrelationId == Guid.Empty
                                        ? _logger.BeginScope(CoreLogs.CORRELATION_ID, Guid.NewGuid())
                                        : _logger.BeginScope(CoreLogs.CORRELATION_ID, request.CorrelationId);
             try {

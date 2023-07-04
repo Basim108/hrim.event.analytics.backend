@@ -11,5 +11,5 @@ public interface IAnalyticsJob: IRequest
     /// Correlation Id that can be serialized from enqueueing process, and
     /// then deserialized by hangfire and creates a correlation scope with it.
     /// </summary>
-    string CorrelationId { get; }
+    Guid CorrelationId { get; }
 }

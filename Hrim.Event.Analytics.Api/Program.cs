@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
+using Hrim.Event.Analytics.Analysis.DependencyInjection;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
@@ -18,6 +19,7 @@ builder.Services.AddMediatR(cfg => {
 });
 builder.Services.AddEventAnalyticsServices(builder.Configuration);
 builder.Services.AddEventAnalyticsStorage(builder.Configuration, typeof(Program).Assembly.GetName().Name!);
+builder.Services.AddEventAnalyticsAnalysisServices();
 builder.Services.AddEventAnalyticsAuthentication(builder.Configuration);
 builder.Services.AddEventAnalyticsHangfireServer(builder.Configuration);
 builder.Services.AddHangfireDashboardAuthorization(builder.Configuration);

@@ -12,8 +12,10 @@ public static class CoreLogs
     public const string FINISH_HANDLING             = "Finish handling";
     public const string START_HANDLING              = "Start handling";
     public const string CQRS_COMMAND                = "CqrsCommand={CqrsCommand}";
-    public const string USER_ID                     = "UserId={UserId}";
+    public const string EVENT_TYPE_ID               = "EventTypeId={EventTypeId}";
     public const string CORRELATION_ID              = "CorrelationId={CorrelationId}";
+    
+    public const string FEATURE_IS_NOT_FOUND = "Feature is not found by AnalysisCode={AnalysisCode}";
     
     public const string ENV_VARIABLE_IS_EMPTY = "EnvironmentVariable={EnvironmentVariable} is empty";
 

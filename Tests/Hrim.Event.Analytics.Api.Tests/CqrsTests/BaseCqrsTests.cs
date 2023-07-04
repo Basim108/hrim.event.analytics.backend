@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Services;
+using Hrim.Event.Analytics.Analysis.DependencyInjection;
 using Hrim.Event.Analytics.Api.DependencyInjection;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.EfCore;
@@ -33,6 +34,7 @@ public abstract class BaseCqrsTests: IDisposable
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddEventAnalyticsServices(appConfig: appConfig);
+        services.AddEventAnalyticsAnalysisServices();
         services.AddEventAnalyticsHangfireServer(appConfig: appConfig);
         services.AddEventAnalyticsStorage(appConfig: appConfig, typeof(Program).Assembly.GetName().Name!);
 

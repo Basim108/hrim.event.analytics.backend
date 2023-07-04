@@ -12,7 +12,7 @@ public class AnalysisByEventType
     public UserEventType? EventType { get; set; }
     
     /// <summary> Events of this event type id will be analysed </summary>
-    public Guid? EventTypeId { get; set; }
+    public Guid EventTypeId { get; set; }
 
     /// <summary> Code of analysis </summary>
     public string AnalysisCode { get; set; }

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Hangfire;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Jobs;
 using Hrim.Event.Analytics.Abstractions.Jobs.Configuration;
 using Hrim.Event.Analytics.JobWorker.Exceptions;
@@ -58,12 +59,15 @@ public class AnalyticsJobRunner: IAnalyticsJobClient
     }
 
     /// <inheritdoc />
-    public async Task RunAsync(IRequest                command,
-                               HrimRecurringJobOptions options,
-                               CancellationToken       cancellation) {
-        using var jobIdScope = _logger.BeginScope(JobLogs.JOB_ID, options.JobId);
+    public async Task RunAsync<TRequest>(TRequest command, HrimRecurringJobOptions options, CancellationToken cancellation)
+        where TRequest : AnalyticsRecurringJob {
+        var       correlationId      = Guid.NewGuid();
+        using var jobIdScope         = _logger.BeginScope(JobLogs.JOB_ID,          options.JobId);
+        using var correlationIdScope = _logger.BeginScope(CoreLogs.CORRELATION_ID, correlationId);
+
         try {
-            await _mediator.Send(command, cancellation);
+            var request = command with { CorrelationId = correlationId };
+            await _mediator.Send(request, cancellation);
         }
         catch (Exception ex) {
             _logger.LogError(ex, JobLogs.RECURRING_JOB_FAILED_WITH_ERROR, options.JobId);

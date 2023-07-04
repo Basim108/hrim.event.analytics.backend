@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20230627184739_add_statistics_for_events_and_event_types")]
+    [Migration("20230629143600_add_statistics_for_events_and_event_types")]
     partial class add_statistics_for_events_and_event_types
     {
         /// <inheritdoc />
@@ -145,7 +145,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.AnalysisByEventType", b =>
                 {
-                    b.Property<Guid?>("EventTypeId")
+                    b.Property<Guid>("EventTypeId")
                         .HasColumnType("uuid")
                         .HasColumnName("event_type_id")
                         .HasComment("Events of this event type will be analysed");
@@ -201,15 +201,15 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("analysis_code")
                         .HasComment("Code of analysis such as count, gap, etc");
 
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id")
+                        .HasComment("The last run correlation id");
+
                     b.Property<DateTime>("FinishedAt")
                         .HasColumnType("timestamptz")
                         .HasColumnName("finished_at")
                         .HasComment("Date and UTC time when an analysis has been finished.");
-
-                    b.Property<Guid>("JobId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("job_id")
-                        .HasComment("The last run job id");
 
                     b.Property<string>("ResultJson")
                         .HasColumnType("text")
@@ -240,15 +240,15 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("analysis_code")
                         .HasComment("Code of analysis such as count, gap, etc");
 
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("correlation_id")
+                        .HasComment("The last run correlation id");
+
                     b.Property<DateTime>("FinishedAt")
                         .HasColumnType("timestamptz")
                         .HasColumnName("finished_at")
                         .HasComment("Date and UTC time when an analysis has been finished.");
-
-                    b.Property<Guid>("JobId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("job_id")
-                        .HasComment("The last run job id");
 
                     b.Property<string>("ResultJson")
                         .HasColumnType("text")

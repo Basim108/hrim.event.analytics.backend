@@ -14,7 +14,7 @@ using NSubstitute;
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 
 [ExcludeFromCodeCoverage]
-public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLifetime
+public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLifetime, IDisposable
     where TProgram : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder) {

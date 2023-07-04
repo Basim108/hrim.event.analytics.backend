@@ -21,7 +21,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     result = table.Column<string>(type: "text", nullable: true),
                     started_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time when an analysis has been started."),
                     finished_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time when an analysis has been finished."),
-                    job_id = table.Column<Guid>(type: "uuid", nullable: false, comment: "The last run job id")
+                    correlation_id = table.Column<Guid>(type: "uuid", nullable: false, comment: "The last run correlation id")
                 },
                 constraints: table =>
                 {
@@ -46,7 +46,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     result = table.Column<string>(type: "text", nullable: true),
                     started_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time when an analysis has been started."),
                     finished_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time when an analysis has been finished."),
-                    job_id = table.Column<Guid>(type: "uuid", nullable: false, comment: "The last run job id")
+                    correlation_id = table.Column<Guid>(type: "uuid", nullable: false, comment: "The last run correlation id")
                 },
                 constraints: table =>
                 {
