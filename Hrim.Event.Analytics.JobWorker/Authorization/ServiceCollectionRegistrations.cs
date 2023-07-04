@@ -59,7 +59,7 @@ public static class ServiceCollectionRegistrations
                                               var logoutUri     = $"https://{domain}/v2/logout?client_id={clientId}";
                                               var postLogoutUri = context.Properties.RedirectUri;
                                               if (!string.IsNullOrEmpty(postLogoutUri)) {
-                                                  if (postLogoutUri.StartsWith("/")) {
+                                                  if (postLogoutUri.StartsWith('/')) {
                                                       // transform to absolute
                                                       var request = context.Request;
                                                       postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
