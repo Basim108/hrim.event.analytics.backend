@@ -1,5 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
+using Hrim.Event.Analytics.Analysis.Models;
 using Hrim.Event.Analytics.EfCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -70,13 +71,13 @@ public class CalculateGapForEventTypeHandler: IRequestHandler<CalculateGapForEve
         var occurrences = await _context.OccurrenceEvents
                                         .Where(x => x.EventTypeId == request.EventTypeId && 
                                                     x.IsDeleted != true)
-                                        .Select(x => new GapAnalysisEvent(x.OccurredOn, x.OccurredAt,
+                                        .Select(x => new AnalysisEvent(x.OccurredOn, x.OccurredAt,
                                                                           null, null))
                                         .ToListAsync(cancellationToken);
         var durations = await _context.DurationEvents
                                       .Where(x => x.EventTypeId == request.EventTypeId && 
                                                   x.IsDeleted != true)
-                                      .Select(x => new GapAnalysisEvent(x.StartedOn,  x.StartedAt,
+                                      .Select(x => new AnalysisEvent(x.StartedOn,  x.StartedAt,
                                                                         x.FinishedOn, x.FinishedAt))
                                       .ToListAsync(cancellationToken);
         var joinedEvents = durations.Concat(occurrences)
