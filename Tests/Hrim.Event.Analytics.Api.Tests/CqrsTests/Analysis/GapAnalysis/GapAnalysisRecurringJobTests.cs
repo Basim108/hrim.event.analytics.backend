@@ -14,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Analysis.GapAnalysis;
 public class GapAnalysisRecurringJobTests
 {
     private readonly GapAnalysisRecurringJobHandler _handler;
-    private readonly GapAnalysisRecurringJob        _job = new (Guid.NewGuid());
+    private readonly GapAnalysisRecurringJob        _job = new ();
     private readonly IDictionary<string, string>    _settings;
     private readonly IMediator                      _mediator = Substitute.For<IMediator>();
     private readonly EventAnalyticDbContext         _context  = DbUtils.GetDbContext();

@@ -13,7 +13,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Analysis.CountAnalysis;
 public class CountAnalysisRecurringJobTests
 {
     private readonly CountAnalysisRecurringJobHandler _handler;
-    private readonly CountAnalysisRecurringJob        _job      = new(Guid.NewGuid());
+    private readonly CountAnalysisRecurringJob        _job      = new();
     private readonly IMediator                        _mediator = Substitute.For<IMediator>();
     private readonly EventAnalyticDbContext           _context  = DbUtils.GetDbContext();
     private readonly TestData                         _testData;
