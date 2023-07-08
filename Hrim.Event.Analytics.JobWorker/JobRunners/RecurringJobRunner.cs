@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Hangfire;
 using Hrim.Event.Analytics.Abstractions;
-using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Jobs;
 using Hrim.Event.Analytics.JobWorker.Configuration;
 using MediatR;
@@ -17,7 +16,7 @@ public class RecurringJobRunner
     private readonly IServiceProvider            _serviceProvider;
 
     public RecurringJobRunner(ILogger<RecurringJobRunner> logger, IServiceProvider serviceProvider) {
-        _logger               = logger;
+        _logger          = logger;
         _serviceProvider = serviceProvider;
     }
 
@@ -37,15 +36,16 @@ public class RecurringJobRunner
         }
     }
 
-    public static void SetupGapAnalysisJob(IServiceProvider sp) {
-        var gapCfg = new GapHrimRecurringJobOptions();
-        RecurringJob.RemoveIfExists(gapCfg.JobId);
-        RecurringJob.AddOrUpdate(gapCfg.JobId,
+    public static void SetupAnalysisJob<TJob, TOptions>(IServiceProvider sp)
+        where TJob: AnalyticsRecurringJob, new()
+        where TOptions: HrimRecurringJobOptions, new() 
+    {
+        var analysisJobCfg = new TOptions();
+        RecurringJob.RemoveIfExists(analysisJobCfg.JobId);
+        RecurringJob.AddOrUpdate(analysisJobCfg.JobId,
                                  () => sp.GetRequiredService<RecurringJobRunner>()
-                                         .RunAsync(new GapAnalysisRecurringJob(Guid.NewGuid()),
-                                                   gapCfg.JobId,
-                                                   CancellationToken.None),
-                                 gapCfg.CronExpression,
+                                         .RunAsync(new TJob(), new TOptions().JobId, CancellationToken.None),
+                                 analysisJobCfg.CronExpression,
                                  new RecurringJobOptions {
                                      TimeZone = TimeZoneInfo.Utc
                                  });

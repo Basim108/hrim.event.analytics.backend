@@ -1,3 +1,4 @@
+using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Analysis.DependencyInjection;
 using Hrim.Event.Analytics.Api.DependencyInjection;
@@ -5,6 +6,7 @@ using Hrim.Event.Analytics.Api.Extensions;
 using Hrim.Event.Analytics.EfCore;
 using Hrim.Event.Analytics.EfCore.DependencyInjection;
 using Hrim.Event.Analytics.JobWorker.Authorization;
+using Hrim.Event.Analytics.JobWorker.Configuration;
 using Hrim.Event.Analytics.JobWorker.DependencyInjection;
 using Hrim.Event.Analytics.JobWorker.JobRunners;
 using MediatR;
@@ -76,16 +78,17 @@ app.UseAnalyticsHangfireDashboard(sp, app.Environment);
 if (!app.Environment.IsProduction())
     app.UseEventAnalyticsSwagger();
 
-var mediator             = sp.GetRequiredService<IMediator>();
-var dbContext            = sp.GetRequiredService<EventAnalyticDbContext>();
-var isNotIntegrationTesting = dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory"; 
+var mediator                = sp.GetRequiredService<IMediator>();
+var dbContext               = sp.GetRequiredService<EventAnalyticDbContext>();
+var isNotIntegrationTesting = dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory";
 if (isNotIntegrationTesting)
     await dbContext.Database.MigrateAsync();
 
 await mediator.Send(new SetupFeatures());
 
 if (isNotIntegrationTesting) {
-    RecurringJobRunner.SetupGapAnalysisJob(sp);
+    RecurringJobRunner.SetupAnalysisJob<GapAnalysisRecurringJob, GapRecurringJobOptions>(sp);
+    RecurringJobRunner.SetupAnalysisJob<CountAnalysisRecurringJob, CountRecurringJobOptions>(sp);
 }
 
 app.MapControllers();

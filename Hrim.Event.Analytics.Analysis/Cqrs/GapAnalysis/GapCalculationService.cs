@@ -1,5 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
+using Hrim.Event.Analytics.Analysis.Models;
 
 namespace Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
 
@@ -9,15 +10,18 @@ public interface IGapCalculationService
     /// <param name="events">List of events which should be examined for gaps</param>
     /// <param name="settings">analysis settings (minimal gap)</param>
     /// <returns>Returns Null if no events in the <paramref name="events"/></returns>
-    GapAnalysisResult Calculate(List<GapAnalysisEvent> events, GapSettings settings);
+    GapAnalysisResult Calculate(List<AnalysisEvent> events, GapSettings settings);
 }
 
 public class GapCalculationService: IGapCalculationService
 {
     /// <inheritdoc />
-    public GapAnalysisResult Calculate(List<GapAnalysisEvent> events, GapSettings settings) {
+    public GapAnalysisResult Calculate(List<AnalysisEvent> events, GapSettings settings) {
         if (events.Count == 0)
-            return new GapAnalysisResult(null, null, null, null, null, 0, 0);
+            return new GapAnalysisResult(Min: null, MinGapDate: null,
+                                         Max: null, MaxGapDate: null,
+                                         Avg: null,
+                                         GapCount: 0, EventCount: 0);
         var       gapCount   = 0;
         var       gapSum     = TimeSpan.Zero;
         TimeSpan? minGap     = null;
@@ -29,9 +33,11 @@ public class GapCalculationService: IGapCalculationService
             var currentEvent  = events[i];
             var previousEvent = events[i - 1];
             var currentTime   = currentEvent.StartDate.CombineWithTime(currentEvent.StartTime);
-            var previousTime  = previousEvent.FinishTime ?? previousEvent.StartTime;
-            var prevDate      = previousEvent.FinishDate ?? previousEvent.StartDate;
-            var gapLength     = currentTime - previousTime;
+            var previousTime  = previousEvent.FinishDate.HasValue
+                                    ? previousEvent.FinishDate.CombineWithTime(previousEvent.FinishTime)!.Value
+                                    : previousEvent.StartDate.CombineWithTime(previousEvent.StartTime);
+            var prevDate  = previousEvent.FinishDate ?? previousEvent.StartDate;
+            var gapLength = currentTime - previousTime;
             if (gapLength <= settings.MinimalGap)
                 continue;
             gapCount++;
@@ -52,8 +58,12 @@ public class GapCalculationService: IGapCalculationService
             minGap = TimeSpan.FromSeconds(Math.Ceiling(minGap.Value.TotalSeconds));
         if(maxGap is not null)
             maxGap = TimeSpan.FromSeconds(Math.Ceiling(maxGap.Value.TotalSeconds));
-        return new GapAnalysisResult(minGap, minGapDate,
-                                     maxGap, maxGapDate,
-                                     avg, gapCount, events.Count);
+        return new GapAnalysisResult(Min: minGap,
+                                     MinGapDate: minGapDate,
+                                     Max: maxGap,
+                                     MaxGapDate: maxGapDate,
+                                     Avg: avg,
+                                     GapCount: gapCount,
+                                     EventCount: events.Count);
     }
 }
