@@ -44,7 +44,7 @@ public class OccurrenceEventControllerValidationTests: BaseEventControllerValida
         ConcurrentToken = 1
     };
 
-    public OccurrenceEventControllerValidationTests(WebAppFactory<Program> factory): base(factory: factory) { Client = factory.GetClient(baseUrl: "v1/event/occurrence/"); }
+    public OccurrenceEventControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory): base(factory: factory) { Client = factory.GetClient(baseUrl: "v1/event/occurrence/"); }
 
     /// <summary> Correct create event request  </summary>
     protected override OccurrenceEventCreateRequest GetCreateRequest() {

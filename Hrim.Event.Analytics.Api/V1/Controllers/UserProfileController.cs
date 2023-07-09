@@ -2,6 +2,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Hrim user profile endpoints </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route(template: "v1/user-profile")]
 public class UserProfileController: ControllerBase
 {

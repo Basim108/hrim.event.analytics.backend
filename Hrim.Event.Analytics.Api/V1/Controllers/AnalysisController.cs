@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Features;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Manage analysis endpoints </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route(template: "v1/[controller]")]
 public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEventType>>
 {

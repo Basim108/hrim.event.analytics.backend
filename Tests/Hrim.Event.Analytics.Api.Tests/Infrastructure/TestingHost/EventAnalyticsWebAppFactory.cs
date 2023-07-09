@@ -4,27 +4,30 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 
 [ExcludeFromCodeCoverage]
-public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLifetime, IDisposable
+public class EventAnalyticsWebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLifetime, IDisposable
     where TProgram : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder) {
         builder.ConfigureAppConfiguration((_, configurationBuilder) => {
             configurationBuilder.AddJsonFile(path: "appsettings.Tests.json", optional: false, reloadOnChange: false);
         });
+        builder.ConfigureTestServices(services => {
+            services.Replace(new ServiceDescriptor(typeof(IPolicyEvaluator), typeof(DisableAuthenticationPolicyEvaluator), ServiceLifetime.Singleton));
+        });
         builder.ConfigureServices(services => {
-            services.AddAuthentication(defaultScheme: "IntegrationTest")
-                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(authenticationScheme: "IntegrationTest", _ => { });
-
             services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));
             services.AddDbContext<EventAnalyticDbContext>(options => options.UseInMemoryDatabase(databaseName: "InMemoryDbForTesting"));
 
@@ -56,8 +59,7 @@ public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLif
     public Task InitializeAsync() { return Task.CompletedTask; }
 
     public void Dispose() {
-        try
-        {
+        try {
             base.Dispose();
         }
         catch (Exception ex) {
@@ -65,10 +67,9 @@ public class WebAppFactory<TProgram>: WebApplicationFactory<TProgram>, IAsyncLif
                 throw new Exception(ex.Message, ex);
         }
     }
-    
+
     public async Task DisposeAsync() {
-        try
-        {
+        try {
             await base.DisposeAsync();
         }
         catch (Exception ex) {

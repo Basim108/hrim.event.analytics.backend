@@ -6,11 +6,11 @@ using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
-public class AllEventsAccessorControllerValidationTests: IClassFixture<WebAppFactory<Program>>
+public class AllEventsAccessorControllerValidationTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>
 {
     private readonly HttpClient? _client;
 
-    public AllEventsAccessorControllerValidationTests(WebAppFactory<Program> factory) { _client = factory.GetClient(baseUrl: "v1/event/"); }
+    public AllEventsAccessorControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) { _client = factory.GetClient(baseUrl: "v1/event/"); }
 
     [Theory]
     [InlineData("?start=&end=2022-09-30")]

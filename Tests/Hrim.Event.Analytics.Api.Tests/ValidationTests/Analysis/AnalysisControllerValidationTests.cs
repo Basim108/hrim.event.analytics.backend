@@ -12,11 +12,11 @@ using Newtonsoft.Json;
 namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Analysis;
 
 [ExcludeFromCodeCoverage]
-public class AnalysisControllerValidationTests: IClassFixture<WebAppFactory<Program>>
+public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>
 {
     private readonly HttpClient? _client;
     
-    public AnalysisControllerValidationTests(WebAppFactory<Program> factory) {
+    public AnalysisControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) {
         _client = factory.GetClient(baseUrl: "v1/analysis/event-type/");
     }
     

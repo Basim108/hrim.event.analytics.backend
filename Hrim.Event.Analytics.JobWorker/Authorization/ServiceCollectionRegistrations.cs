@@ -18,7 +18,7 @@ public static class ServiceCollectionRegistrations
 {
     public static void AddHangfireDashboardAuthorization(this IServiceCollection services, IConfiguration appConfig) {
         services.AddTransient<IDashboardAuthorizationFilter, HrimsoftDashboardAuthFilter>();
-   
+        
         services.AddAuthentication(options => {
                      options.DefaultScheme          = CookieAuthenticationDefaults.AuthenticationScheme;
                      options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
@@ -31,15 +31,15 @@ public static class ServiceCollectionRegistrations
                                       var domain = appConfig[Envs.AUTH0_DOMAIN];
                                       if (string.IsNullOrWhiteSpace(domain))
                                           throw new ConfigurationException(null, Envs.AUTH0_DOMAIN);
-
+        
                                       var clientId = appConfig[Envs.AUTH0_JOBS_CLIENT_ID];
                                       if (string.IsNullOrWhiteSpace(clientId))
                                           throw new ConfigurationException(null, Envs.AUTH0_JOBS_CLIENT_ID);
-
+        
                                       var clientSecret = appConfig[Envs.AUTH0_JOBS_CLIENT_SECRET];
                                       if (string.IsNullOrWhiteSpace(clientSecret))
                                           throw new ConfigurationException(null, Envs.AUTH0_JOBS_CLIENT_SECRET);
-
+        
                                       options.Authority                      = $"https://{domain}";
                                       options.ClientId                       = clientId;
                                       options.ClientSecret                   = clientSecret;
@@ -68,7 +68,7 @@ public static class ServiceCollectionRegistrations
                                               }
                                               context.Response.Redirect(logoutUri);
                                               context.HandleResponse();
-
+        
                                               return Task.CompletedTask;
                                           }
                                       };

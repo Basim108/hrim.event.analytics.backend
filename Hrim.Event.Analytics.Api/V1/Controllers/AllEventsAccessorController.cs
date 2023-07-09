@@ -2,6 +2,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Get access to events of all types at once </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route(template: "v1/event")]
 public class AllEventsAccessorController: ControllerBase
 {

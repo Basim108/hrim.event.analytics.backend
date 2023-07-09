@@ -10,6 +10,7 @@ using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Api.V1.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 
 /// <summary> Manage any entity type </summary>
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route(template: "v1/entity/{id}")]
 public class EntityController: ControllerBase
 {

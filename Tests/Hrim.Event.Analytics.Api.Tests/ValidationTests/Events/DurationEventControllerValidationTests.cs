@@ -58,7 +58,7 @@ public class DurationEventControllerValidationTests: BaseEventControllerValidati
         ConcurrentToken = 1
     };
 
-    public DurationEventControllerValidationTests(WebAppFactory<Program> factory): base(factory: factory) { Client = factory.GetClient(baseUrl: "v1/event/duration/"); }
+    public DurationEventControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory): base(factory: factory) { Client = factory.GetClient(baseUrl: "v1/event/duration/"); }
 
     /// <summary> Correct create event request  </summary>
     protected override DurationEventCreateRequest GetCreateRequest() {

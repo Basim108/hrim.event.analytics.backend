@@ -10,11 +10,11 @@ using Newtonsoft.Json;
 namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Entity;
 
 [ExcludeFromCodeCoverage]
-public class EntityControllerValidationTests: IClassFixture<WebAppFactory<Program>>
+public class EntityControllerValidationTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>
 {
     private readonly HttpClient _client;
 
-    public EntityControllerValidationTests(WebAppFactory<Program> factory) { _client = factory.GetClient(baseUrl: "v1/entity/"); }
+    public EntityControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) { _client = factory.GetClient(baseUrl: "v1/entity/"); }
 
     [Theory]
     [InlineData("00000000-0000-0000-0000-000000000000")]

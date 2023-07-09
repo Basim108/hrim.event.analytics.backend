@@ -18,7 +18,7 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests;
 [SuppressMessage(category: "Usage",
                  checkId:
                  "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
-public abstract class BaseEntityControllerTests: IClassFixture<WebAppFactory<Program>>
+public abstract class BaseEntityControllerTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>
 {
     protected HttpClient? Client { get; init; }
 

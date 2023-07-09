@@ -15,7 +15,7 @@ namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 
 [ExcludeFromCodeCoverage]
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class EntityControllerTests: IClassFixture<WebAppFactory<Program>>, IDisposable
+public class EntityControllerTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>, IDisposable
 {
     private readonly HttpClient             _client;
     private readonly JsonSerializerSettings _jsonSettings;
@@ -23,7 +23,7 @@ public class EntityControllerTests: IClassFixture<WebAppFactory<Program>>, IDisp
     private readonly IServiceScope          _serviceScope;
     private readonly TestData               _testData;
 
-    public EntityControllerTests(WebAppFactory<Program> factory) {
+    public EntityControllerTests(EventAnalyticsWebAppFactory<Program> factory) {
         _jsonSettings    = JsonSettingsFactory.Get();
         _client          = factory.GetClient(baseUrl: "v1/entity/");
         _serviceScope    = factory.Services.CreateScope();

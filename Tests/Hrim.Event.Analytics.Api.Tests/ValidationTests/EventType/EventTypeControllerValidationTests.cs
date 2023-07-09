@@ -17,7 +17,7 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.EventType;
 [ExcludeFromCodeCoverage]
 public class EventTypeControllerValidationTests: BaseEntityControllerTests
 {
-    public EventTypeControllerValidationTests(WebAppFactory<Program> factory) { Client = factory.GetClient(baseUrl: "v1/event-type/"); }
+    public EventTypeControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) { Client = factory.GetClient(baseUrl: "v1/event-type/"); }
 
     /// <summary> Correct create event type request  </summary>
     protected override CreateEventTypeRequest GetCreateRequest() {

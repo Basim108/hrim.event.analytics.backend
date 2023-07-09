@@ -26,7 +26,7 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     private readonly   TestData               _testData;
     protected readonly JsonSerializerSettings JsonSettings = JsonSettingsFactory.Get();
 
-    protected BaseEventControllerValidationTests(WebAppFactory<Program> factory) {
+    protected BaseEventControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) {
         _serviceScope = factory.Services.CreateScope();
         var context = _serviceScope.ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
         _testData = new TestData(context: context);
