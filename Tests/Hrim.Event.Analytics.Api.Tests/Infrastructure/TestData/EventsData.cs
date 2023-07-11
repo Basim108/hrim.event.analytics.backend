@@ -13,7 +13,7 @@ public class EventsData
 
     public EventsData(EventAnalyticDbContext context) { _context = context; }
 
-    public UserEventType CreateEventType(Guid userId, string name, bool isDeleted = false) {
+    public UserEventType CreateEventType(Guid userId, string name="Test Event Type", bool isDeleted = false) {
         var entity = new UserEventType {
             Name            = name,
             Color           = "#ff00cc",
