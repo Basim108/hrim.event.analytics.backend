@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
 using Hrim.Event.Analytics.Api.V1.Models;
 
@@ -19,8 +21,31 @@ public class EventTypeCreateTests: BaseCqrsTests
         IsPublic    = true
     };
 
-    public EventTypeCreateTests() { _createCommand = new EventTypeCreateCommand(EventType: _createEventTypeRequest, SaveChanges: true, Context: OperatorContext); }
+    public EventTypeCreateTests() {
+        _createCommand = new EventTypeCreateCommand(EventType: _createEventTypeRequest, 
+                                                    SaveChanges: true,
+                                                    Context: OperatorContext);
+    }
 
+    [Fact]
+    public async Task Create_Given_EventType_With_AnalysisResults_Should_Not_Save_Them_To_DB() {
+        var beforeSend = DateTime.UtcNow;
+        _createCommand.EventType.AnalysisResults = new List<StatisticsForEventType> {
+            new () {
+                EntityId     = _createCommand.EventType.Id,
+                AnalysisCode = FeatureCodes.GAP_ANALYSIS,
+                ResultJson   = "",
+                StartedAt    = DateTime.UtcNow,
+                FinishedAt   = DateTime.UtcNow.AddMinutes(1)
+            }
+        };
+        var cqrsResult = await Mediator.Send(request: _createCommand);
+
+        cqrsResult.CheckSuccessfullyCreatedEntity(operatorId: OperatorUserId, beforeSend: beforeSend);
+        
+        TestData.DbContext.StatisticsForEventTypes.ToList().Should().BeEmpty();
+    }
+    
     [Fact]
     public async Task Create_EventType() {
         var beforeSend = DateTime.UtcNow;

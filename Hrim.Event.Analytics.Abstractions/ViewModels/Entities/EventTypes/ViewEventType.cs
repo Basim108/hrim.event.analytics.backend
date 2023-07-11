@@ -1,3 +1,5 @@
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Analysis;
+
 namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 
 /// <summary>
@@ -11,10 +13,12 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 /// <param name="IsDeleted">Soft deletion flag</param>
 /// <param name="IsMine">Is this event type was created by an operator, or it has been created by another user</param>
 /// <param name="Id">Entity id</param>
-public record ViewEventType(Guid    Id,
-                            string  Name,
-                            string? Description,
-                            string  Color,
-                            bool    IsPublic,
-                            bool    IsDeleted,
-                            bool    IsMine);
+/// <param name="AnalysisResults">All analysis calculation results calculated on events of this event type</param>
+public record ViewEventType(Guid                             Id,
+                            string                           Name,
+                            string?                          Description,
+                            string                           Color,
+                            bool                             IsPublic,
+                            bool                             IsDeleted,
+                            bool                             IsMine,
+                            IEnumerable<ViewAnalysisResult>? AnalysisResults=null);

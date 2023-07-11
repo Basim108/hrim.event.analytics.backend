@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
+using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
@@ -96,5 +98,31 @@ public class EventTypeCqrsTests: BaseCqrsTests
 
         cqrsResult.Should().NotBeNull();
         cqrsResult.StatusCode.Should().Be(expected: CqrsResultCode.Forbidden);
+    }
+    
+    [Fact]
+    public async Task Update_Given_EventType_With_AnalysisResults_Should_Not_Save_Them_To_DB() {
+        var createdEntities = TestData.Events.CreateManyEventTypes(count: 1, userId: OperatorUserId);
+        var forUpdate       = new UserEventType();
+        createdEntities.First().Value.CopyTo(another: forUpdate);
+        forUpdate.Name = "Updated";
+        var beforeSend    = DateTime.UtcNow;
+        var updateCommand = new EventTypeUpdateCommand(EventType: forUpdate, SaveChanges: true, Context: OperatorContext);
+
+        updateCommand.EventType.AnalysisResults = new List<StatisticsForEventType> {
+            new () {
+                EntityId     = updateCommand.EventType.Id,
+                AnalysisCode = FeatureCodes.GAP_ANALYSIS,
+                ResultJson   = "",
+                StartedAt    = DateTime.UtcNow,
+                FinishedAt   = DateTime.UtcNow.AddMinutes(1)
+            }
+        };
+        
+        var cqrsResult = await Mediator.Send(request: updateCommand);
+
+        cqrsResult.CheckSuccessfullyUpdatedEntity(operatorId: OperatorUserId, forUpdate: forUpdate, beforeSend: beforeSend);
+
+        TestData.DbContext.StatisticsForEventTypes.ToList().Should().BeEmpty();
     }
 }

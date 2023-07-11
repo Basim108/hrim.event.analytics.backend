@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
@@ -7,6 +8,22 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
 [ExcludeFromCodeCoverage]
 public class EventTypeGetAllTests: BaseCqrsTests
 {
+    [Fact]
+    public async Task Given_EventType_When_Not_Empty_AnalysisResults_Returns_Them() {
+        var eventType = TestData.Events.CreateEventType(OperatorUserId);
+        var gapResult = TestData.AnalysisResults.EnsureGapExistence(eventType.Id);
+
+        var resultList = await Mediator.Send(new EventTypeGetAllMine(Context: OperatorContext));
+        resultList.Should().NotBeEmpty();
+        resultList.Count.Should().Be(expected: 1);
+        resultList[0].AnalysisResults.Should().NotBeEmpty();
+        var analysisResult = resultList[0].AnalysisResults!.First();
+        analysisResult.Should().NotBeNull();
+        analysisResult.Code.Should().Be(FeatureCodes.GAP_ANALYSIS);
+        analysisResult.ResultJson.Should().NotBeNull();
+        analysisResult.CalculatedAt.Should().Be(gapResult.FinishedAt);
+    }
+
     [Fact]
     public async Task Given_IncludeOthersPublic_False_Returns_OnlyMine_Private_And_Public_EventTypes() {
         var anotherUserId = Guid.NewGuid();

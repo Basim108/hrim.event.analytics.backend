@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Services;
+using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
@@ -36,6 +38,9 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
             query = query.Where(x => x.CreatedById == operatorUserId);
         if (!request.IncludeDeleted)
             query = query.Where(x => x.IsDeleted != true);
+        if (request.IncludeAnalysis)
+            query = query.Include(x => x.AnalysisResults);
+
         var result = await query.AsNoTracking()
                                 .Select(x => new ViewEventType(x.Id,
                                                                x.Name,
@@ -43,8 +48,11 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
                                                                x.Color,
                                                                x.IsPublic,
                                                                x.IsDeleted   == true,
-                                                               x.CreatedById == operatorUserId))
-                                .ToListAsync(cancellationToken: cancellationToken);
+                                                               x.CreatedById == operatorUserId,
+                                                               x.AnalysisResults.Select(a => new ViewAnalysisResult(a.AnalysisCode,
+                                                                                                                    a.ResultJson,
+                                                                                                                    a.FinishedAt))))
+            .ToListAsync(cancellationToken: cancellationToken);
         return result;
     }
 }
