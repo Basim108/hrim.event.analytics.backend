@@ -32,6 +32,9 @@ public abstract class BaseEvent: HrimEntity, IHasOwner
     /// <summary> Analysis results </summary>
     public List<StatisticsForEvent>? AnalysisResults { get; set; }
 
+    /// <summary> Some additional values associated with this event </summary>
+    public IDictionary<string, string>? Props { get; set; }
+
     /// <summary> copy all entity properties to the another entity </summary>
     public void CopyTo(BaseEvent another) {
         base.CopyTo(another: another);
