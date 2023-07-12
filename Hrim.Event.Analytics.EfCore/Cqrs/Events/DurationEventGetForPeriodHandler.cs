@@ -40,7 +40,8 @@ public class DurationEventGetForPeriodHandler: IRequestHandler<DurationEventGetF
                                                                                     IsPublic: x.EventType.IsPublic,
                                                                                     x.EventType.IsDeleted ?? false,
                                                                                     IsMine: true),
-                                                                  ConcurrentToken: x.ConcurrentToken))
+                                                                  ConcurrentToken: x.ConcurrentToken,
+                                                                  Props: x.Props))
                                .ToList();
         return result;
     }

@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
+using Hrim.Event.Analytics.EfCore.ValueConverters;
 using Hrimsoft.StringCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,5 +22,11 @@ public static class _EventBaseDbConfigExtension
                .HasComment(comment: "Event type on which current event is based.")
                .IsRequired();
         builder.HasOne(x => x.EventType);
+        
+        builder.Property(p => p.Props)
+               .HasColumnName(nameof(BaseEvent.Props).ToSnakeCase())
+               .HasComment("Some additional values associated with this event")
+               .HasConversion(JsonDictionaryConverter.GetNullable())
+               .HasColumnType("jsonb");
     }
 }

@@ -70,6 +70,7 @@ public class OccurrenceEventCreateHandler: IRequestHandler<OccurrenceEventCreate
             CreatedById     = operatorUserId,
             CreatedAt       = now,
             UpdatedAt       = now,
+            Props           = request.EventInfo.Props,
             ConcurrentToken = 1
         };
         _context.OccurrenceEvents.Add(entity: entityToCreate);

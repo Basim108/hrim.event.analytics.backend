@@ -3,6 +3,7 @@ using System;
 using Hrim.Event.Analytics.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    partial class EventAnalyticDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230712122711_add_props_for_all_kind_of_events")]
+    partial class add_props_for_all_kind_of_events
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

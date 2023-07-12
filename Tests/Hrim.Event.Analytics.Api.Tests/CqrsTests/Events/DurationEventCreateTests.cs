@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
 using Hrim.Event.Analytics.Api.V1.Models;
 using Hrimsoft.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
@@ -35,7 +36,24 @@ public class DurationEventCreateTests: BaseCqrsTests
         cqrsResult.Result!.StartedAt.Should().Be(_createRequest.StartedAt.TruncateToMilliseconds());
         cqrsResult.Result!.FinishedAt.Should().Be(_createRequest.FinishedAt!.Value.TruncateToMilliseconds());
     }
+    
+    [Fact]
+    public async Task Create_Given_Props_DurationEvent_Should_Save_It() {
+        var beforeSend = DateTime.UtcNow;
+        _createRequest.Props = new Dictionary<string, string>() {
+            { "notes", "this is a test note" }
+        };
+        
+        var cqrsResult = await Mediator.Send(request: _createCommand);
 
+        cqrsResult.CheckSuccessfullyCreatedEntity(operatorId: OperatorUserId, beforeSend: beforeSend);
+
+        var savedEvent = TestData.DbContext.DurationEvents.FirstOrDefault(x => x.Id == cqrsResult.Result!.Id);
+        savedEvent.Should().NotBeNull();
+        savedEvent!.Props.Should().NotBeEmpty();
+        savedEvent.Props!.ContainsKey("notes").Should().BeTrue();
+    }
+    
     [Fact]
     public async Task Create_DurationEvent_With_Same_StartedAt_And_EventType() {
         var dbEntity      = TestData.Events.CreateDurationEvent(userId: OperatorUserId, eventTypeId: _eventType.Id);

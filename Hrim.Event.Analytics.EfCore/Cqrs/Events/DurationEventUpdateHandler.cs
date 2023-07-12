@@ -4,6 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Events;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
+using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
@@ -87,6 +88,10 @@ public class DurationEventUpdateHandler: IRequestHandler<DurationEventUpdateComm
         if (existed.EventTypeId != mappedEventInfo.EventTypeId) {
             existed.EventTypeId = request.EventInfo.EventTypeId;
             isChanged           = true;
+        }
+        if (existed.Props.NotEqualTo(request.EventInfo.Props)) {
+            existed.Props = request.EventInfo.Props;
+            isChanged     = true;
         }
         if (isChanged) {
             existed.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();

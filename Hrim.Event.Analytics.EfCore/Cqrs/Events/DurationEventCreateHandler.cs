@@ -71,6 +71,7 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
             CreatedById     = operatorUserId,
             CreatedAt       = now,
             UpdatedAt       = now,
+            Props           = request.EventInfo.Props,
             ConcurrentToken = 1
         };
         _context.DurationEvents.Add(entity: entityToCreate);

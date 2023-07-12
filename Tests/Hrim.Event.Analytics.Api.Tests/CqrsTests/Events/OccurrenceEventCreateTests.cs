@@ -25,6 +25,23 @@ public class OccurrenceEventCreateTests: BaseCqrsTests
     }
 
     [Fact]
+    public async Task Create_Given_Props_OccurrenceEvent_Should_Save_It() {
+        var beforeSend = DateTime.UtcNow;
+        _createRequest.Props = new Dictionary<string, string>() {
+            { "notes", "this is a test note" }
+        };
+        
+        var cqrsResult = await Mediator.Send(request: _createCommand);
+
+        cqrsResult.CheckSuccessfullyCreatedEntity(operatorId: OperatorUserId, beforeSend: beforeSend);
+
+        var savedEvent = TestData.DbContext.OccurrenceEvents.FirstOrDefault(x => x.Id == cqrsResult.Result!.Id);
+        savedEvent.Should().NotBeNull();
+        savedEvent!.Props.Should().NotBeEmpty();
+        savedEvent.Props!.ContainsKey("notes").Should().BeTrue();
+    }
+    
+    [Fact]
     public async Task Create_OccurrenceEvent() {
         var beforeSend = DateTime.UtcNow;
 

@@ -23,6 +23,25 @@ public class OccurrenceEventUpdateTests: BaseCqrsTests
     }
 
     [Fact]
+    public async Task Update_Given_Props_OccurrenceEvent_Should_Save_It() {
+        var dbEvent = TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId, eventTypeId: _eventType.Id);
+
+        var forUpdate = new OccurrenceEventUpdateRequest();
+        dbEvent.CopyTo(another: forUpdate);
+        forUpdate.Props = new Dictionary<string, string>() {
+            { "notes", "this is a test note" }
+        };
+        var updateCommand = new OccurrenceEventUpdateCommand(EventInfo: forUpdate, SaveChanges: true, Context: OperatorContext);
+
+        await Mediator.Send(request: updateCommand);
+
+        var savedEvent = TestData.DbContext.OccurrenceEvents.FirstOrDefault(x => x.Id == forUpdate.Id);
+        savedEvent.Should().NotBeNull();
+        savedEvent!.Props.Should().NotBeEmpty();
+        savedEvent.Props!.ContainsKey("notes").Should().BeTrue();
+    }
+    
+    [Fact]
     public async Task Update_OccurrenceEvent() {
         var dbEvent = TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
                                                             eventTypeId: _eventType.Id,
