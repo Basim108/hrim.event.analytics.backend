@@ -2,20 +2,24 @@ using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
+using Hrim.Event.Analytics.Analysis;
+using Hrim.Event.Analytics.Analysis.Cqrs;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
-using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Analysis.GapAnalysis;
 
 [ExcludeFromCodeCoverage]
 public class CalculateGapForEventTypeTests: BaseCqrsTests
 {
-    private readonly GapSettings _settings = new(TimeSpan.FromDays(1));
+    private readonly Dictionary<string, string> _settings = new () {
+        { AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "01:00:00:00" }
+    };
 
     [Fact]
     public async Task Should() {
-        var command = new CalculateGapForEventType(Guid.Empty, _settings, null);
-        var ex      = await Assert.ThrowsAsync<ArgumentNullException>(() => Mediator.Send(command));
+        var calcInfo = new EventTypeAnalysisSettings(Guid.Empty, _settings, DateTime.UtcNow);
+        var command  = new CalculateGapForEventType(calcInfo, null);
+        var ex       = await Assert.ThrowsAsync<ArgumentNullException>(() => Mediator.Send(command));
         ex.ParamName.Should().Be("request");
         ex.Message.Contains("EventTypeId").Should().BeTrue();
     }
@@ -34,7 +38,8 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(-2),
             FinishedAt   = DateTime.UtcNow.AddMinutes(-1)
         };
-        var result = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, lastRun));
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result = await Mediator.Send(new CalculateGapForEventType(calcInfo, lastRun));
         result.Should().NotBeNull();
         result!.EventCount.Should().Be(0);
         result.Min.Should().BeNull();
@@ -51,7 +56,8 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Given_No_LastRun_When_No_Events_Should_Return_Null() {
         var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
-        var result = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, null));
+        var calcInfo   = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result     = await Mediator.Send(new CalculateGapForEventType(calcInfo, null));
         result.Should().BeNull();
     }
     
@@ -71,7 +77,8 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         };
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id);
         TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id);
-        var result = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, lastRun));
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result   = await Mediator.Send(new CalculateGapForEventType(calcInfo, lastRun));
         result.Should().NotBeNull();
         result!.EventCount.Should().Be(4);
     }
@@ -92,7 +99,8 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         };
         duration.UpdatedAt = DateTime.UtcNow.AddMinutes(1);
         TestData.DbContext.SaveChanges();
-        var result = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, lastRun));
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result   = await Mediator.Send(new CalculateGapForEventType(calcInfo, lastRun));
         result.Should().NotBeNull();
         result!.EventCount.Should().Be(2);
     }
@@ -111,10 +119,11 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(1),
             FinishedAt   = DateTime.UtcNow.AddMinutes(2)
         };
-        var result = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, lastRun));
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result   = await Mediator.Send(new CalculateGapForEventType(calcInfo, lastRun));
         result.Should().BeNull();
     }
-    
+
     /// <summary>
     /// CASE 6: there are shuffled event kinds: e.g. sequence of occurrence, duration, occurrence
     /// </summary>
@@ -125,7 +134,8 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: now);
         var firstOccurrence = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: now.AddDays(1));
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: firstOccurrence.OccurredAt.AddDays(1));
-        var result = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, null));
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result   = await Mediator.Send(new CalculateGapForEventType(calcInfo, null));
         result.Should().NotBeNull();
         result!.EventCount.Should().Be(3);
         result.GapCount.Should().Be(0);
@@ -141,9 +151,29 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: now);
         var firstOccurrence = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: now.AddDays(1), isDeleted:true);
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: firstOccurrence.OccurredAt.AddDays(1));
-        var result          = await Mediator.Send(new CalculateGapForEventType(eventType1.Id, _settings, null));
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result   = await Mediator.Send(new CalculateGapForEventType(calcInfo, null));
         result.Should().NotBeNull();
         result!.EventCount.Should().Be(2);
         result.GapCount.Should().Be(1);
+    }
+    
+    /// <summary>
+    /// CASE 8: there is no changes in events, but analysis settings changed after last run => recalculate
+    /// </summary>
+    [Fact]
+    public async Task Given_No_Changed_Events_When_Settings_Changed_After_LastRun_Should_Calculate() {
+        var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
+        TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id);
+        TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id);
+        var lastRun = new StatisticsForEventType {
+            EntityId     = eventType1.Id,
+            AnalysisCode = FeatureCodes.GAP_ANALYSIS,
+            StartedAt    = DateTime.UtcNow.AddSeconds(60),
+            FinishedAt   = DateTime.UtcNow.AddSeconds(120)
+        };
+        var calcInfo = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.UtcNow.AddSeconds(61));
+        var result   = await Mediator.Send(new CalculateGapForEventType(calcInfo, lastRun));
+        result.Should().NotBeNull();
     }
 }

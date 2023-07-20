@@ -31,11 +31,10 @@ public class GapAnalysisRecurringJobHandler: IRequestHandler<GapAnalysisRecurrin
             using var eventTypeScope = _logger.BeginScope(CoreLogs.EVENT_TYPE_ID, info.EventTypeId);
 
             var startedAt   = DateTime.UtcNow.TruncateToMicroseconds();
-            var gapSettings = new GapSettings(info.Settings!);
             var prevAnalysisResult = await _context.StatisticsForEventTypes
                                                    .FirstOrDefaultAsync(x => x.EntityId == info.EventTypeId && x.AnalysisCode == FeatureCodes.GAP_ANALYSIS,
                                                                         cancellationToken);
-            var analysisResult = await _mediator.Send(new CalculateGapForEventType(info.EventTypeId, gapSettings, prevAnalysisResult),
+            var analysisResult = await _mediator.Send(new CalculateGapForEventType(info, prevAnalysisResult),
                                                       cancellationToken);
             if (analysisResult != null) {
                 var resultJson = analysisResult.EventCount == 0

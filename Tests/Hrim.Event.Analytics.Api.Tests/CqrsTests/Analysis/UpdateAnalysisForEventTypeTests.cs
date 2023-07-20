@@ -175,7 +175,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         // count should be unchanged
         var countDb = await TestData.AnalysisByEventType.GetAsync(eventType.Id, FeatureCodes.COUNT_ANALYSIS);
         countDb.Should().NotBeNull();
-        countDb!.UpdatedAt.Should().BeNull();
+        countDb!.UpdatedAt.Should().Be(countDb.CreatedAt);
         countDb.IsOn.Should().BeTrue();
         countDb.ConcurrentToken.Should().Be(1);
         
@@ -193,7 +193,6 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         var count        = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         var gap          = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         var list         = new List<AnalysisByEventType>() { count, gap };
-        var beforeUpdate = DateTime.UtcNow;
         var resultList   = await Mediator.Send(new UpdateAnalysisForEventType(eventType.Id, list, OperatorContext));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
@@ -202,14 +201,14 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         // count should be unchanged
         var countDb = await TestData.AnalysisByEventType.GetAsync(eventType.Id, FeatureCodes.COUNT_ANALYSIS);
         countDb.Should().NotBeNull();
-        countDb!.UpdatedAt.Should().BeNull();
+        countDb!.UpdatedAt.Should().Be(countDb.CreatedAt);
         countDb.IsOn.Should().BeTrue();
         countDb.ConcurrentToken.Should().Be(1);
         
         // gap should be unchanged
         var gapDb = await TestData.AnalysisByEventType.GetAsync(eventType.Id, FeatureCodes.GAP_ANALYSIS);
         gapDb.Should().NotBeNull();
-        gapDb!.UpdatedAt.Should().BeNull();
+        gapDb!.UpdatedAt.Should().Be(gapDb.CreatedAt);
         gapDb.IsOn.Should().BeTrue();
         gapDb.ConcurrentToken.Should().Be(1);
     }

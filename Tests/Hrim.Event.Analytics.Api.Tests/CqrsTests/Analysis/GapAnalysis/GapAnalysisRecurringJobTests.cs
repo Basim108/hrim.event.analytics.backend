@@ -39,17 +39,17 @@ public class GapAnalysisRecurringJobTests
         var eventType2 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #2");
         _mediator.Send(Arg.Any<GetEventTypesForAnalysis>(), Arg.Any<CancellationToken>())
                  .Returns(new List<EventTypeAnalysisSettings>() {
-                      new (eventType1.Id, _settings),
-                      new (eventType2.Id, _settings)
+                      new (eventType1.Id, _settings, DateTime.UtcNow),
+                      new (eventType2.Id, _settings, DateTime.UtcNow)
                   });
 
         await _handler.Handle(_job, CancellationToken.None);
 
         await _mediator.Received(1)
-                       .Send(Arg.Is<CalculateGapForEventType>(x => x.EventTypeId == eventType1.Id),
+                       .Send(Arg.Is<CalculateGapForEventType>(x => x.CalculationInfo.EventTypeId == eventType1.Id),
                              Arg.Any<CancellationToken>());
         await _mediator.Received(1)
-                       .Send(Arg.Is<CalculateGapForEventType>(x => x.EventTypeId == eventType2.Id),
+                       .Send(Arg.Is<CalculateGapForEventType>(x => x.CalculationInfo.EventTypeId == eventType2.Id),
                              Arg.Any<CancellationToken>());
     }
     
@@ -61,7 +61,7 @@ public class GapAnalysisRecurringJobTests
         var eventType1 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
         _mediator.Send(Arg.Any<GetEventTypesForAnalysis>(), Arg.Any<CancellationToken>())
                  .Returns(new List<EventTypeAnalysisSettings>() {
-                      new (eventType1.Id, _settings),
+                      new (eventType1.Id, _settings, DateTime.UtcNow),
                   });
         _mediator.Send(Arg.Any<CalculateGapForEventType>(),
                        Arg.Any<CancellationToken>())

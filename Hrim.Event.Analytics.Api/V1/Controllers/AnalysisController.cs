@@ -25,7 +25,7 @@ public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEven
         _mediator = mediator;
     }
 
-    /// <summary> Get all user event types </summary>
+    /// <summary> Get all enabled analysis </summary>
     [HttpGet]
     public Task<List<AvailableAnalysis>> GetAllAsync(CancellationToken cancellationToken)
         => _mediator.Send(new GetAvailableAnalysisQuery(), cancellationToken: cancellationToken);

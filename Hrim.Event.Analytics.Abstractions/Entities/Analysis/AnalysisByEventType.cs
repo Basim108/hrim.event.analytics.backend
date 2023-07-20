@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+
 #pragma warning disable CS8618
 
 namespace Hrim.Event.Analytics.Abstractions.Entities.Analysis;
@@ -10,7 +11,7 @@ public class AnalysisByEventType
 {
     /// <summary> Events of this event type will be analysed </summary>
     public UserEventType? EventType { get; set; }
-    
+
     /// <summary> Events of this event type id will be analysed </summary>
     public Guid EventTypeId { get; set; }
 
@@ -30,7 +31,7 @@ public class AnalysisByEventType
     public DateTime CreatedAt { get; set; }
 
     /// <summary> Date and UTC time of entity instance last update </summary>
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     /// <summary> Update is possible only when this token equals to the token in the storage </summary>
     public long ConcurrentToken { get; set; }
