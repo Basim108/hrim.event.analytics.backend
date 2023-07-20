@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.Analysis.Cqrs;
 
-public record EventTypeAnalysisSettings(Guid EventTypeId, IDictionary<string, string>? Settings);
+public record EventTypeAnalysisSettings(Guid EventTypeId, IDictionary<string, string>? Settings, DateTime UpdatedAt);
 
 public record GetEventTypesForAnalysis(string AnalysisCode): IRequest<List<EventTypeAnalysisSettings>>;
 
@@ -33,7 +33,7 @@ public class GetEventTypesForAnalysisHandler: IRequestHandler<GetEventTypesForAn
         return feature.IsOn
                    ? await _context.AnalysisByEventType
                                    .Where(x => x.AnalysisCode == request.AnalysisCode && x.IsOn)
-                                   .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, x.Settings))
+                                   .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, x.Settings, x.UpdatedAt))
                                    .ToListAsync(cancellationToken)
                    : new List<EventTypeAnalysisSettings>();
     }

@@ -7,5 +7,5 @@ public static class AnalysisLogs
     public const string STARTING_AT_IS_GREATER_THAN_FINISHED_AT = "StaringAt is greater than FinishedAt";
 
     public const string GAP_CALCULATION_PARAMS =
-        "Gap Analysis calculation params: IsFirstRun={IsFirstRun}, IsDurationChanged={IsDurationChanged}, IsOccurrenceChanged={IsOccurrenceChanged}";
+        "Gap Analysis calculation params: IsFirstRun={IsFirstRun}, IsDurationChanged={IsDurationChanged}, IsOccurrenceChanged={IsOccurrenceChanged}, IsCalcSettingsChanged={IsCalcSettingsChanged}";
 }

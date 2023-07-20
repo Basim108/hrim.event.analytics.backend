@@ -14,12 +14,14 @@ public class AnalysisByEventTypeData
                                                string                       analysisCode,
                                                bool                         isOn,
                                                IDictionary<string, string>? settings) {
+        var now = DateTime.UtcNow;
         var analysis = new AnalysisByEventType {
             EventTypeId     = eventTypeId,
             AnalysisCode    = analysisCode,
             IsOn            = isOn,
             Settings        = settings,
-            CreatedAt       = DateTime.UtcNow,
+            CreatedAt       = now,
+            UpdatedAt       = now,
             ConcurrentToken = 1
         };
         _context.AnalysisByEventType.Add(analysis);
