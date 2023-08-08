@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
+using Newtonsoft.Json;
 
 #pragma warning disable CS8618
 
@@ -9,7 +10,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 /// </summary>
 public class AnalysisByEventType
 {
-    /// <summary> Events of this event type will be analysed </summary>
+    [JsonIgnore]
     public UserEventType? EventType { get; set; }
 
     /// <summary> Events of this event type id will be analysed </summary>

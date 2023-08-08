@@ -1,5 +1,7 @@
+using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Analysis.Cqrs.CountAnalysis;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
+using Hrim.Event.Analytics.Analysis.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hrim.Event.Analytics.Analysis.DependencyInjection;
@@ -13,5 +15,6 @@ public static class AnalysisServiceRegistrations
 
         services.AddTransient<IGapCalculationService, GapCalculationService>();
         services.AddTransient<ICountCalculationService, CountCalculationService>();
+        services.AddTransient<IAnalysisSettingsFactory, AnalysisSettingsFactory>();
     }
 }

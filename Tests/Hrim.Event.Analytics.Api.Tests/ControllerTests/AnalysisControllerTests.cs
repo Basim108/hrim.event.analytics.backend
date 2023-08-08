@@ -16,6 +16,7 @@ public class AnalysisControllerTests: BaseCqrsTests
 
     public AnalysisControllerTests() {
         _controller = new AnalysisController(ServiceProvider.GetRequiredService<IApiRequestAccessor>(),
+                                             ServiceProvider.GetRequiredService<IAnalysisSettingsFactory>(),
                                              ServiceProvider.GetRequiredService<IMediator>());
     }
 

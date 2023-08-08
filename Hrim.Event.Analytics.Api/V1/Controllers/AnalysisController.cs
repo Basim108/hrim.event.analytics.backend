@@ -16,13 +16,16 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [Route(template: "v1/[controller]")]
 public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEventType>>
 {
-    private readonly IMediator _mediator;
+    private readonly IAnalysisSettingsFactory _analysisSettings;
+    private readonly IMediator                _mediator;
 
     /// <inheritdoc />
-    public AnalysisController(IApiRequestAccessor requestAccessor,
-                              IMediator           mediator)
+    public AnalysisController(IApiRequestAccessor      requestAccessor,
+                              IAnalysisSettingsFactory analysisSettings,
+                              IMediator                mediator)
         : base(requestAccessor) {
-        _mediator = mediator;
+        _analysisSettings = analysisSettings;
+        _mediator         = mediator;
     }
 
     /// <summary> Get all enabled analysis </summary>
@@ -33,10 +36,13 @@ public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEven
     /// <summary> Get analysis info of a particular event type </summary>
     [HttpGet("event-type/{eventTypeId}")]
     public async Task<ActionResult<List<AnalysisByEventType>>> GetForEventType(Guid eventTypeId, CancellationToken cancellationToken) {
+        if (eventTypeId == Guid.Empty)
+            return _analysisSettings.GetDefaultSettings();
         var result = await _mediator.Send(new GetAnalysisByEventTypeId(eventTypeId, OperationContext),
                                           cancellationToken);
         return ProcessCqrsResult(cqrsResult: result);
     }
+
 
     /// <summary>
     /// Create or update analysis info for a particular event type 
