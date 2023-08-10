@@ -42,12 +42,8 @@ builder.Host.UseSerilog((context, services, configuration) => {
                  .Enrich.WithProperty("ThreadId", Environment.CurrentManagedThreadId)
                  .Enrich.WithProperty("AspNetEnvironment", context.HostingEnvironment.EnvironmentName);
     }
-    if (context.HostingEnvironment.IsDevelopment()) {
-        configuration.WriteTo.Console();
-    }
-    else {
-        configuration.WriteTo.Console(new RenderedCompactJsonFormatter());
-    }
+    configuration.WriteTo.Console();
+    // configuration.WriteTo.Console(new RenderedCompactJsonFormatter());
 });
 var app = builder.Build();
 
