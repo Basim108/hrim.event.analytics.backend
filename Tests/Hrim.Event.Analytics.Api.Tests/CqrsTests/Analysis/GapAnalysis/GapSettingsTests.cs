@@ -35,7 +35,7 @@ public class GapSettingsTests
     [Fact]
     public void Given_1d_MinimalGap_Dictionary_Should_Parse_Correctly() {
         var dict = new Dictionary<string, string>() {
-            { AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "1:00:00:00"}
+            { AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "1.00:00:00"}
         };
         _gapSettings.FromDictionary(dict);
         _gapSettings.MinimalGap.Days.Should().Be(1);

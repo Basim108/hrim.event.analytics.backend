@@ -13,7 +13,7 @@ public class AnalysisSettingsFactory: IAnalysisSettingsFactory
             AnalysisCode = FeatureCodes.GAP_ANALYSIS, 
             IsOn         = true,
             Settings = new Dictionary<string, string>(){ 
-                {AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "24:00:00"}
+                {AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "1.00:00:00"}
             }
         },
     };
