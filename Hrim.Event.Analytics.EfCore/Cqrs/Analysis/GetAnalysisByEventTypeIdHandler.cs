@@ -16,13 +16,16 @@ public class GetAnalysisByEventTypeIdHandler: IRequestHandler<GetAnalysisByEvent
 {
     private readonly EventAnalyticDbContext                   _context;
     private readonly ILogger<GetAnalysisByEventTypeIdHandler> _logger;
+    private readonly IMediator                                _mediator;
     private readonly IApiRequestAccessor                      _requestAccessor;
 
     public GetAnalysisByEventTypeIdHandler(EventAnalyticDbContext                   context,
                                            ILogger<GetAnalysisByEventTypeIdHandler> logger,
+                                           IMediator                                mediator,
                                            IApiRequestAccessor                      requestAccessor) {
         _context         = context;
         _logger          = logger;
+        _mediator        = mediator;
         _requestAccessor = requestAccessor;
     }
 
@@ -44,12 +47,21 @@ public class GetAnalysisByEventTypeIdHandler: IRequestHandler<GetAnalysisByEvent
                 _logger.LogWarning(message: EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, nameof(AnalysisByEventType));
                 return new CqrsResult<List<AnalysisByEventType>?>(Result: null, StatusCode: CqrsResultCode.Forbidden);
             }
-            var query = from analysis in _context.AnalysisByEventType
-                        join feature in _context.HrimFeatures on analysis.AnalysisCode equals feature.Code
-                        where analysis.EventTypeId == request.EventTypeId &&
-                              feature.IsOn
-                        select analysis;
-            var settings = await query.AsNoTracking().ToListAsync(cancellationToken);
+            var query =
+                from analysis in _context.AnalysisByEventType
+                join feature in _context.HrimFeatures on analysis.AnalysisCode equals feature.Code
+                where analysis.EventTypeId == request.EventTypeId && feature.IsOn
+                select analysis;
+            var settings       = await query.AsNoTracking().ToListAsync(cancellationToken);
+            var syncCommand    = new SyncAnalysisSettings(request.EventTypeId, settings, null, IsSaveChanges: true);
+            var missedSettings = await _mediator.Send(syncCommand, cancellationToken);
+            if (missedSettings is { Count: > 0 }) {
+                if (_logger.IsEnabled(LogLevel.Debug)) {
+                    var missedCodes = string.Join(", ", missedSettings.Select(x => x.AnalysisCode));
+                    _logger.LogDebug(EfCoreLogs.PROCESSED_EVENT_TYPE, request.EventTypeId, missedCodes);
+                }
+                settings.AddRange(missedSettings);
+            }
             return new CqrsResult<List<AnalysisByEventType>?>(Result: settings, StatusCode: CqrsResultCode.Ok);
         }
         catch (TimeoutException ex) {
