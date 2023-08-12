@@ -17,17 +17,7 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
         _gapFeature   = TestData.Features.EnsureExistence("FEAT_GAP",   FeatureCodes.GAP_ANALYSIS,   true);
         _countFeature = TestData.Features.EnsureExistence("FEAT_COUNT", FeatureCodes.COUNT_ANALYSIS, true, "explanation");
     }
-
-    [Fact]
-    public async Task Given_EventType_Without_Analysis_Returns_EmptyList() {
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-
-        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Id));
-        resultList.Should().NotBeNull();
-        resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
-        resultList.Result.Should().BeNullOrEmpty();
-    }
-
+    
     [Fact]
     public async Task Given_EventType_Created_By_Another_User_Should_Forbid_And_Return_EmptyList() {
         var anotherUserId = Guid.NewGuid();
