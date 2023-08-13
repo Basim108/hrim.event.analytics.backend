@@ -14,9 +14,12 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
     private readonly List<HrimFeature> _features;
 
     public SyncAnalysisSettingsTests() {
-        _gapFeature   = TestData.Features.EnsureExistence("FEAT_GAP",   FeatureCodes.GAP_ANALYSIS,   true);
+        _gapFeature = TestData.Features.EnsureExistence("FEAT_GAP", FeatureCodes.GAP_ANALYSIS, true);
         var countFeature = TestData.Features.EnsureExistence("FEAT_COUNT", FeatureCodes.COUNT_ANALYSIS, true, "explanation");
-        _features = new List<HrimFeature>() { countFeature, _gapFeature };
+        _features = new List<HrimFeature>() {
+            countFeature,
+            _gapFeature
+        };
     }
 
     [Fact]
@@ -25,7 +28,9 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         var countSettings = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
 
         var command = new SyncAnalysisSettings(eventType.Id,
-                                               new List<AnalysisByEventType>() { countSettings },
+                                               new List<AnalysisByEventType>() {
+                                                   countSettings
+                                               },
                                                _features,
                                                IsSaveChanges: true);
         var resultList = await Mediator.Send(command);
@@ -33,6 +38,14 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         resultList!.Count.Should().Be(1);
         resultList[0].AnalysisCode.Should().Be(FeatureCodes.GAP_ANALYSIS);
         resultList[0].ConcurrentToken.Should().Be(1);
+
+        var savedSettings = TestData.DbContext
+                                    .AnalysisByEventType
+                                    .Where(x => x.EventTypeId == eventType.Id)
+                                    .ToList();
+        savedSettings.Count.Should().Be(2);
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS).Should().BeTrue();
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.GAP_ANALYSIS).Should().BeTrue();
     }
 
     [Fact]
@@ -41,13 +54,23 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         var countSettings = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS, true, null);
 
         var command = new SyncAnalysisSettings(eventType.Id,
-                                               new List<AnalysisByEventType>() { countSettings },
+                                               new List<AnalysisByEventType>() {
+                                                   countSettings
+                                               },
                                                _features,
                                                IsSaveChanges: true);
         var resultList = await Mediator.Send(command);
         resultList.Should().NotBeNull();
         resultList!.Count.Should().Be(1);
         resultList[0].AnalysisCode.Should().Be(FeatureCodes.COUNT_ANALYSIS);
+        
+        var savedSettings = TestData.DbContext
+                                    .AnalysisByEventType
+                                    .Where(x => x.EventTypeId == eventType.Id)
+                                    .ToList();
+        savedSettings.Count.Should().Be(2);
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS).Should().BeTrue();
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.GAP_ANALYSIS).Should().BeTrue();
     }
 
     [Fact]
@@ -61,6 +84,13 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         resultList.Should().NotBeNull();
         resultList!.Count.Should().Be(1);
         resultList[0].AnalysisCode.Should().Be(FeatureCodes.COUNT_ANALYSIS);
+        
+        var savedSettings = TestData.DbContext
+                                    .AnalysisByEventType
+                                    .Where(x => x.EventTypeId == eventType.Id)
+                                    .ToList();
+        savedSettings.Count.Should().Be(1);
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS).Should().BeTrue();
     }
 
     [Fact]
@@ -73,5 +103,13 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         resultList!.Count.Should().Be(2);
         resultList.Any(x => x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS).Should().BeTrue();
         resultList.Any(x => x.AnalysisCode == FeatureCodes.GAP_ANALYSIS).Should().BeTrue();
+        
+        var savedSettings = TestData.DbContext
+                                    .AnalysisByEventType
+                                    .Where(x => x.EventTypeId == eventType.Id)
+                                    .ToList();
+        savedSettings.Count.Should().Be(2);
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS).Should().BeTrue();
+        savedSettings.Any(x => x.AnalysisCode == FeatureCodes.GAP_ANALYSIS).Should().BeTrue();
     }
 }

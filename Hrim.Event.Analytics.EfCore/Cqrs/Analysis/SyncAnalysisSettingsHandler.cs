@@ -9,11 +9,11 @@ namespace Hrim.Event.Analytics.EfCore.Cqrs.Analysis;
 
 public class SyncAnalysisSettingsHandler: IRequestHandler<SyncAnalysisSettings, List<AnalysisByEventType>?>
 {
-    private readonly IAnalysisSettingsFactory             _settingsFactory;
-    private readonly EventAnalyticDbContext               _context;
+    private readonly IAnalysisSettingsFactory _settingsFactory;
+    private readonly EventAnalyticDbContext   _context;
 
-    public SyncAnalysisSettingsHandler(IAnalysisSettingsFactory             settingsFactory,
-                                       EventAnalyticDbContext               context) {
+    public SyncAnalysisSettingsHandler(IAnalysisSettingsFactory settingsFactory,
+                                       EventAnalyticDbContext   context) {
         _settingsFactory = settingsFactory;
         _context         = context;
     }
@@ -21,7 +21,7 @@ public class SyncAnalysisSettingsHandler: IRequestHandler<SyncAnalysisSettings, 
     public Task<List<AnalysisByEventType>?> Handle(SyncAnalysisSettings request, CancellationToken cancellationToken) {
         if (request.EventTypeId == Guid.Empty)
             throw new ArgumentNullException(nameof(request), nameof(request.EventTypeId));
-        
+
         return HandleAsync(request, cancellationToken);
     }
 
@@ -31,23 +31,31 @@ public class SyncAnalysisSettingsHandler: IRequestHandler<SyncAnalysisSettings, 
         if (missedSettings == null)
             return null;
         var availableMissedSettings = new List<AnalysisByEventType>();
-        var features                = request.Features ?? await _context.HrimFeatures
-                                                                        .AsNoTracking()
-                                                                        .Where(x => x.IsDeleted != true)
-                                                                        .ToListAsync(cancellationToken);
+        var features = request.Features
+                    ?? await _context.HrimFeatures
+                                     .AsNoTracking()
+                                     .Where(x => x.IsDeleted != true)
+                                     .ToListAsync(cancellationToken);
         foreach (var missedItem in missedSettings) {
             var feature = features.First(x => x.Code == missedItem.AnalysisCode);
             if (!feature.IsOn || feature.IsDeleted == true)
                 continue;
             var now = DateTime.UtcNow.TruncateToMicroseconds();
-            missedItem.EventTypeId     = request.EventTypeId;
-            missedItem.CreatedAt       = now;
-            missedItem.UpdatedAt       = now;
-            missedItem.ConcurrentToken = 1;
-            _context.AnalysisByEventType.Add(missedItem);
-            availableMissedSettings.Add(missedItem);
+            var createdSettings = new AnalysisByEventType {
+                EventTypeId  = request.EventTypeId,
+                AnalysisCode = missedItem.AnalysisCode,
+                IsOn         = missedItem.IsOn,
+                Settings = missedItem.Settings == null
+                               ? null
+                               : new Dictionary<string, string>(missedItem.Settings),
+                CreatedAt       = now,
+                UpdatedAt       = now,
+                ConcurrentToken = 1
+            };
+            _context.AnalysisByEventType.Add(createdSettings);
+            availableMissedSettings.Add(createdSettings);
         }
-        if(request.IsSaveChanges)
+        if (request.IsSaveChanges)
             await _context.SaveChangesAsync(cancellationToken);
         return availableMissedSettings;
     }
