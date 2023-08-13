@@ -83,6 +83,7 @@ if (isNotIntegrationTesting)
 await mediator.Send(new SetupFeatures());
 
 if (isNotIntegrationTesting) {
+    RecurringJobRunner.SetupAnalysisJob<AnalysisSettingsAutoCreationRecurringJob, AnalysisSettingsAutoCreationRecurringJobOptions>(sp);
     RecurringJobRunner.SetupAnalysisJob<GapAnalysisRecurringJob, GapRecurringJobOptions>(sp);
     RecurringJobRunner.SetupAnalysisJob<CountAnalysisRecurringJob, CountRecurringJobOptions>(sp);
 }
