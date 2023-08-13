@@ -83,9 +83,17 @@ if (isNotIntegrationTesting)
 await mediator.Send(new SetupFeatures());
 
 if (isNotIntegrationTesting) {
-    RecurringJobRunner.SetupAnalysisJob<AnalysisSettingsAutoCreationRecurringJob, AnalysisSettingsAutoCreationRecurringJobOptions>(sp);
-    RecurringJobRunner.SetupAnalysisJob<GapAnalysisRecurringJob, GapRecurringJobOptions>(sp);
-    RecurringJobRunner.SetupAnalysisJob<CountAnalysisRecurringJob, CountRecurringJobOptions>(sp);
+    if (app.Environment.IsDevelopment()) {
+        // for debugging in dev mode
+        // await mediator.Send(new AnalysisSettingsAutoCreationRecurringJob());
+        await mediator.Send(new GapAnalysisRecurringJob());
+        // await mediator.Send(new CountAnalysisRecurringJob());
+    }
+    else {
+        RecurringJobRunner.SetupAnalysisJob<AnalysisSettingsAutoCreationRecurringJob, AnalysisSettingsAutoCreationRecurringJobOptions>(sp);
+        RecurringJobRunner.SetupAnalysisJob<GapAnalysisRecurringJob, GapRecurringJobOptions>(sp);
+        RecurringJobRunner.SetupAnalysisJob<CountAnalysisRecurringJob, CountRecurringJobOptions>(sp);
+    }
 }
 
 app.MapControllers();
