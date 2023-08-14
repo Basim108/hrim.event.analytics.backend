@@ -64,6 +64,7 @@ public class GapCalculationService: IGapCalculationService
                                      MaxGapDate: maxGapDate,
                                      Avg: avg,
                                      GapCount: gapCount,
-                                     EventCount: events.Count);
+                                     // subtract that last occurrence that was added to calculate the last gap
+                                     EventCount: events.Count - 1); 
     }
 }

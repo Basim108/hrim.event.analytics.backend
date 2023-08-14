@@ -1,7 +1,9 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
+using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
 using Hrim.Event.Analytics.Analysis.Models;
 using Hrim.Event.Analytics.EfCore;
+using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -77,18 +79,23 @@ public class CalculateGapForEventTypeHandler: IRequestHandler<CalculateGapForEve
                                         .Where(x => x.EventTypeId == request.CalculationInfo.EventTypeId && 
                                                     x.IsDeleted   != true)
                                         .Select(x => new AnalysisEvent(x.OccurredOn, x.OccurredAt,
-                                                                          null, null))
+                                                                       null, null))
                                         .ToListAsync(cancellationToken);
+        // add last occurrence in order to calculate the gap between the last event and now
+        var now = DateTimeOffset.UtcNow.TruncateToSeconds();
+        occurrences.Add(new AnalysisEvent(now.ToDateOnly(), now, null, null));
+        
         var durations = await _context.DurationEvents
                                       .Where(x => x.EventTypeId == request.CalculationInfo.EventTypeId && 
                                                   x.IsDeleted   != true)
                                       .Select(x => new AnalysisEvent(x.StartedOn,  x.StartedAt,
-                                                                        x.FinishedOn, x.FinishedAt))
+                                                                     x.FinishedOn, x.FinishedAt))
                                       .ToListAsync(cancellationToken);
         var joinedEvents = durations.Concat(occurrences)
                                     .OrderBy(x => x.StartDate)
                                     .ThenBy(x => x.StartTime)
                                     .ToList();
+        
         // CASE 1, 3, 4, 6, 7
         var gapSettings = new GapSettings(request.CalculationInfo.Settings!);
         return _calcService.Calculate(joinedEvents, gapSettings);

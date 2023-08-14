@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Analysis;
 using Hrim.Event.Analytics.Analysis.Cqrs;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
+using Hrimsoft.Core.Extensions;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Analysis.GapAnalysis;
 
@@ -179,17 +180,17 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_Occurrence_Events_With_2_Gaps_Then_Calculate_Them() {
-        var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
-        var firstDt    = new DateTimeOffset(2023, 08, 01, 0, 0, 0, TimeSpan.Zero);
-        var event1     = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: firstDt);
-        var event2     = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: event1.OccurredAt.AddHours(2));
-        var event3     = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: event2.OccurredAt.AddDays(3));
-        var event4     = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: event3.OccurredAt.AddDays(7));
-        var calcInfo   = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
-        var result     = await Mediator.Send(new CalculateGapForEventType(calcInfo, null));
+        var eventType1    = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
+        var firstDt       = new DateTimeOffset(2023, 08, 01, 0, 0, 0, TimeSpan.Zero);
+        var event1        = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: firstDt);
+        var event2        = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: event1.OccurredAt.AddHours(2));
+        var event3        = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: event2.OccurredAt.AddDays(3));
+        var event4        = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: event3.OccurredAt.AddDays(7));
+        var calcInfo      = new EventTypeAnalysisSettings(eventType1.Id, _settings, DateTime.MinValue);
+        var result        = await Mediator.Send(new CalculateGapForEventType(calcInfo, null));
         result.Should().NotBeNull();
         result!.EventCount.Should().Be(4);
-        result.GapCount.Should().Be(2);
+        result.GapCount.Should().Be(3);
         result.Min.Should().NotBeNull();
         result.Min.Should().Be(TimeSpan.FromDays(3));
         result.MinGapDate.Should().NotBeNull();
@@ -198,8 +199,6 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         result.Max.Should().Be(TimeSpan.FromDays(7));
         result.MaxGapDate.Should().NotBeNull();
         result.MaxGapDate.Should().Be(event3.OccurredOn);
-        var avg = Math.Ceiling((result.Min!.Value.TotalSeconds + result.Max!.Value.TotalSeconds) / 2);
         result.Avg.Should().NotBeNull();
-        result.Avg!.Value.TotalSeconds.Should().Be(avg);
     }
 }
