@@ -11,6 +11,21 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 public class UserEventType: HrimEntity, IHasOwner
 {
     /// <summary>
+    /// Reference to a more general event type, which this type is specified in some context
+    /// For example, if current event type is Hatha Yoga, its parent type might be just general Yoga. 
+    /// </summary>
+    public UserEventType? Parent { get; set; }
+    
+    /// <summary> Identifier of parent event type </summary>
+    public Guid? ParentId { get; set; }
+    
+    /// <summary>
+    /// Reference to a list of mre specific event types
+    /// For example, if current event type is smoking, then its children subtypes might be "smoking cigarettes", "smoking "  
+    /// </summary>
+    public List<UserEventType>? Children { get; set; }
+    
+    /// <summary>
     ///     Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>
     public string Name { get; set; }

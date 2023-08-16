@@ -20,6 +20,10 @@ public class UserEventTypeDbConfig: IEntityTypeConfiguration<UserEventType>
                 })
                .IsUnique();
 
+        builder.Property(p => p.ParentId)
+               .HasColumnName(nameof(UserEventType.ParentId).ToSnakeCase())
+               .HasComment(comment: "Reference to a more general event type, which this type is specified in some context\nFor example, if current event type is Hatha Yoga, its parent type might be just general Yoga.");
+        
         builder.Property(p => p.Name)
                .HasColumnName(nameof(UserEventType.Name).ToSnakeCase())
                .HasComment(comment: "Event type name, e.g. 'nice mood', 'headache', etc")
@@ -43,6 +47,10 @@ public class UserEventTypeDbConfig: IEntityTypeConfiguration<UserEventType>
                .IsRequired();
         
         builder.HasOne(x => x.CreatedBy);
+        
+        builder.HasOne(x => x.Parent)
+               .WithMany(x => x.Children)
+               .HasForeignKey(x => x.ParentId);
         
         builder.HasMany(x => x.AnalysisResults)
                .WithOne()
