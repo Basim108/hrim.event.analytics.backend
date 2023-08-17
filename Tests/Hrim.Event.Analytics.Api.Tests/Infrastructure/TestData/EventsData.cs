@@ -13,16 +13,18 @@ public class EventsData
 
     public EventsData(EventAnalyticDbContext context) { _context = context; }
 
-    public UserEventType CreateEventType(Guid userId, string name="Test Event Type", bool isDeleted = false) {
+    public UserEventType CreateEventType(Guid userId, string name ="Test Event Type", Guid? parentId=null, bool? isDeleted = false) {
         var entity = new UserEventType {
             Name            = name,
             Color           = "#ff00cc",
-            IsPublic        = true,
+            ParentId        = parentId,
+            IsPublic        = false,
             CreatedById     = userId,
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
+            UpdatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
-        if (isDeleted)
+        if (isDeleted == true)
             entity.IsDeleted = true;
         _context.UserEventTypes.Add(entity: entity);
         _context.SaveChanges();

@@ -33,7 +33,7 @@ public class CountAnalysisRecurringJobHandler: IRequestHandler<CountAnalysisRecu
                                                    .FirstOrDefaultAsync(x => x.EntityId == info.EventTypeId && 
                                                                              x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS,
                                                                         cancellationToken);
-            var analysisResult = await _mediator.Send(new CalculateCountForEventType(info.EventTypeId, prevAnalysisResult),
+            var analysisResult = await _mediator.Send(new CalculateCountForEventType(info, prevAnalysisResult),
                                                       cancellationToken);
             if (analysisResult != null) {
                 var resultJson = analysisResult is { DurationsCount: 0, OccurrencesCount : 0 }

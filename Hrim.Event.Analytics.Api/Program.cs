@@ -86,8 +86,8 @@ if (isNotIntegrationTesting) {
     if (app.Environment.IsDevelopment()) {
         // for debugging in dev mode
         // await mediator.Send(new AnalysisSettingsAutoCreationRecurringJob());
-        await mediator.Send(new GapAnalysisRecurringJob());
-        // await mediator.Send(new CountAnalysisRecurringJob());
+        // await mediator.Send(new GapAnalysisRecurringJob());
+        await mediator.Send(new CountAnalysisRecurringJob());
     }
     else {
         RecurringJobRunner.SetupAnalysisJob<AnalysisSettingsAutoCreationRecurringJob, AnalysisSettingsAutoCreationRecurringJobOptions>(sp);

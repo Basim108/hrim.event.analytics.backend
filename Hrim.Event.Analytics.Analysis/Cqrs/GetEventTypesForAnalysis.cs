@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.Abstractions;
+using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.Analysis.Cqrs;
 
-public record EventTypeAnalysisSettings(Guid EventTypeId, IDictionary<string, string>? Settings, DateTime UpdatedAt);
+public record EventTypeAnalysisSettings(Guid EventTypeId, IDictionary<string, string>? Settings, DateTime UpdatedAt, IEnumerable<Guid>? ChildrenIds);
 
 public record GetEventTypesForAnalysis(string AnalysisCode): IRequest<List<EventTypeAnalysisSettings>>;
 
@@ -32,8 +33,10 @@ public class GetEventTypesForAnalysisHandler: IRequestHandler<GetEventTypesForAn
         }
         return feature.IsOn
                    ? await _context.AnalysisByEventType
+                                   .Include(x => x.EventType)
+                                   .ThenInclude(x => x.Children)
                                    .Where(x => x.AnalysisCode == request.AnalysisCode && x.IsOn)
-                                   .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, x.Settings, x.UpdatedAt))
+                                   .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, x.Settings, x.UpdatedAt, x.EventType!.Children.Select(c => c.Id)))
                                    .ToListAsync(cancellationToken)
                    : new List<EventTypeAnalysisSettings>();
     }
