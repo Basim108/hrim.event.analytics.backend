@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Analysis.DependencyInjection;
@@ -14,7 +15,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args: args);
 
@@ -86,8 +86,8 @@ if (isNotIntegrationTesting) {
     if (app.Environment.IsDevelopment()) {
         // for debugging in dev mode
         // await mediator.Send(new AnalysisSettingsAutoCreationRecurringJob());
-        await mediator.Send(new GapAnalysisRecurringJob());
-        // await mediator.Send(new CountAnalysisRecurringJob());
+        // await mediator.Send(new GapAnalysisRecurringJob());
+        await mediator.Send(new CountAnalysisRecurringJob());
     }
     else {
         RecurringJobRunner.SetupAnalysisJob<AnalysisSettingsAutoCreationRecurringJob, AnalysisSettingsAutoCreationRecurringJobOptions>(sp);
@@ -103,6 +103,7 @@ app.Run();
 namespace Hrim.Event.Analytics.Api
 {
     /// <summary> for integration tests </summary>
+    [ExcludeFromCodeCoverage]
     public class Program
     { }
 }

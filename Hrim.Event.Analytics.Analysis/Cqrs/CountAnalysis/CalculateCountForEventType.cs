@@ -11,10 +11,10 @@ namespace Hrim.Event.Analytics.Analysis.Cqrs.CountAnalysis;
 /// <summary>
 /// Calculates number of events and info about duration events (total duration, min, max and avg duration) of a specific event-type 
 /// </summary>
-/// <param name="EventTypeId">Id of an event-type for which events we should perform an analysis</param>
+/// <param name="EventTypeInfo">An event-type for which events we should perform an analysis</param>
 /// <param name="LastRun">Previous analysis result.</param>
 /// <returns> Returns analysis result or null if there was no changes after the last run.</returns>
-public record CalculateCountForEventType(Guid EventTypeId, StatisticsForEventType? LastRun)
+public record CalculateCountForEventType(EventTypeAnalysisSettings EventTypeInfo, StatisticsForEventType? LastRun)
     : IRequest<CountAnalysisResult?>;
 
 public class CalculateCountForEventTypeHandler: IRequestHandler<CalculateCountForEventType, CountAnalysisResult?>
@@ -32,8 +32,8 @@ public class CalculateCountForEventTypeHandler: IRequestHandler<CalculateCountFo
     }
 
     public Task<CountAnalysisResult?> Handle(CalculateCountForEventType request, CancellationToken cancellationToken) {
-        if (request.EventTypeId == Guid.Empty)
-            throw new ArgumentNullException(nameof(request), nameof(request.EventTypeId));
+        if (request.EventTypeInfo.EventTypeId == Guid.Empty)
+            throw new ArgumentNullException(nameof(request), nameof(request.EventTypeInfo.EventTypeId));
         // CASE 1: there is no events (all deleted after last run) => remove pre analysis result from db  => then result.EventCount = 0
         // CASE 2: there is no events and no last run  => do nothing even analysis_result should be null
         // CASE 3: there is no changes before last run and there are changes after last run => recalculate everything
@@ -45,12 +45,14 @@ public class CalculateCountForEventTypeHandler: IRequestHandler<CalculateCountFo
 
     private async Task<CountAnalysisResult?> CalculateAsync(CalculateCountForEventType request, CancellationToken cancellationToken) {
         var lastUpdatedDuration = await _context.DurationEvents
-                                                .Where(x => x.EventTypeId == request.EventTypeId)
+                                                .Where(x => x.EventTypeId == request.EventTypeInfo.EventTypeId ||
+                                                            request.EventTypeInfo.ChildrenIds.Contains(x.EventTypeId))
                                                 .OrderByDescending(x => x.UpdatedAt)
                                                 .Select(x => x.UpdatedAt)
                                                 .FirstOrDefaultAsync(cancellationToken);
         var lastUpdatedOccurrence = await _context.OccurrenceEvents
-                                                  .Where(x => x.EventTypeId == request.EventTypeId)
+                                                  .Where(x => x.EventTypeId == request.EventTypeInfo.EventTypeId ||
+                                                              request.EventTypeInfo.ChildrenIds.Contains(x.EventTypeId))
                                                   .OrderByDescending(x => x.UpdatedAt)
                                                   .Select(x => x.UpdatedAt)
                                                   .FirstOrDefaultAsync(cancellationToken);
@@ -59,16 +61,20 @@ public class CalculateCountForEventTypeHandler: IRequestHandler<CalculateCountFo
         var isOccurrenceChanged = lastUpdatedOccurrence.HasValue && isFirstRun || lastUpdatedOccurrence.HasValue && lastUpdatedOccurrence > request.LastRun!.StartedAt;
 
         if (_logger.IsEnabled(LogLevel.Debug))
-            _logger.LogDebug(AnalysisLogs.GAP_CALCULATION_PARAMS, isFirstRun, isDurationChanged, isOccurrenceChanged);
+            _logger.LogDebug(AnalysisLogs.GAP_CALCULATION_PARAMS, isFirstRun, isDurationChanged, isOccurrenceChanged, false);
 
         if (!isDurationChanged && !isOccurrenceChanged)
             return null; // CASE 2, 5
 
         var occurrences = await _context.OccurrenceEvents
-                                        .Where(x => x.EventTypeId == request.EventTypeId && x.IsDeleted != true)
+                                        .Where(x => (x.EventTypeId == request.EventTypeInfo.EventTypeId ||
+                                                     request.EventTypeInfo.ChildrenIds.Contains(x.EventTypeId))
+                                                 && x.IsDeleted != true)
                                         .CountAsync(cancellationToken);
         var durations = await _context.DurationEvents
-                                      .Where(x => x.EventTypeId == request.EventTypeId && x.IsDeleted != true)
+                                      .Where(x => (x.EventTypeId == request.EventTypeInfo.EventTypeId ||
+                                                   request.EventTypeInfo.ChildrenIds.Contains(x.EventTypeId))
+                                               && x.IsDeleted != true)
                                       .OrderBy(x => x.StartedOn)
                                       .ThenBy(x => x.StartedAt)
                                       .Select(x => new AnalysisEvent(x.StartedOn,

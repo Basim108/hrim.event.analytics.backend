@@ -2,9 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
+using Hrim.Event.Analytics.Analysis.Cqrs;
 using Hrim.Event.Analytics.Analysis.Cqrs.CountAnalysis;
-using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
-using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Analysis.CountAnalysis;
 
@@ -13,7 +12,7 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
 {
     [Fact]
     public async Task Should() {
-        var command = new CalculateCountForEventType(Guid.Empty, null);
+        var command = new CalculateCountForEventType(new EventTypeAnalysisSettings(Guid.Empty, null, DateTime.Now, Enumerable.Empty<Guid>()), null);
         var ex      = await Assert.ThrowsAsync<ArgumentNullException>(() => Mediator.Send(command));
         ex.ParamName.Should().Be("request");
         ex.Message.Contains("EventTypeId").Should().BeTrue();
@@ -33,7 +32,8 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(-2),
             FinishedAt   = DateTime.UtcNow.AddMinutes(-1)
         };
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, lastRun));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, lastRun));
         result.Should().NotBeNull();
         result!.OccurrencesCount.Should().Be(0);
         result.MinDuration.Should().BeNull();
@@ -50,8 +50,9 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     /// </summary>
     [Fact]
     public async Task Given_No_LastRun_When_No_Events_Should_Return_Null() {
-        var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, null));
+        var eventType1    = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, null));
         result.Should().BeNull();
     }
     
@@ -71,7 +72,9 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
         };
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id);
         TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id);
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, lastRun));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, lastRun));
+
         result.Should().NotBeNull();
         result!.DurationsCount.Should().Be(2);
         result.OccurrencesCount.Should().Be(2);
@@ -93,7 +96,9 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
         };
         duration.UpdatedAt = DateTime.UtcNow.AddMinutes(1);
         TestData.DbContext.SaveChanges();
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, lastRun));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, lastRun));
+
         result.Should().NotBeNull();
         result!.DurationsCount.Should().Be(1);
         result.OccurrencesCount.Should().Be(1);
@@ -113,7 +118,9 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(1),
             FinishedAt   = DateTime.UtcNow.AddMinutes(2)
         };
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, lastRun));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, lastRun));
+
         result.Should().BeNull();
     }
     
@@ -127,7 +134,9 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: now);
         var firstOccurrence = TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: now.AddDays(1), isDeleted:true);
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: firstOccurrence.OccurredAt.AddDays(1));
-        var result          = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, null));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, null));
+
         result.Should().NotBeNull();
         result!.DurationsCount.Should().Be(2);
         result.OccurrencesCount.Should().Be(0);
@@ -140,7 +149,9 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     public async Task Given_Occurrence_But_No_Duration_Should_Return_Occurrences() {
         var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
         TestData.Events.CreateOccurrenceEvent(eventType1.CreatedById, eventType1.Id, occurredAt: DateTimeOffset.UtcNow);
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, null));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, null));
+
         result.Should().NotBeNull();
         result!.DurationsCount.Should().Be(0);
         result.OccurrencesCount.Should().Be(1);
@@ -154,9 +165,27 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
         var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
         var now        = DateTimeOffset.UtcNow;
         TestData.Events.CreateDurationEvent(eventType1.CreatedById, eventType1.Id, startedAt: now);
-        var result = await Mediator.Send(new CalculateCountForEventType(eventType1.Id, null));
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType1.Id, null, eventType1.UpdatedAt!.Value, Enumerable.Empty<Guid>());
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, null));
+
         result.Should().NotBeNull();
         result!.DurationsCount.Should().Be(1);
         result.OccurrencesCount.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Given_Events_For_Parent_And_Child_EventTYpe_Should_Return_All_Those_Events() {
+        var eventType = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
+        var childEventType = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1", parentId: eventType.Id);
+        TestData.Events.CreateOccurrenceEvent(eventType.CreatedById, eventType.Id, occurredAt: DateTimeOffset.UtcNow);
+        TestData.Events.CreateDurationEvent(eventType.CreatedById, eventType.Id, startedAt: DateTimeOffset.UtcNow);
+        TestData.Events.CreateOccurrenceEvent(eventType.CreatedById, childEventType.Id, occurredAt: DateTimeOffset.UtcNow);
+        TestData.Events.CreateDurationEvent(eventType.CreatedById, childEventType.Id, startedAt: DateTimeOffset.UtcNow);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Id, null, eventType.UpdatedAt!.Value, new List<Guid>{childEventType.Id});
+        var result        = await Mediator.Send(new CalculateCountForEventType(eventTypeInfo, null));
+
+        result.Should().NotBeNull();
+        result!.DurationsCount.Should().Be(2);
+        result.OccurrencesCount.Should().Be(2);
     }
 }
