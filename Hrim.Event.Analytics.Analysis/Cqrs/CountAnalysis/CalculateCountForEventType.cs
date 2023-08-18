@@ -61,7 +61,7 @@ public class CalculateCountForEventTypeHandler: IRequestHandler<CalculateCountFo
         var isOccurrenceChanged = lastUpdatedOccurrence.HasValue && isFirstRun || lastUpdatedOccurrence.HasValue && lastUpdatedOccurrence > request.LastRun!.StartedAt;
 
         if (_logger.IsEnabled(LogLevel.Debug))
-            _logger.LogDebug(AnalysisLogs.GAP_CALCULATION_PARAMS, isFirstRun, isDurationChanged, isOccurrenceChanged);
+            _logger.LogDebug(AnalysisLogs.GAP_CALCULATION_PARAMS, isFirstRun, isDurationChanged, isOccurrenceChanged, false);
 
         if (!isDurationChanged && !isOccurrenceChanged)
             return null; // CASE 2, 5

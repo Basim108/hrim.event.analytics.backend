@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Analysis.DependencyInjection;
@@ -14,7 +15,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args: args);
 
@@ -103,6 +103,7 @@ app.Run();
 namespace Hrim.Event.Analytics.Api
 {
     /// <summary> for integration tests </summary>
+    [ExcludeFromCodeCoverage]
     public class Program
     { }
 }

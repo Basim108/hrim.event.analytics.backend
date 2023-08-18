@@ -1,7 +1,5 @@
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
-using Hrim.Event.Analytics.Abstractions.Jobs;
-using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
 using Hrim.Event.Analytics.EfCore;
 using Hrimsoft.Core.Extensions;
 using MediatR;

@@ -1,6 +1,6 @@
 ﻿namespace Hrim.Event.Analytics.Analysis;
 
-public class SqlQueries
+public static class SqlQueries
 {
     public const string GET_EVENT_TYPE_PARENTS = @"
 WITH RECURSIVE cte AS (
