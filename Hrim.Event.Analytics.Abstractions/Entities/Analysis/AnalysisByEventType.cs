@@ -1,5 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Newtonsoft.Json;
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 #pragma warning disable CS8618
 
@@ -15,8 +16,7 @@ public class AnalysisByEventType
 
     /// <summary> Events of this event type id will be analysed </summary>
     public Guid EventTypeId { get; set; }
-
-    /// <summary> Code of analysis </summary>
+    
     public string AnalysisCode { get; set; }
 
     /// <summary>
