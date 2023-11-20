@@ -28,7 +28,7 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         var countSettings = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
 
         var command = new SyncAnalysisSettings(eventType.Id,
-                                               new List<AnalysisByEventType>() {
+                                               new List<AnalysisConfigByEventType>() {
                                                    countSettings
                                                },
                                                _features,
@@ -54,7 +54,7 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
         var countSettings = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS, true, null);
 
         var command = new SyncAnalysisSettings(eventType.Id,
-                                               new List<AnalysisByEventType>() {
+                                               new List<AnalysisConfigByEventType>() {
                                                    countSettings
                                                },
                                                _features,

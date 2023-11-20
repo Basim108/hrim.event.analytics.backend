@@ -10,7 +10,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 [ExcludeFromCodeCoverage]
 public class DurationEventGetForPeriodTests: BaseCqrsTests
 {
-    private readonly UserEventType _eventType;
+    private readonly EventType _eventType;
 
     public DurationEventGetForPeriodTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}"); }
 
@@ -22,7 +22,7 @@ public class DurationEventGetForPeriodTests: BaseCqrsTests
                                                             eventTypeId: _eventType.Id,
                                                             startedAt: DateTimeOffset.Now,
                                                             finishedAt: DateTimeOffset.Now);
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         TestData.Events.CreateDurationEvent(userId: anotherUserId,
                                             eventTypeId: _eventType.Id,

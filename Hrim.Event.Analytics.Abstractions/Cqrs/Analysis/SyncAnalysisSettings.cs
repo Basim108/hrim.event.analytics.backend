@@ -12,8 +12,8 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 /// <param name="Features">List of all features available and not</param>
 /// <param name="IsSaveChanges">If true will save changes after creation</param>
 /// <returns>Returns missed settings and null in case no settings were missed</returns>
-public record SyncAnalysisSettings(Guid                       EventTypeId,
-                                   List<AnalysisByEventType>? CurrentSettings,
-                                   List<HrimFeature>?         Features,
-                                   bool                       IsSaveChanges)
-    : IRequest<List<AnalysisByEventType>?>;
+public record SyncAnalysisSettings(long                             EventTypeId,
+                                   List<AnalysisConfigByEventType>? CurrentSettings,
+                                   List<HrimFeature>?               Features,
+                                   bool                             IsSaveChanges)
+    : IRequest<List<AnalysisConfigByEventType>?>;

@@ -13,8 +13,9 @@ public static class EventValidatorExtensions
     /// <summary>
     ///     Adds rules to update and create duration event requests
     /// </summary>
-    public static void AddRulesForEntityUpdateRequests<TRequest>(this AbstractValidator<TRequest> validator)
-        where TRequest : HrimEntity {
+    public static void AddRulesForEntityUpdateRequests<TRequest, TKey>(this AbstractValidator<TRequest> validator)
+        where TKey : struct
+        where TRequest : HrimEntity<TKey> {
         validator.RuleFor(x => x.Id)
                  .NotEmpty()
                  .WithMessage(errorMessage: ValidationMessages.IS_REQUIRED);
@@ -26,8 +27,9 @@ public static class EventValidatorExtensions
     /// <summary>
     ///     Adds rules to update and create duration event requests
     /// </summary>
-    public static void AddRulesForEntityCreateRequests<TRequest>(this AbstractValidator<TRequest> validator)
-        where TRequest : HrimEntity {
+    public static void AddRulesForEntityCreateRequests<TRequest, TKey>(this AbstractValidator<TRequest> validator)
+        where TKey : struct
+        where TRequest : HrimEntity<TKey> {
         validator.RuleFor(x => x.Id)
                  .Empty();
 

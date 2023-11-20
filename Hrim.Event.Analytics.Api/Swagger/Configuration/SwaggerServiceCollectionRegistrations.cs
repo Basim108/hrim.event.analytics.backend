@@ -1,5 +1,6 @@
 using System.Reflection;
 using Hrim.Event.Analytics.Abstractions.Entities;
+using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Swashbuckle.AspNetCore.Filters;
 
 #pragma warning disable CS1591
@@ -30,7 +31,7 @@ public static class SwaggerServiceCollectionRegistrations
     }
 
     private static string GetAbstractionsXmlCommentsPath() {
-        var xmlFile = $"{Assembly.GetAssembly(typeof(HrimEntity))?.GetName().Name}.xml";
+        var xmlFile = $"{Assembly.GetAssembly(typeof(BaseEvent))?.GetName().Name}.xml";
         var xmlPath = Path.Combine(path1: AppContext.BaseDirectory, path2: xmlFile);
         return xmlPath;
     }

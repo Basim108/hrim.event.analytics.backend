@@ -11,7 +11,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 [ExcludeFromCodeCoverage]
 public class OccurrenceEventUpdateTests: BaseCqrsTests
 {
-    private readonly UserEventType                _eventType;
+    private readonly EventType                _eventType;
     private readonly OccurrenceEventUpdateRequest _updateRequest;
 
     public OccurrenceEventUpdateTests() {

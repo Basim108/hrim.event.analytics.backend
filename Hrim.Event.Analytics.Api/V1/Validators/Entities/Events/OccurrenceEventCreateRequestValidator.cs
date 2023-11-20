@@ -8,7 +8,7 @@ public class OccurrenceEventCreateRequestValidator: AbstractValidator<Occurrence
 {
     /// <summary> </summary>
     public OccurrenceEventCreateRequestValidator() {
-        this.AddRulesForEntityCreateRequests();
+        this.AddRulesForEntityCreateRequests<OccurrenceEventCreateRequest, long>();
         this.AddRulesForBaseEvent();
         this.AddRulesForOccurrenceEvent();
     }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Users;
 
-public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQuery, Guid>
+public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQuery, long>
 {
     private readonly EventAnalyticDbContext                 _context;
     private readonly ILogger<GetInternalUserIdQueryHandler> _logger;
@@ -17,7 +17,7 @@ public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQue
         _context = context;
     }
 
-    public Task<Guid> Handle(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
+    public Task<long> Handle(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
         if (request.Context == null)
@@ -26,7 +26,7 @@ public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQue
         return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
-    private async Task<Guid> HandleAsync(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
+    private async Task<long> HandleAsync(GetInternalUserIdQuery request, CancellationToken cancellationToken) {
         var externalId = request.Context.ExternalId();
         var email      = request.Context.Email;
 
@@ -35,11 +35,13 @@ public class GetInternalUserIdQueryHandler: IRequestHandler<GetInternalUserIdQue
                     ? query.Where(x => x.ExternalUserId == externalId)
                     : query.Where(x => x.ExternalUserId == externalId || x.Email == email);
 
-        var existedList = await query.Select(x => x.HrimUserId).Distinct().ToListAsync(cancellationToken: cancellationToken);
+        var existedList = await query.Select(x => x.HrimUserId)
+                                     .Distinct()
+                                     .ToListAsync(cancellationToken);
         if (existedList.Count > 1)
             _logger.LogWarning(message: EfCoreLogs.THERE_ARE_MANY_USERS_FOUND_BY_CLAIMS);
         return existedList.Count == 0
-                   ? Guid.Empty
+                   ? default
                    : existedList.First();
     }
 }

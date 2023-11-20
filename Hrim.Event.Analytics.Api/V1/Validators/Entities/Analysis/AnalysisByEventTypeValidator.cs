@@ -7,7 +7,7 @@ using Hrimsoft.Core.Extensions;
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.Analysis;
 
 /// <summary> Validates analysis by event-type </summary>
-public class AnalysisByEventTypeValidator: AbstractValidator<AnalysisByEventType>
+public class AnalysisByEventTypeValidator: AbstractValidator<AnalysisConfigByEventType>
 {
     /// <inheritdoc />
     public AnalysisByEventTypeValidator() {

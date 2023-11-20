@@ -14,7 +14,7 @@ public class DurationEventCreateTests: BaseCqrsTests
 {
     private readonly DurationEventCreateCommand _createCommand;
     private readonly DurationEventCreateRequest _createRequest;
-    private readonly UserEventType              _eventType;
+    private readonly EventType              _eventType;
 
     public DurationEventCreateTests() {
         _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}");

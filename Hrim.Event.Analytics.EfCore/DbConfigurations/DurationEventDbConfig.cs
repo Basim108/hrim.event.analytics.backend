@@ -1,4 +1,5 @@
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
+using Hrim.Event.Analytics.EfCore.ValueConverters;
 using Hrimsoft.StringCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -26,8 +27,25 @@ public class DurationEventDbConfig: IEntityTypeConfiguration<DbDurationEvent>
                     x.IsDeleted
                 });
 
-        builder.AddEntityProperties();
-        builder.AddEventBaseProperties();
+        builder.AddEntityProperties<DbDurationEvent, long>();
+        
+        builder.Property(p => p.CreatedById)
+               .HasColumnName(nameof(DbDurationEvent.CreatedBy).ToSnakeCase())
+               .HasComment(comment: "A user who created an instance of this event type")
+               .IsRequired();
+        builder.HasOne(x => x.CreatedBy);
+
+        builder.Property(p => p.EventTypeId)
+               .HasColumnName(nameof(DbDurationEvent.EventTypeId).ToSnakeCase())
+               .HasComment(comment: "Event type on which current event is based.")
+               .IsRequired();
+        builder.HasOne(x => x.EventType);
+        
+        builder.Property(p => p.Props)
+               .HasColumnName(nameof(DbDurationEvent.Props).ToSnakeCase())
+               .HasComment("Some additional values associated with this event")
+               .HasConversion(JsonDictionaryConverter.GetNullable())
+               .HasColumnType("jsonb");
 
         builder.Property(p => p.StartedOn)
                .HasColumnName(nameof(DbDurationEvent.StartedOn).ToSnakeCase())

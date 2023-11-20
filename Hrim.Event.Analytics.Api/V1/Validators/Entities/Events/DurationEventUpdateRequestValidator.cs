@@ -8,7 +8,7 @@ public class DurationEventUpdateRequestValidator: AbstractValidator<DurationEven
 {
     /// <summary> </summary>
     public DurationEventUpdateRequestValidator() {
-        this.AddRulesForEntityUpdateRequests();
+        this.AddRulesForEntityUpdateRequests<DurationEventUpdateRequest, long>();
         this.AddRulesForBaseEvent();
         this.AddRulesForDurationEvent();
     }

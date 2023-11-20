@@ -8,7 +8,7 @@ public class DurationEventCreateRequestValidator: AbstractValidator<DurationEven
 {
     /// <summary> </summary>
     public DurationEventCreateRequestValidator() {
-        this.AddRulesForEntityCreateRequests();
+        this.AddRulesForEntityCreateRequests<DurationEventCreateRequest, long>();
         this.AddRulesForBaseEvent();
         this.AddRulesForDurationEvent();
     }

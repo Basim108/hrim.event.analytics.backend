@@ -21,7 +21,7 @@ public class GapAnalysisRecurringJobTests
     private readonly TestData                       _testData;
 
     public GapAnalysisRecurringJobTests() {
-        _testData = new TestData(_context);
+        _testData = new TestData(_context, MapperFactory.GetMapper());
         _settings = new Dictionary<string, string>() {
             { AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "1:00:00:00"}
         };
@@ -35,12 +35,12 @@ public class GapAnalysisRecurringJobTests
     /// </summary>
     [Fact]
     public async Task Given_EventTypes_Should_Calculate_Analysis_For_Each() {
-        var eventType1 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
-        var eventType2 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #2");
+        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
+        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2");
         _mediator.Send(Arg.Any<GetEventTypesForAnalysis>(), Arg.Any<CancellationToken>())
                  .Returns(new List<EventTypeAnalysisSettings>() {
-                      new (eventType1.Id, _settings, DateTime.UtcNow, Enumerable.Empty<Guid>()),
-                      new (eventType2.Id, _settings, DateTime.UtcNow, Enumerable.Empty<Guid>())
+                      new (eventType1.Id, _settings, DateTime.UtcNow, Enumerable.Empty<long>()),
+                      new (eventType2.Id, _settings, DateTime.UtcNow, Enumerable.Empty<long>())
                   });
 
         await _handler.Handle(_job, CancellationToken.None);
@@ -58,10 +58,10 @@ public class GapAnalysisRecurringJobTests
     /// </summary>
     [Fact]
     public async Task Given_Empty_Analysis_Result_Should_Save_It_As_Null() {
-        var eventType1 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
+        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         _mediator.Send(Arg.Any<GetEventTypesForAnalysis>(), Arg.Any<CancellationToken>())
                  .Returns(new List<EventTypeAnalysisSettings>() {
-                      new (eventType1.Id, _settings, DateTime.UtcNow, Enumerable.Empty<Guid>()),
+                      new (eventType1.Id, _settings, DateTime.UtcNow, Enumerable.Empty<long>()),
                   });
         _mediator.Send(Arg.Any<CalculateGapForEventType>(),
                        Arg.Any<CancellationToken>())

@@ -1,10 +1,10 @@
 namespace Hrim.Event.Analytics.Abstractions.Entities;
 
 /// <summary> Each entity own these properties </summary>
-public abstract class HrimEntity
+public abstract class HrimEntity<TKey> where TKey: struct
 {
     /// <summary> Entity id </summary>
-    public Guid Id { get; set; }
+    public TKey Id { get; set; }
 
     /// <summary> Date and UTC time of entity instance creation </summary>
     public DateTime CreatedAt { get; set; }
@@ -21,7 +21,8 @@ public abstract class HrimEntity
     public long ConcurrentToken { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(HrimEntity another) {
+    // TODO: remove this cloning! switch AutoMapper
+    public void CopyTo(HrimEntity<TKey> another) {
         another.Id              = Id;
         another.CreatedAt       = CreatedAt;
         another.UpdatedAt       = UpdatedAt;

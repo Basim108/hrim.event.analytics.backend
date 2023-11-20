@@ -20,7 +20,7 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_EventType_Created_By_Another_User_Should_Forbid_And_Return_EmptyList() {
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var eventType = TestData.Events.CreateEventType(anotherUserId, "Test Type");
 

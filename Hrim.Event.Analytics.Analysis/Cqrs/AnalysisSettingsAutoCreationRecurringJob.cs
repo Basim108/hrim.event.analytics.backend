@@ -1,4 +1,6 @@
+using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
+using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.EfCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +12,21 @@ public class AnalysisSettingsAutoCreationRecurringJobHandler: IRequestHandler<An
 {
     private readonly ILogger<AnalysisSettingsAutoCreationRecurringJobHandler> _logger;
     private readonly IMediator                                                _mediator;
+    private readonly IMapper                                                  _mapper;
     private readonly EventAnalyticDbContext                                   _context;
 
     public AnalysisSettingsAutoCreationRecurringJobHandler(ILogger<AnalysisSettingsAutoCreationRecurringJobHandler> logger,
                                                            IMediator                                                mediator,
+                                                           IMapper                                                  mapper,
                                                            EventAnalyticDbContext                                   context) {
         _logger   = logger;
         _mediator = mediator;
+        _mapper   = mapper;
         _context  = context;
     }
 
     public async Task Handle(AnalysisSettingsAutoCreationRecurringJob request, CancellationToken cancellationToken) {
-        var eventTypes = await _context.UserEventTypes
+        var eventTypes = await _context.EventTypes
                                        .Include(x => x.AnalysisSettings)
                                        .Where(x => x.IsDeleted != true)
                                        .AsNoTracking()
@@ -30,8 +35,9 @@ public class AnalysisSettingsAutoCreationRecurringJobHandler: IRequestHandler<An
                                      .AsNoTracking()
                                      .ToListAsync(cancellationToken);
         foreach (var eventType in eventTypes) {
-            var syncCommand    = new SyncAnalysisSettings(eventType.Id, eventType.AnalysisSettings, features, IsSaveChanges: false);
-            var missedSettings = await _mediator.Send(syncCommand, cancellationToken);
+            var blAnalysisSettings = _mapper.Map<List<AnalysisConfigByEventType>>(eventType.AnalysisSettings);
+            var syncCommand        = new SyncAnalysisSettings(eventType.Id, blAnalysisSettings, features, IsSaveChanges: false);
+            var missedSettings     = await _mediator.Send(syncCommand, cancellationToken);
             if (_logger.IsEnabled(LogLevel.Debug)) {
                 var missedCodes = missedSettings == null
                                       ? "no missed settings found"

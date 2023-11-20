@@ -10,7 +10,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 [ExcludeFromCodeCoverage]
 public class OccurrenceEventGetForPeriodTests: BaseCqrsTests
 {
-    private readonly UserEventType _eventType;
+    private readonly EventType _eventType;
 
     public OccurrenceEventGetForPeriodTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}"); }
 
@@ -21,7 +21,7 @@ public class OccurrenceEventGetForPeriodTests: BaseCqrsTests
         var mineEvent = TestData.Events.CreateOccurrenceEvent(userId: OperatorUserId,
                                                               eventTypeId: _eventType.Id,
                                                               occurredAt: DateTimeOffset.Now);
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         TestData.Events.CreateOccurrenceEvent(userId: anotherUserId,
                                               eventTypeId: _eventType.Id,

@@ -26,7 +26,7 @@ public class EventTypeGetAllTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_IncludeOthersPublic_False_Returns_OnlyMine_Private_And_Public_EventTypes() {
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var myEvents = TestData.Events.CreateManyEventTypes(count: 4, userId: OperatorUserId);
         myEvents.First().Value.IsPublic = false;
@@ -41,7 +41,7 @@ public class EventTypeGetAllTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_IncludeOthersPublic_True_Returns_All_Mine_And_Public_Others() {
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var myEvents = TestData.Events.CreateManyEventTypes(count: 4, userId: OperatorUserId);
         myEvents.First().Value.IsPublic = false;
@@ -56,7 +56,7 @@ public class EventTypeGetAllTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_IncludeOthersPublic_True_Returns_Correct_IsMine_Property_Value() {
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var myEvents = TestData.Events.CreateManyEventTypes(count: 4, userId: OperatorUserId);
         myEvents.First().Value.IsPublic = false;

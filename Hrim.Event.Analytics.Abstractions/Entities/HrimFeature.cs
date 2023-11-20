@@ -5,7 +5,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities;
 /// <summary>
 /// Describes a feature that might be on/off
 /// </summary>
-public class HrimFeature: HrimEntity
+public class HrimFeature: HrimEntity<Guid>
 {
     /// <summary>
     /// When a feature is off then its hangfire jobs, in case existed, should not be proceeded or scheduled.

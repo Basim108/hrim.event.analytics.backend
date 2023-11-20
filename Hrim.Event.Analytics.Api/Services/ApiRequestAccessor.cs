@@ -15,7 +15,7 @@ public class ApiRequestAccessor: IApiRequestAccessor
     private readonly ILogger<ApiRequestAccessor> _logger;
     private readonly IMediator                   _mediator;
 
-    private Guid _internalUserId;
+    private long _internalUserId;
 
     public ApiRequestAccessor(IHttpContextAccessor        httpContextAccessor,
                               ILogger<ApiRequestAccessor> logger,
@@ -39,9 +39,8 @@ public class ApiRequestAccessor: IApiRequestAccessor
                    : _httpContextAccessor.HttpContext!.User.Claims;
     }
 
-    /// <inheritdoc />
-    public async Task<Guid> GetInternalUserIdAsync(CancellationToken cancellation) {
-        if (_internalUserId == Guid.Empty)
+    public async Task<long> GetInternalUserIdAsync(CancellationToken cancellation) {
+        if (_internalUserId == default)
             _internalUserId = await _mediator.Send(new GetInternalUserIdQuery(GetOperationContext()), cancellationToken: cancellation);
         return _internalUserId;
     }

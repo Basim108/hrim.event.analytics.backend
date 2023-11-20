@@ -6,12 +6,12 @@ namespace Hrim.Event.Analytics.Api.V1.Validators;
 /// <summary>
 ///     Validates requests for entity controller
 /// </summary>
-public class ByIdRequestValidator: AbstractValidator<ByIdRequest>
+public class ByLongIdRequestValidator: AbstractValidator<ByIdRequest<long>> 
 {
     /// <summary> </summary>
-    public ByIdRequestValidator() {
+    public ByLongIdRequestValidator() {
         RuleFor(x => x.Id)
-           .NotEmpty()
+           .GreaterThan(0)
            .WithMessage(errorMessage: ValidationMessages.IS_REQUIRED);
     }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using FluentAssertions;
+using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -8,7 +9,8 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
 
 public class AllEventsAccessorControllerValidationTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>
 {
-    private readonly HttpClient? _client;
+    private readonly HttpClient?            _client;
+    private readonly JsonSerializerSettings _jsonSettings = JsonSettingsFactory.Get();
 
     public AllEventsAccessorControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) { _client = factory.GetClient(baseUrl: "v1/event/"); }
 
@@ -20,7 +22,7 @@ public class AllEventsAccessorControllerValidationTests: IClassFixture<EventAnal
         var response = await _client!.GetAsync(requestUri: url);
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent);
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent, _jsonSettings);
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors.ContainsKey(key: "start").Should().BeTrue();
@@ -35,7 +37,7 @@ public class AllEventsAccessorControllerValidationTests: IClassFixture<EventAnal
         var response = await _client!.GetAsync(requestUri: url);
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent);
+        var problemDetails  = JsonConvert.DeserializeObject<ValidationProblemDetails>(value: responseContent, _jsonSettings);
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().NotBeEmpty();
         problemDetails.Errors.ContainsKey(key: "end").Should().BeTrue();

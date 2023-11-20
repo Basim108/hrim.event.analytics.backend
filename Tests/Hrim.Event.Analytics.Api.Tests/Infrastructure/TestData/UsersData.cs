@@ -15,10 +15,11 @@ public class UsersData
     public const     string                 FIRST_NAME  = "Alan";
     public const     string                 LAST_NAME   = "Turing";
     private readonly EventAnalyticDbContext _context;
+    private static   long                   _lastCreatedUserId;
 
     public UsersData(EventAnalyticDbContext context) { _context = context; }
 
-    public HrimUser EnsureUserExistence(Guid        id,
+    public HrimUser EnsureUserExistence(long        id,
                                         bool        isDeleted  = false,
                                         string      externalId = EXTERNAL_ID,
                                         ExternalIdp idp        = ExternalIdp.Facebook,
@@ -59,12 +60,12 @@ public class UsersData
     }
 
     /// <summary> Creates a user if not exists and create a profile for this user </summary>
-    public ExternalUserProfile CreateUniqueLogin(Guid?       userId     = null,
+    public ExternalUserProfile CreateUniqueLogin(long?       userId     = null,
                                                  string?     email      = null,
                                                  string?     externalId = null,
                                                  ExternalIdp idp        = ExternalIdp.Google,
                                                  bool        isDeleted  = false) {
-        var user = EnsureUserExistence(userId ?? Guid.NewGuid());
+        var user = EnsureUserExistence(userId ?? ++_lastCreatedUserId);
         externalId ??= Guid.NewGuid().ToString();
         email      ??= $"{externalId}@mailinator.com";
         var now = DateTime.UtcNow.TruncateToMicroseconds();

@@ -22,8 +22,8 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
 
     [Fact]
     public void CheckDifferences_Should_Check_Only_IsOn_And_Settings() {
-        var countDb = new AnalysisByEventType {
-            EventTypeId = Guid.NewGuid(),
+        var countDb = new AnalysisConfigByEventType {
+            EventTypeId = new Random().NextInt64(),
             CreatedAt   = DateTime.UtcNow,
             Settings = new Dictionary<string, string>() {
                 {
@@ -31,7 +31,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
                 }
             }
         };
-        var countIncoming = new AnalysisByEventType {
+        var countIncoming = new AnalysisConfigByEventType {
             Settings = new Dictionary<string, string>() {
                 {
                     "key", "value"
@@ -68,8 +68,8 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
 
     [Fact]
     public void CheckDifferences_Given_DB_Additional_Settings_Should_Return_True() {
-        var countDb = new AnalysisByEventType {
-            EventTypeId = Guid.NewGuid(),
+        var countDb = new AnalysisConfigByEventType {
+            EventTypeId = new Random().NextInt64(),
             CreatedAt   = DateTime.UtcNow,
             Settings = new Dictionary<string, string>() {
                 {
@@ -79,7 +79,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
                 }
             }
         };
-        var countIncoming = new AnalysisByEventType {
+        var countIncoming = new AnalysisConfigByEventType {
             Settings = new Dictionary<string, string>() {
                 {
                     "key", "value"
@@ -92,11 +92,11 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_EventType_Created_By_Another_User_Should_Forbid_And_DoNot_Update() {
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var eventType = TestData.Events.CreateEventType(anotherUserId, "Test Type");
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
-        var list = new List<AnalysisByEventType>() {
+        var list = new List<AnalysisConfigByEventType>() {
             new () {
                 EventTypeId     = eventType.Id,
                 AnalysisCode    = FeatureCodes.COUNT_ANALYSIS,
@@ -116,8 +116,8 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_Not_Existed_EventType_Should_Return_NotFound_And_DoNot_Update() {
-        var unknownEventTypeId = Guid.NewGuid();
-        var list = new List<AnalysisByEventType>() {
+        var unknownEventTypeId = new Random().NextInt64();
+        var list = new List<AnalysisConfigByEventType>() {
             new () {
                 EventTypeId     = unknownEventTypeId,
                 AnalysisCode    = FeatureCodes.COUNT_ANALYSIS,
@@ -135,7 +135,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS, true, null);
-        var list = new List<AnalysisByEventType>() {
+        var list = new List<AnalysisConfigByEventType>() {
             new () { AnalysisCode = FeatureCodes.COUNT_ANALYSIS, ConcurrentToken = 1 },
             new () { AnalysisCode = FeatureCodes.GAP_ANALYSIS, ConcurrentToken = 1 }
         };
@@ -162,7 +162,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
         var count = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
-        var list = new List<AnalysisByEventType>() {
+        var list = new List<AnalysisConfigByEventType>() {
             count,
             new () { AnalysisCode = FeatureCodes.GAP_ANALYSIS, ConcurrentToken = 1 }
         };
@@ -192,7 +192,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         var eventType    = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
         var count        = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         var gap          = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
-        var list         = new List<AnalysisByEventType>() { count, gap };
+        var list         = new List<AnalysisConfigByEventType>() { count, gap };
         var resultList   = await Mediator.Send(new UpdateAnalysisForEventType(eventType.Id, list, OperatorContext));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
@@ -219,7 +219,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
-        var list = new List<AnalysisByEventType>() {
+        var list = new List<AnalysisConfigByEventType>() {
             new () { AnalysisCode = FeatureCodes.COUNT_ANALYSIS, ConcurrentToken = 1 },
             new () { AnalysisCode = FeatureCodes.GAP_ANALYSIS, ConcurrentToken   = 1 }
         };

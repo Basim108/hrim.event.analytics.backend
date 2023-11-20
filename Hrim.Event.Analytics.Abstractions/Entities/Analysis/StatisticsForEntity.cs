@@ -9,7 +9,7 @@ public class StatisticsForEntity
     /// <summary>
     /// Id of an entity e.g. occurrence/duration events or event-types for which theis calculation was made. 
     /// </summary>
-    public Guid EntityId { get; set; }
+    public long? EntityId { get; set; }
     
     /// <summary> Code of analysis <see cref="FeatureCodes"/> </summary>
     public string AnalysisCode { get; set; }

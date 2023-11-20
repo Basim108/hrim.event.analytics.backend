@@ -18,12 +18,13 @@ public class AnalysisSettingsAutoCreationRecurringJobTests
     private readonly IMediator                                       _mediator = Substitute.For<IMediator>();
     private readonly EventAnalyticDbContext                          _context  = DbUtils.GetDbContext();
     private readonly TestData                                        _testData;
-    private readonly AnalysisByEventType                             _gapDefaultSettings;
-    private readonly AnalysisByEventType                             _countDefaultSettings;
+    private readonly AnalysisConfigByEventType                       _gapDefaultSettings;
+    private readonly AnalysisConfigByEventType                       _countDefaultSettings;
 
     public AnalysisSettingsAutoCreationRecurringJobTests() {
-        _testData   = new TestData(_context);
-        _testData.Features.EnsureExistence("FEAT_GAP", FeatureCodes.GAP_ANALYSIS, true);
+        var mapper = MapperFactory.GetMapper();
+        _testData = new TestData(_context, mapper);
+        _testData.Features.EnsureExistence("FEAT_GAP",   FeatureCodes.GAP_ANALYSIS,   true);
         _testData.Features.EnsureExistence("FEAT_COUNT", FeatureCodes.COUNT_ANALYSIS, true, "explanation");
 
         var settingsFactory = new AnalysisSettingsFactory();
@@ -31,14 +32,15 @@ public class AnalysisSettingsAutoCreationRecurringJobTests
         _countDefaultSettings = settingsFactory.GetDefaultSettings().First(x => x.AnalysisCode == FeatureCodes.COUNT_ANALYSIS);
         _handler = new AnalysisSettingsAutoCreationRecurringJobHandler(NullLogger<AnalysisSettingsAutoCreationRecurringJobHandler>.Instance,
                                                                        _mediator,
+                                                                       mapper,
                                                                        _context);
     }
-    
+
     [Fact]
     public async Task Given_3_EventTypes_When_1_Without_Any_Settings_Should_Sync_All_of_Them() {
-        var eventType1 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
-        var eventType2 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #2");
-        var eventType3 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #3");
+        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
+        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2");
+        var eventType3 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #3");
         _testData.AnalysisByEventType.EnsureExistence(eventType1.Id, _gapDefaultSettings);
         _testData.AnalysisByEventType.EnsureExistence(eventType1.Id, _countDefaultSettings);
         _testData.AnalysisByEventType.EnsureExistence(eventType3.Id, _gapDefaultSettings);
@@ -56,12 +58,12 @@ public class AnalysisSettingsAutoCreationRecurringJobTests
                        .Send(Arg.Is<SyncAnalysisSettings>(x => x.EventTypeId == eventType3.Id),
                              Arg.Any<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task Given_3_EventTypes_When_1_IsDeleted_Should_Ignore_Deleted() {
-        var eventType1 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #1");
-        var eventType2 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #2", isDeleted: true);
-        var eventType3 = _testData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type #3");
+        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
+        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2", isDeleted: true);
+        var eventType3 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #3");
 
         await _handler.Handle(_job, CancellationToken.None);
 

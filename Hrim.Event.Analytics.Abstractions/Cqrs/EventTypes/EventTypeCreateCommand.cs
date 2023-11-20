@@ -13,5 +13,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 ///     Null if there is an instance with such name and for the same user in the storage. Code=(409)Conflict.
 ///     Otherwise returns a created instance with a new ConcurrentToken value. Code=(201)Created
 /// </returns>
-public record EventTypeCreateCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
-    : OperationRequest(Context: Context), IRequest<CqrsResult<UserEventType?>>;
+public record EventTypeCreateCommand(EventType EventType, bool SaveChanges, OperationContext Context)
+    : OperationRequest(Context: Context), IRequest<CqrsResult<EventType?>>;

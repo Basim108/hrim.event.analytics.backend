@@ -32,7 +32,7 @@ public class CalculateCountForEventTypeHandler: IRequestHandler<CalculateCountFo
     }
 
     public Task<CountAnalysisResult?> Handle(CalculateCountForEventType request, CancellationToken cancellationToken) {
-        if (request.EventTypeInfo.EventTypeId == Guid.Empty)
+        if (request.EventTypeInfo.EventTypeId == default)
             throw new ArgumentNullException(nameof(request), nameof(request.EventTypeInfo.EventTypeId));
         // CASE 1: there is no events (all deleted after last run) => remove pre analysis result from db  => then result.EventCount = 0
         // CASE 2: there is no events and no last run  => do nothing even analysis_result should be null

@@ -1,5 +1,3 @@
-using Hrim.Event.Analytics.Abstractions.Entities.Events;
-
 #pragma warning disable CS8618
 namespace Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 

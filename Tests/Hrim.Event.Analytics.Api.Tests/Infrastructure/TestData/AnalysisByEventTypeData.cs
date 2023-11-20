@@ -1,5 +1,6 @@
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.EfCore;
+using Hrim.Event.Analytics.EfCore.DbEntities.Analysis;
 using Hrimsoft.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,10 @@ public class AnalysisByEventTypeData
     private readonly EventAnalyticDbContext _context;
 
     public AnalysisByEventTypeData(EventAnalyticDbContext context) { _context = context; }
-    public AnalysisByEventType EnsureExistence(Guid eventTypeId, AnalysisByEventType template) {
+
+    public DbAnalysisConfigByEventType EnsureExistence(long eventTypeId, AnalysisConfigByEventType template) {
         var now = DateTime.UtcNow.TruncateToMicroseconds();
-        var analysis = new AnalysisByEventType {
+        var analysis = new DbAnalysisConfigByEventType {
             EventTypeId     = eventTypeId,
             AnalysisCode    = template.AnalysisCode,
             IsOn            = template.IsOn,
@@ -26,12 +28,12 @@ public class AnalysisByEventTypeData
         return analysis;
     }
 
-    public AnalysisByEventType EnsureExistence(Guid                         eventTypeId,
-                                               string                       analysisCode,
-                                               bool                         isOn,
-                                               IDictionary<string, string>? settings) {
+    public DbAnalysisConfigByEventType EnsureExistence(long                         eventTypeId,
+                                                       string                       analysisCode,
+                                                       bool                         isOn,
+                                                       IDictionary<string, string>? settings) {
         var now = DateTime.UtcNow.TruncateToMicroseconds();
-        var analysis = new AnalysisByEventType {
+        var analysis = new DbAnalysisConfigByEventType {
             EventTypeId     = eventTypeId,
             AnalysisCode    = analysisCode,
             IsOn            = isOn,
@@ -45,6 +47,6 @@ public class AnalysisByEventTypeData
         return analysis;
     }
 
-    public Task<AnalysisByEventType?> GetAsync(Guid eventTypeId, string analysisCode)
+    public Task<DbAnalysisConfigByEventType?> GetAsync(long eventTypeId, string analysisCode)
         => _context.AnalysisByEventType.FirstOrDefaultAsync(x => x.EventTypeId == eventTypeId && x.AnalysisCode == analysisCode);
 }

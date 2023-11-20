@@ -5,7 +5,8 @@ namespace Hrim.Event.Analytics.Api.V1.Validators;
 
 /// <summary> An empty validator does nothing </summary>
 /// <typeparam name="TEntity"></typeparam>
-public class EmptyAsyncValidator<TEntity>: AbstractValidator<TEntity>
-where TEntity: HrimEntity
+public class EmptyAsyncValidator<TEntity, TKey>: AbstractValidator<TEntity>
+where TKey: struct
+where TEntity: HrimEntity<TKey>
 {
 }

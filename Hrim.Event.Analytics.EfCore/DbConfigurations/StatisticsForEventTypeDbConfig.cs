@@ -9,7 +9,7 @@ public class StatisticsForEventTypeDbConfig: IEntityTypeConfiguration<Statistics
 {
     public void Configure(EntityTypeBuilder<StatisticsForEventType> builder) {
         builder.ToTable(name:  $"{nameof(StatisticsForEventType).ToSnakeCase()}s", 
-                        schema: "analysis",  
+                        schema: "v2_analysis",  
                         t => {
                             t.HasComment(comment: "Stores results of calculation analysis for event types");
                         });

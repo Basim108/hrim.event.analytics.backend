@@ -14,7 +14,7 @@ public static class EventTypeValidatorExtensions
     ///     Adds rules to update and create event_type requests
     /// </summary>
     public static void AddRulesForEventType<TRequest>(this AbstractValidator<TRequest> validator)
-        where TRequest : UserEventType {
+        where TRequest : EventType {
         validator.RuleFor(x => x.Name)
                  .NotEmpty()
                  .WithMessage(errorMessage: ValidationMessages.IS_REQUIRED)

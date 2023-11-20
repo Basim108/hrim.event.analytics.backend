@@ -6,7 +6,7 @@ namespace Hrim.Event.Analytics.EfCore.DbEntities.Events;
 ///     When it is important to register an event that has start time and end time this system_event_type can be used.
 ///     <br />This kind of events may occur several times a day and can cross each other.
 /// </summary>
-public class DbDurationEvent: BaseEvent
+public class DbDurationEvent: DbBaseEvent
 {
     /// <summary>
     ///     Date when an event started
@@ -29,6 +29,7 @@ public class DbDurationEvent: BaseEvent
     public DateTimeOffset? FinishedAt { get; set; }
 
     /// <summary> copy all entity properties to the another entity </summary>
+    /// TODO: Remove this cloning logic to AutoMapper
     public void CopyTo(DurationEvent another) {
         base.CopyTo(another: another);
         another.StartedAt = new DateTimeOffset(year: StartedOn.Year,

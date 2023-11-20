@@ -13,7 +13,7 @@ public class OccurrenceEventCreateTests: BaseCqrsTests
 {
     private readonly OccurrenceEventCreateCommand _createCommand;
     private readonly OccurrenceEventCreateRequest _createRequest;
-    private readonly UserEventType                _eventType;
+    private readonly EventType                _eventType;
 
     public OccurrenceEventCreateTests() {
         _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}");

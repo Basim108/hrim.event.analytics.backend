@@ -24,15 +24,15 @@ public class CheckEntityExistenceHandler: IRequestHandler<CheckEntityExistence, 
     }
 
     public Task<CqrsVoidResult> Handle(CheckEntityExistence request, CancellationToken cancellationToken) {
-        if (request.Id == Guid.Empty)
+        if (request.Id == default)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Id)}");
 
         return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
 
     private async Task<CqrsVoidResult> HandleAsync(CheckEntityExistence request, CancellationToken cancellationToken) {
-        using var   entityIdScope = _logger.BeginScope(messageFormat: CoreLogs.HRIM_ENTITY_ID, request.Id);
-        HrimEntity? existed;
+        using var         entityIdScope = _logger.BeginScope(messageFormat: CoreLogs.HRIM_ENTITY_ID, request.Id);
+        HrimEntity<long>? existed       = null;
         switch (request.EntityType) {
             case EntityType.HrimUser:
                 existed = await _context.HrimUsers
@@ -45,7 +45,7 @@ public class CheckEntityExistenceHandler: IRequestHandler<CheckEntityExistence, 
                                         .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
                 break;
             case EntityType.EventType:
-                existed = await _context.UserEventTypes
+                existed = await _context.EventTypes
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
                 break;

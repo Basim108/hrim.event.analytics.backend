@@ -21,15 +21,14 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Events;
                  "xUnit1033:Test classes decorated with \'Xunit.IClassFixture<TFixture>\' or \'Xunit.ICollectionFixture<TFixture>\' should add a constructor argument of type TFixture")]
 public abstract class BaseEventControllerValidationTests: BaseEntityControllerTests, IDisposable
 {
-    private readonly   Guid                   _operatorId;
-    private readonly   IServiceScope          _serviceScope;
-    private readonly   TestData               _testData;
-    protected readonly JsonSerializerSettings JsonSettings = JsonSettingsFactory.Get();
+    private readonly long          _operatorId;
+    private readonly IServiceScope _serviceScope;
+    private readonly TestData      _testData;
 
     protected BaseEventControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) {
         _serviceScope = factory.Services.CreateScope();
         var context = _serviceScope.ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-        _testData = new TestData(context: context);
+        _testData = new TestData(context, MapperFactory.GetMapper());
         var apiRequestAccessor = _serviceScope.ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         _operatorId = apiRequestAccessor.GetInternalUserIdAsync(cancellation: CancellationToken.None).Result;
     }
@@ -48,10 +47,10 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     protected abstract BaseEvent GetBaseEventUpdateRequest();
 
     [Theory]
-    [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
-    public async Task Create_Given_NonExistent_EventTypeId_Returns_BadRequest(string eventTypeId) {
+    [InlineData(2)]
+    public async Task Create_Given_NonExistent_EventTypeId_Returns_BadRequest(long eventTypeId) {
         var createRequest = GetBaseEventCreateRequest();
-        createRequest.EventTypeId = Guid.Parse(input: eventTypeId);
+        createRequest.EventTypeId = eventTypeId;
 
         var response = await Client!.PostAsync(requestUri: "", TestUtils.PrepareJson(instance: createRequest));
 
@@ -67,12 +66,14 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     }
 
     [Theory]
+    [InlineData("0")]
+    [InlineData("-2")]
     [InlineData("00000000-0000-0000-0000-000000000000")]
     [InlineData("352246af-9681")]
     [InlineData("352246af-9681-4aae-9c2c-6faddcb2e552-352246af-9681-4aae-9c2c-6faddcb2e552")]
     public async Task Update_Given_Wrong_CreatedById_Returns_BadRequest(string createdById) {
         var updateRequest = GetBaseEventUpdateRequest();
-        updateRequest.CreatedById = Guid.Empty;
+        updateRequest.CreatedById = default;
         var payload = JsonConvert.SerializeObject(value: updateRequest, settings: JsonSettings)
                                  .Replace(Guid.Empty.ToString(), newValue: createdById);
 
@@ -90,12 +91,12 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     }
 
     [Theory]
-    [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
-    public async Task Update_Given_NonExistent_CreatedById_Returns_BadRequest(string createdById) {
+    [InlineData(12345678)]
+    public async Task Update_Given_NonExistent_CreatedById_Returns_BadRequest(long createdById) {
         var eventType     = _testData.Events.CreateEventType(userId: _operatorId, $"Headache-{Guid.NewGuid()}");
         var updateRequest = GetBaseEventUpdateRequest();
         updateRequest.EventTypeId = eventType.Id;
-        updateRequest.CreatedById = Guid.Parse(input: createdById);
+        updateRequest.CreatedById = createdById;
 
         var response = await Client!.PutAsync(requestUri: "", TestUtils.PrepareJson(instance: updateRequest));
 
@@ -111,10 +112,10 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     }
 
     [Theory]
-    [InlineData("12a7e462-19d2-47cf-80e1-368be629dba7")]
-    public async Task Update_Given_NonExistent_EventTypeId_Returns_BadRequest(string eventTypeId) {
+    [InlineData(12345678)]
+    public async Task Update_Given_NonExistent_EventTypeId_Returns_BadRequest(long eventTypeId) {
         var updateRequest = GetBaseEventUpdateRequest();
-        updateRequest.EventTypeId = Guid.Parse(input: eventTypeId);
+        updateRequest.EventTypeId = eventTypeId;
 
         var response = await Client!.PutAsync(requestUri: "", TestUtils.PrepareJson(instance: updateRequest));
 

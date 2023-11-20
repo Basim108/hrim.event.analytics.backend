@@ -14,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.Tests.ControllerTests;
 public class AllEventsAccessorControllerTests: BaseCqrsTests
 {
     private readonly AllEventsAccessorController _controller;
-    private readonly UserEventType               _eventType;
+    private readonly EventType                   _eventType;
     private readonly ByPeriodRequest             _request;
 
     public AllEventsAccessorControllerTests() {

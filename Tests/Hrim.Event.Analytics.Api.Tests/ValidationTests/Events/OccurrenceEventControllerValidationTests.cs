@@ -17,8 +17,8 @@ public class OccurrenceEventControllerValidationTests: BaseEventControllerValida
 {
     /// <summary> Correct duration event create request </summary>
     private readonly OccurrenceEventCreateRequest _occurrenceEventCreateRequest = new() {
-        CreatedById = Guid.NewGuid(),
-        EventTypeId = Guid.NewGuid(),
+        CreatedById = new Random().NextInt64(),
+        EventTypeId = new Random().NextInt64(),
         OccurredAt = new DateTimeOffset(year: 2020,
                                         month: 09,
                                         day: 1,
@@ -30,9 +30,9 @@ public class OccurrenceEventControllerValidationTests: BaseEventControllerValida
 
     /// <summary> Correct duration event create request </summary>
     private readonly OccurrenceEventUpdateRequest _occurrenceEventUpdateRequest = new() {
-        Id          = Guid.NewGuid(),
-        CreatedById = Guid.NewGuid(),
-        EventTypeId = Guid.NewGuid(),
+        Id          = new Random().NextInt64(),
+        CreatedById = new Random().NextInt64(),
+        EventTypeId = new Random().NextInt64(),
         OccurredAt = new DateTimeOffset(year: 2020,
                                         month: 09,
                                         day: 1,
@@ -56,7 +56,7 @@ public class OccurrenceEventControllerValidationTests: BaseEventControllerValida
     /// <summary> Correct update event request  </summary>
     protected override OccurrenceEventUpdateRequest GetUpdateRequest() {
         return new OccurrenceEventUpdateRequest {
-            Id              = Guid.NewGuid(),
+            Id              = new Random().NextInt64(),
             ConcurrentToken = 1,
             OccurredAt      = DateTimeOffset.Now
         };

@@ -6,5 +6,5 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 /// <summary>
 /// Get a list of analysis settings for a particular event-type
 /// </summary>
-public record GetAnalysisByEventTypeId(Guid EventTypeId, OperationContext Context)
-    : OperationRequest(Context: Context), IRequest<CqrsResult<List<AnalysisByEventType>?>>;
+public record GetAnalysisByEventTypeId(long EventTypeId, OperationContext Context)
+    : OperationRequest(Context: Context), IRequest<CqrsResult<List<AnalysisConfigByEventType>?>>;

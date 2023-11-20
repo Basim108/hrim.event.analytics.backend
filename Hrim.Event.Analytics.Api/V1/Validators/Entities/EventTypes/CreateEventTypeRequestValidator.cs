@@ -8,7 +8,7 @@ public class CreateEventTypeRequestValidator: AbstractValidator<CreateEventTypeR
 {
     /// <summary> </summary>
     public CreateEventTypeRequestValidator() {
-        this.AddRulesForEntityCreateRequests();
+        this.AddRulesForEntityCreateRequests<CreateEventTypeRequest, long>();
         this.AddRulesForEventType();
     }
 }

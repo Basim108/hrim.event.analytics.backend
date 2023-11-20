@@ -36,7 +36,7 @@ public class CalculateGapForEventTypeHandler: IRequestHandler<CalculateGapForEve
     public Task<GapAnalysisResult?> Handle(CalculateGapForEventType request, CancellationToken cancellationToken) {
         if (request.CalculationInfo == null)
             throw new ArgumentNullException(nameof(request), nameof(request.CalculationInfo));
-        if(request.CalculationInfo.EventTypeId == Guid.Empty)
+        if(request.CalculationInfo.EventTypeId == default)
             throw new ArgumentNullException(nameof(request), nameof(request.CalculationInfo.EventTypeId));
             
         // CASE 1: there is no events (all deleted after last run) => remove pre analysis result from db  => then result.EventCount = 0

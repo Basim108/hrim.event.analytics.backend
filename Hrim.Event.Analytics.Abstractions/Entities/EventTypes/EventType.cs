@@ -8,23 +8,8 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 ///     Event types created by user
 ///     <br />https://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types
 /// </summary>
-public class UserEventType: HrimEntity, IHasOwner
+public class EventType: HrimEntity<long>, IHasOwner
 {
-    /// <summary>
-    /// Reference to a more general event type, which this type is specified in some context
-    /// For example, if current event type is Hatha Yoga, its parent type might be just general Yoga. 
-    /// </summary>
-    public UserEventType? Parent { get; set; }
-    
-    /// <summary> Identifier of parent event type </summary>
-    public Guid? ParentId { get; set; }
-    
-    /// <summary>
-    /// Reference to a list of mre specific event types
-    /// For example, if current event type is smoking, then its children subtypes might be "smoking cigarettes", "smoking "  
-    /// </summary>
-    public List<UserEventType>? Children { get; set; }
-    
     /// <summary>
     ///     Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>
@@ -53,17 +38,17 @@ public class UserEventType: HrimEntity, IHasOwner
     /// <summary>
     ///     A user id who created an instance of the event type
     /// </summary>
-    public Guid CreatedById { get; set; }
+    public long CreatedById { get; set; }
     
     /// <summary> Analysis settings related to this event type </summary>
-    public List<AnalysisByEventType>? AnalysisSettings { get; set; }
+    public List<AnalysisConfigByEventType>? AnalysisSettings { get; set; }
     
     /// <summary> Analysis results </summary>
     public List<StatisticsForEventType>? AnalysisResults { get; set; }
 
 
     /// <summary> copy all entity properties to the another entity </summary>
-    public void CopyTo(UserEventType another) {
+    public void CopyTo(EventType another) {
         base.CopyTo(another: another);
         another.Name        = Name;
         another.Description = Description;

@@ -5,6 +5,7 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Analysis;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Services;
+using Hrim.Event.Analytics.EfCore.DbEntities.Analysis;
 using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Hrim.Event.Analytics.EfCore.Cqrs.Analysis;
 
 [SuppressMessage(category: "Usage", checkId: "CA2208:Instantiate argument exceptions correctly")]
-public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisForEventType, CqrsResult<List<AnalysisByEventType>?>>
+public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisForEventType, CqrsResult<List<AnalysisConfigByEventType>?>>
 {
     private readonly EventAnalyticDbContext                     _context;
     private readonly ILogger<UpdateAnalysisForEventTypeHandler> _logger;
@@ -27,28 +28,28 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
         _requestAccessor = requestAccessor;
     }
 
-    public Task<CqrsResult<List<AnalysisByEventType>?>> Handle(UpdateAnalysisForEventType request, CancellationToken cancellationToken) {
-        if (request.EventTypeId == Guid.Empty)
+    public Task<CqrsResult<List<AnalysisConfigByEventType>?>> Handle(UpdateAnalysisForEventType request, CancellationToken cancellationToken) {
+        if (request.EventTypeId == default)
             throw new ArgumentNullException(nameof(request), nameof(request.EventTypeId));
 
         return HandleAsync(request, cancellationToken);
     }
 
-    private async Task<CqrsResult<List<AnalysisByEventType>?>> HandleAsync(UpdateAnalysisForEventType request, CancellationToken cancellationToken) {
+    private async Task<CqrsResult<List<AnalysisConfigByEventType>?>> HandleAsync(UpdateAnalysisForEventType request, CancellationToken cancellationToken) {
         using var entityIdScope = _logger.BeginScope(messageFormat: CoreLogs.HRIM_ENTITY_ID, request.EventTypeId);
         try {
-            var result = await _context.UserEventTypes.FirstOrDefaultAsync(x => x.Id == request.EventTypeId, cancellationToken);
+            var result = await _context.EventTypes.FirstOrDefaultAsync(x => x.Id == request.EventTypeId, cancellationToken);
             if (result == null)
-                return new CqrsResult<List<AnalysisByEventType>?>(Result: null, StatusCode: CqrsResultCode.NotFound);
+                return new CqrsResult<List<AnalysisConfigByEventType>?>(Result: null, StatusCode: CqrsResultCode.NotFound);
             var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
             if (result.CreatedById != operatorUserId) {
-                _logger.LogWarning(message: EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, nameof(AnalysisByEventType));
-                return new CqrsResult<List<AnalysisByEventType>?>(Result: null, StatusCode: CqrsResultCode.Forbidden);
+                _logger.LogWarning(message: EfCoreLogs.OPERATION_IS_FORBIDDEN_FOR_USER_ID, HrimOperations.Read, result.CreatedById, nameof(AnalysisConfigByEventType));
+                return new CqrsResult<List<AnalysisConfigByEventType>?>(Result: null, StatusCode: CqrsResultCode.Forbidden);
             }
             var settings = await _context.AnalysisByEventType
                                          .Where(x => x.EventTypeId == request.EventTypeId)
                                          .ToListAsync(cancellationToken);
-            var resultList       = new List<AnalysisByEventType>(request.Analysis.Count);
+            var resultList       = new List<AnalysisConfigByEventType>(request.Analysis.Count);
             var hasGlobalChanges = false;
             foreach (var incoming in request.Analysis) {
                 var db = settings.Find(x => x.AnalysisCode == incoming.AnalysisCode);
@@ -58,7 +59,7 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
                 }
                 else {
                     if (db.ConcurrentToken != incoming.ConcurrentToken)
-                        return new CqrsResult<List<AnalysisByEventType>?>(Result: request.Analysis, StatusCode: CqrsResultCode.Conflict);
+                        return new CqrsResult<List<AnalysisConfigByEventType>?>(Result: request.Analysis, StatusCode: CqrsResultCode.Conflict);
                     var hasLocalChanges = CheckDifferences(db, incoming);
                     if (hasLocalChanges) {
                         UpdateStoredAnalysis(db, incoming);
@@ -70,11 +71,11 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
             if (hasGlobalChanges) {
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            return new CqrsResult<List<AnalysisByEventType>?>(Result: resultList, StatusCode: CqrsResultCode.Ok);
+            return new CqrsResult<List<AnalysisConfigByEventType>?>(Result: resultList, StatusCode: CqrsResultCode.Ok);
         }
         catch (TimeoutException ex) {
             _logger.LogWarning(message: EfCoreLogs.OPERATION_TIMEOUT, HrimOperations.Read, ex.Message);
-            return new CqrsResult<List<AnalysisByEventType>?>(Result: null, StatusCode: CqrsResultCode.Locked);
+            return new CqrsResult<List<AnalysisConfigByEventType>?>(Result: null, StatusCode: CqrsResultCode.Locked);
         }
     }
 
@@ -83,7 +84,7 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
     /// Ignores additional settings in incoming model as not trusted.
     /// </summary>
     /// <returns>Returns True when there are changes that have to be updated in the storage</returns>
-    public static bool CheckDifferences(AnalysisByEventType db, AnalysisByEventType incoming) {
+    public static bool CheckDifferences(AnalysisConfigByEventType db, AnalysisConfigByEventType incoming) {
         var hasChanges = db.IsOn != incoming.IsOn || db.Settings == null && incoming.Settings != null || db.Settings != null && incoming.Settings == null;
         if (!hasChanges && db.Settings != null && incoming.Settings != null) {
             foreach (var dbPair in db.Settings) {
@@ -93,9 +94,9 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
         return hasChanges;
     }
 
-    private AnalysisByEventType CreateAnalysis(Guid eventTypeId, AnalysisByEventType incomingTemplate) {
+    private DbAnalysisConfigByEventType CreateAnalysis(long eventTypeId, AnalysisConfigByEventType incomingTemplate) {
         var now = DateTime.UtcNow.TruncateToMicroseconds();
-        var db = new AnalysisByEventType {
+        var db = new DbAnalysisConfigByEventType {
             EventTypeId     = eventTypeId,
             AnalysisCode    = incomingTemplate.AnalysisCode,
             IsOn            = incomingTemplate.IsOn,
@@ -108,7 +109,7 @@ public class UpdateAnalysisForEventTypeHandler: IRequestHandler<UpdateAnalysisFo
         return db;
     }
 
-    private static void UpdateStoredAnalysis(AnalysisByEventType db, AnalysisByEventType incoming) {
+    private static void UpdateStoredAnalysis(AnalysisConfigByEventType db, AnalysisConfigByEventType incoming) {
         db.IsOn      = incoming.IsOn;
         db.Settings  = incoming.Settings;
         db.UpdatedAt = DateTime.UtcNow.TruncateToMicroseconds();
