@@ -16,5 +16,7 @@ public static class AnalysisServiceRegistrations
         services.AddTransient<IGapCalculationService, GapCalculationService>();
         services.AddTransient<ICountCalculationService, CountCalculationService>();
         services.AddTransient<IAnalysisSettingsFactory, AnalysisSettingsFactory>();
+        services.AddTransient<IGapEventHierarchyAccessor, GapEventHierarchyAccessor>();
+        services.AddTransient<ICountEventHierarchyAccessor, CountEventHierarchyAccessor>();
     }
 }

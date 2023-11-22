@@ -34,17 +34,17 @@ public class CountAnalysisRecurringJobTests
         var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2");
         _mediator.Send(Arg.Any<GetEventTypesForAnalysis>(), Arg.Any<CancellationToken>())
                  .Returns(new List<EventTypeAnalysisSettings>() {
-                      new (eventType1.Id, null, DateTime.UtcNow, Enumerable.Empty<long>()),
-                      new (eventType2.Id, null, DateTime.UtcNow, Enumerable.Empty<long>())
+                      new (eventType1.Bl.Id, null, DateTime.UtcNow, eventType1.Db.TreeNodePath),
+                      new (eventType2.Bl.Id, null, DateTime.UtcNow, eventType2.Db.TreeNodePath)
                   });
 
         await _handler.Handle(_job, CancellationToken.None);
 
         await _mediator.Received(1)
-                       .Send(Arg.Is<CalculateCountForEventType>(x => x.EventTypeInfo.EventTypeId == eventType1.Id),
+                       .Send(Arg.Is<CalculateCountForEventType>(x => x.EventTypeInfo.EventTypeId == eventType1.Bl.Id),
                              Arg.Any<CancellationToken>());
         await _mediator.Received(1)
-                       .Send(Arg.Is<CalculateCountForEventType>(x => x.EventTypeInfo.EventTypeId == eventType2.Id),
+                       .Send(Arg.Is<CalculateCountForEventType>(x => x.EventTypeInfo.EventTypeId == eventType2.Bl.Id),
                              Arg.Any<CancellationToken>());
     }
     
@@ -56,7 +56,7 @@ public class CountAnalysisRecurringJobTests
         var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         _mediator.Send(Arg.Any<GetEventTypesForAnalysis>(), Arg.Any<CancellationToken>())
                  .Returns(new List<EventTypeAnalysisSettings>() {
-                      new (eventType1.Id, null, DateTime.UtcNow, Enumerable.Empty<long>())
+                      new (eventType1.Bl.Id, null, DateTime.UtcNow, eventType1.Db.TreeNodePath)
                   });
         _mediator.Send(Arg.Any<CalculateCountForEventType>(),
                        Arg.Any<CancellationToken>())
@@ -65,7 +65,7 @@ public class CountAnalysisRecurringJobTests
         await _handler.Handle(_job, CancellationToken.None);
         
         await _mediator.Received(1)
-                       .Send(Arg.Is<SaveEventTypeAnalysisResult>(x => x.EventTypeId == eventType1.Id && 
+                       .Send(Arg.Is<SaveEventTypeAnalysisResult>(x => x.EventTypeId == eventType1.Bl.Id && 
                                                                       x.ResultJson == null),
                              Arg.Any<CancellationToken>());
     }

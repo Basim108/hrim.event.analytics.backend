@@ -24,7 +24,7 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var eventType = TestData.Events.CreateEventType(anotherUserId, "Test Type");
 
-        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Id));
+        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Bl.Id));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Forbidden);
         resultList.Result.Should().BeNullOrEmpty();
@@ -33,10 +33,10 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
     [Fact]
     public async Task Given_EventType_With_All_On_Analysis_Returns_Them() {
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
 
-        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Id));
+        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Bl.Id));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
         resultList.Result.Should().NotBeNullOrEmpty();
@@ -49,10 +49,10 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
     [Fact]
     public async Task Given_EventType_With_All_Off_Analysis_Returns_Them() {
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, false, null);
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   false, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.COUNT_ANALYSIS, false, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.GAP_ANALYSIS,   false, null);
 
-        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Id));
+        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Bl.Id));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
         resultList.Result.Should().NotBeNullOrEmpty();
@@ -66,10 +66,10 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
     public async Task Given_Gap_Feature_Off_Should_Not_Return_It() {
         _gapFeature.IsOn = false;
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
 
-        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Id));
+        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Bl.Id));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
         resultList.Result.Should().NotBeNullOrEmpty();
@@ -84,10 +84,10 @@ public class GetAnalysisByEventTypeIdTests: BaseCqrsTests
         _gapFeature.IsOn   = false;
         _countFeature.IsOn = false;
         var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
-        TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
+        TestData.AnalysisByEventType.EnsureExistence(eventType.Bl.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
 
-        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Id));
+        var resultList = await Mediator.Send(new GetAnalysisByEventTypeId(Context: OperatorContext, EventTypeId: eventType.Bl.Id));
         resultList.Should().NotBeNull();
         resultList.StatusCode.Should().Be(CqrsResultCode.Ok);
         resultList.Result.Should().BeNullOrEmpty();

@@ -5,7 +5,6 @@ using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
 using Hrim.Event.Analytics.Api.V1.Models;
 using Hrimsoft.Core.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 
@@ -17,7 +16,7 @@ public class DurationEventCreateTests: BaseCqrsTests
     private readonly EventType              _eventType;
 
     public DurationEventCreateTests() {
-        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}").Bl;
         _createRequest = new DurationEventCreateRequest {
             StartedAt   = DateTimeOffset.Now.AddHours(hours: -1),
             FinishedAt  = DateTimeOffset.Now,

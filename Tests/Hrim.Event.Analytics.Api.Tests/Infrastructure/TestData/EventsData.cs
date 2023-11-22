@@ -19,7 +19,7 @@ public class EventsData
         _mapper  = mapper;
     }
 
-    public EventType CreateEventType(long   userId,
+    public (DbEventType Db, EventType Bl) CreateEventType(long   userId,
                                      string name      = "Test Event Type",
                                      long?  parentId  = null,
                                      bool?  isDeleted = false) {
@@ -38,7 +38,7 @@ public class EventsData
         _context.EventTypes.Add(entity: entity);
         entity.GeneratePath();
         _context.SaveChanges();
-        return _mapper.Map<EventType>(entity);
+        return (entity, _mapper.Map<EventType>(entity));
     }
 
     public DbDurationEvent CreateDurationEvent(long            userId,
@@ -46,7 +46,7 @@ public class EventsData
                                                bool            isDeleted   = false,
                                                DateTimeOffset? startedAt   = null,
                                                DateTimeOffset? finishedAt  = null) {
-        eventTypeId ??= CreateEventType(userId, $"event type name: {Guid.NewGuid()}").Id;
+        eventTypeId ??= CreateEventType(userId, $"event type name: {Guid.NewGuid()}").Bl.Id;
         var entity = new DbDurationEvent {
             CreatedById = userId,
             EventTypeId = eventTypeId.Value,
@@ -97,7 +97,7 @@ public class EventsData
         if (end < start)
             throw new ArgumentException($"{nameof(end)}({end}) must be greater or equal to {nameof(start)}({start})",
                                         nameof(end));
-        eventTypeId ??= CreateEventType(userId, $"event-type-name: {Guid.NewGuid()}").Id;
+        eventTypeId ??= CreateEventType(userId, $"event-type-name: {Guid.NewGuid()}").Bl.Id;
         var startedAt = new DateTimeOffset(year: start.Year,
                                            month: start.Month,
                                            day: start.Day,
@@ -136,7 +136,7 @@ public class EventsData
         if (end < start)
             throw new ArgumentException($"{nameof(end)}({end}) must be greater or equal to {nameof(start)}({start})",
                                         nameof(end));
-        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Id;
+        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Bl.Id;
         var startedAt = new DateTimeOffset(year: start.Year,
                                            month: start.Month,
                                            day: start.Day,
@@ -169,7 +169,7 @@ public class EventsData
                                                    long?           eventTypeId = null,
                                                    bool            isDeleted   = false,
                                                    DateTimeOffset? occurredAt  = null) {
-        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Id;
+        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Bl.Id;
         var entity = new DbOccurrenceEvent {
             CreatedById = userId,
             EventTypeId = eventTypeId.Value,

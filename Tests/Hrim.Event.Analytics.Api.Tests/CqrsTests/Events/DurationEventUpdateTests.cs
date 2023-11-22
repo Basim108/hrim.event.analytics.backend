@@ -13,7 +13,7 @@ public class DurationEventUpdateTests: BaseCqrsTests
 {
     private readonly EventType _eventType;
 
-    public DurationEventUpdateTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}"); }
+    public DurationEventUpdateTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}").Bl; }
 
     [Fact]
     public async Task Update_Given_Props_DurationEvent_Should_Save_It() {

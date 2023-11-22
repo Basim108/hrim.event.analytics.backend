@@ -10,7 +10,7 @@ public class EventTypeGetAllTests: BaseCqrsTests
 {
     [Fact]
     public async Task Given_EventType_When_Not_Empty_AnalysisResults_Returns_Them() {
-        var eventType = TestData.Events.CreateEventType(OperatorUserId);
+        var eventType = TestData.Events.CreateEventType(OperatorUserId).Bl;
         var gapResult = TestData.AnalysisResults.EnsureGapExistence(eventType.Id);
 
         var resultList = await Mediator.Send(new EventTypeGetAllMine(Context: OperatorContext));

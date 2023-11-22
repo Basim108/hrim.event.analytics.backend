@@ -6,7 +6,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.Analysis.Cqrs;
 
-public record EventTypeAnalysisSettings(long EventTypeId, IDictionary<string, string>? Settings, DateTime UpdatedAt, IEnumerable<long> ChildrenIds);
+public record EventTypeAnalysisSettings(long EventTypeId, 
+                                        IDictionary<string, string>? Settings,
+                                        DateTime UpdatedAt, 
+                                        LTree TreeNodePath);
 
 public record GetEventTypesForAnalysis(string AnalysisCode): IRequest<List<EventTypeAnalysisSettings>>;
 
@@ -30,15 +33,15 @@ public class GetEventTypesForAnalysisHandler: IRequestHandler<GetEventTypesForAn
             _logger.LogCritical(CoreLogs.FEATURE_IS_NOT_FOUND, request.AnalysisCode);
             throw new ArgumentOutOfRangeException(nameof(request), CoreLogs.FEATURE_IS_NOT_FOUND);
         }
-        // due to refactoring - uncomment and check later
-        return null;
-        // return feature.IsOn
-        //            ? await _context.AnalysisByEventType
-        //                            .Include(x => x.EventType)
-        //                            .ThenInclude(x => x!.Children)  
-        //                            .Where(x => x.AnalysisCode == request.AnalysisCode && x.IsOn)
-        //                            .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, x.Settings, x.UpdatedAt, x.EventType!.Children!.Select(c => c.Id)))
-        //                            .ToListAsync(cancellationToken)
-        //            : new List<EventTypeAnalysisSettings>();
+        return feature.IsOn
+                   ? await _context.AnalysisByEventType
+                                   .Include(x => x.EventType)
+                                   .Where(x => x.AnalysisCode == request.AnalysisCode && x.IsOn)
+                                   .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, 
+                                                                              x.Settings, 
+                                                                              x.UpdatedAt, 
+                                                                              x.EventType.TreeNodePath))
+                                   .ToListAsync(cancellationToken)
+                   : new List<EventTypeAnalysisSettings>();
     }
 }

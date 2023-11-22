@@ -12,7 +12,7 @@ public class OccurrenceEventGetForPeriodTests: BaseCqrsTests
 {
     private readonly EventType _eventType;
 
-    public OccurrenceEventGetForPeriodTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}"); }
+    public OccurrenceEventGetForPeriodTests() { _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}").Bl; }
 
     [Fact]
     public async Task Should_Return_Only_Mine_Events() {

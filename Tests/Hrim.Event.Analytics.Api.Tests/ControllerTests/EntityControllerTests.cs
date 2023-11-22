@@ -50,7 +50,7 @@ public class EntityControllerTests: IClassFixture<EventAnalyticsWebAppFactory<Pr
         var operatorId = await _requestAccessor.GetInternalUserIdAsync(cancellation: CancellationToken.None);
         HrimEntity<long> entity = entityType switch {
             EntityType.HrimUser        => _testData.Users.EnsureUserExistence(id: operatorId),
-            EntityType.EventType       => _testData.Events.CreateEventType(userId: operatorId, $"name: {Guid.NewGuid()}"),
+            EntityType.EventType       => _testData.Events.CreateEventType(userId: operatorId, $"name: {Guid.NewGuid()}").Bl,
             EntityType.DurationEvent   => _testData.Events.CreateDurationEvent(userId: operatorId, isDeleted: false),
             EntityType.OccurrenceEvent => _testData.Events.CreateOccurrenceEvent(userId: operatorId, isDeleted: false),
             _                          => throw new Exception($"Unsupported entity type: {entityType.ToString()}")
@@ -74,7 +74,7 @@ public class EntityControllerTests: IClassFixture<EventAnalyticsWebAppFactory<Pr
         var operatorId = await _requestAccessor.GetInternalUserIdAsync(cancellation: CancellationToken.None);
         HrimEntity<long> entity = entityType switch {
             EntityType.HrimUser        => _testData.Users.EnsureUserExistence(id: operatorId, isDeleted: true),
-            EntityType.EventType       => _testData.Events.CreateEventType(userId: operatorId, $"name: {Guid.NewGuid()}", isDeleted: true),
+            EntityType.EventType       => _testData.Events.CreateEventType(userId: operatorId, $"name: {Guid.NewGuid()}", isDeleted: true).Bl,
             EntityType.DurationEvent   => _testData.Events.CreateDurationEvent(userId: operatorId, isDeleted: true),
             EntityType.OccurrenceEvent => _testData.Events.CreateOccurrenceEvent(userId: operatorId, isDeleted: true),
             _                          => throw new Exception($"Unsupported entity type: {entityType.ToString()}")

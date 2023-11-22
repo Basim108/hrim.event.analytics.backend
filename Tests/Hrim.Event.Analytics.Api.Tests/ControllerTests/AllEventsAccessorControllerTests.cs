@@ -21,7 +21,7 @@ public class AllEventsAccessorControllerTests: BaseCqrsTests
         var accessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         _controller = new AllEventsAccessorController(requestAccessor: accessor, mediator: Mediator);
 
-        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Headache-{Guid.NewGuid()}").Bl;
         _request = new ByPeriodRequest {
             Start = DateTime.Now.Date.AddDays(value: -1).ToDateOnly(),
             End   = DateTime.Now.Date.AddDays(value: 1).ToDateOnly()

@@ -23,8 +23,7 @@ public class EventAnalyticDbContext: DbContext
     public DbSet<ExternalUserProfile> ExternalUserProfiles { get; set; }
     public DbSet<HrimTag>             HrimTags             { get; set; }
     public DbSet<HrimFeature>         HrimFeatures         { get; set; }
-
-    // TODO: try use contravariant
+    
     public DbSet<DbAnalysisConfigByEventType> AnalysisByEventType     { get; set; }
     public DbSet<StatisticsForEvent>          StatisticsForEvents     { get; set; }
     public DbSet<StatisticsForEventType>      StatisticsForEventTypes { get; set; }

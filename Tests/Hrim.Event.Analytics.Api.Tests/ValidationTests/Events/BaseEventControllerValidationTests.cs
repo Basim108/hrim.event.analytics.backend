@@ -4,7 +4,6 @@ using System.Text;
 using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Services;
-using Hrim.Event.Analytics.Api.Services;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.TestingHost;
 using Hrim.Event.Analytics.EfCore;
@@ -93,7 +92,7 @@ public abstract class BaseEventControllerValidationTests: BaseEntityControllerTe
     [Theory]
     [InlineData(12345678)]
     public async Task Update_Given_NonExistent_CreatedById_Returns_BadRequest(long createdById) {
-        var eventType     = _testData.Events.CreateEventType(userId: _operatorId, $"Headache-{Guid.NewGuid()}");
+        var eventType     = _testData.Events.CreateEventType(userId: _operatorId, $"Headache-{Guid.NewGuid()}").Bl;
         var updateRequest = GetBaseEventUpdateRequest();
         updateRequest.EventTypeId = eventType.Id;
         updateRequest.CreatedById = createdById;

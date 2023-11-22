@@ -15,7 +15,7 @@ public class OccurrenceEventUpdateTests: BaseCqrsTests
     private readonly OccurrenceEventUpdateRequest _updateRequest;
 
     public OccurrenceEventUpdateTests() {
-        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}").Bl;
         _updateRequest = new OccurrenceEventUpdateRequest {
             OccurredAt  = DateTimeOffset.Now,
             EventTypeId = _eventType.Id

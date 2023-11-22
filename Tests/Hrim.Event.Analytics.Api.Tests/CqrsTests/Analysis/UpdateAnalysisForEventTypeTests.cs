@@ -94,7 +94,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
     public async Task Given_EventType_Created_By_Another_User_Should_Forbid_And_DoNot_Update() {
         var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
-        var eventType = TestData.Events.CreateEventType(anotherUserId, "Test Type");
+        var eventType = TestData.Events.CreateEventType(anotherUserId, "Test Type").Bl;
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         var list = new List<AnalysisConfigByEventType>() {
             new () {
@@ -132,7 +132,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_2_Changed_Analysis_Should_Update_Both() {
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS, true, null);
         var list = new List<AnalysisConfigByEventType>() {
@@ -159,7 +159,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_1_Changed_Analysis_Should_Update_One_And_DoNot_Change_Unchanged() {
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         var count = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         var list = new List<AnalysisConfigByEventType>() {
@@ -189,7 +189,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_2_Unchanged_Analysis_Should_DoNot_Change_Unchanged() {
-        var eventType    = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType    = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         var count        = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         var gap          = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         var list         = new List<AnalysisConfigByEventType>() { count, gap };
@@ -216,7 +216,7 @@ public class UpdateAnalysisForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Given_2_Changed_Analysis_When_Count_Feature_IsOff_Should_Update_Both() {
         _countFeature.IsOn = false;
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         var list = new List<AnalysisConfigByEventType>() {

@@ -38,9 +38,9 @@ public class AnalysisSettingsAutoCreationRecurringJobTests
 
     [Fact]
     public async Task Given_3_EventTypes_When_1_Without_Any_Settings_Should_Sync_All_of_Them() {
-        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
-        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2");
-        var eventType3 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #3");
+        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1").Bl;
+        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2").Bl;
+        var eventType3 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #3").Bl;
         _testData.AnalysisByEventType.EnsureExistence(eventType1.Id, _gapDefaultSettings);
         _testData.AnalysisByEventType.EnsureExistence(eventType1.Id, _countDefaultSettings);
         _testData.AnalysisByEventType.EnsureExistence(eventType3.Id, _gapDefaultSettings);
@@ -61,9 +61,9 @@ public class AnalysisSettingsAutoCreationRecurringJobTests
 
     [Fact]
     public async Task Given_3_EventTypes_When_1_IsDeleted_Should_Ignore_Deleted() {
-        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
-        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2", isDeleted: true);
-        var eventType3 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #3");
+        var eventType1 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1").Bl;
+        var eventType2 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #2", isDeleted: true).Bl;
+        var eventType3 = _testData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #3").Bl;
 
         await _handler.Handle(_job, CancellationToken.None);
 
