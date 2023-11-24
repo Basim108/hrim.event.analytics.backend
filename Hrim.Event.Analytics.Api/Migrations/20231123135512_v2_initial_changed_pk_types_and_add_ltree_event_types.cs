@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -22,36 +23,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:PostgresExtension:ltree", ",,")
                 .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
-
-            migrationBuilder.CreateSequence(
-                name: "db_duration_event_id_seq",
-                schema: "v2_hrim_analytics",
-                incrementBy: 10);
-
-            migrationBuilder.CreateSequence(
-                name: "db_event_type_id_seq",
-                schema: "v2_hrim_analytics",
-                incrementBy: 10);
-
-            migrationBuilder.CreateSequence(
-                name: "db_occurrence_event_id_seq",
-                schema: "v2_hrim_analytics",
-                incrementBy: 10);
-
-            migrationBuilder.CreateSequence(
-                name: "external_user_profile_id_seq",
-                schema: "v2_hrim_analytics",
-                incrementBy: 10);
-
-            migrationBuilder.CreateSequence(
-                name: "hrim_tag_id_seq",
-                schema: "v2_hrim_analytics",
-                incrementBy: 10);
-
-            migrationBuilder.CreateSequence(
-                name: "hrim_user_id_seq",
-                schema: "v2_hrim_analytics",
-                incrementBy: 10);
 
             migrationBuilder.CreateTable(
                 name: "hrim_features",
@@ -81,7 +52,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "v2_hrim_analytics",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: true, comment: "Date and UTC time of entity instance last update "),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: true),
@@ -99,7 +71,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "v2_hrim_analytics",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     tree_node_path = table.Column<string>(type: "ltree", nullable: false),
                     parent_id = table.Column<long>(type: "bigint", nullable: true, comment: "Reference to a more general event type, which this type is specified in some context\nFor example, if current event type is Hatha Yoga, its parent type might be just general Yoga."),
                     name = table.Column<string>(type: "text", nullable: false, comment: "Event type name, e.g. 'nice mood', 'headache', etc"),
@@ -137,7 +110,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "v2_hrim_analytics",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     user_id = table.Column<long>(type: "bigint", nullable: false, comment: "A user id in current system to which this profile is linked to"),
                     external_user_id = table.Column<string>(type: "text", nullable: false, comment: "A user id in external identity provider"),
                     idp = table.Column<string>(type: "text", nullable: false, comment: "Identity provider that provided this profile"),
@@ -170,7 +144,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "v2_hrim_analytics",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     tag = table.Column<string>(type: "text", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false, comment: "A user id who created a tag"),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
@@ -224,7 +199,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "v2_hrim_analytics",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     started_on = table.Column<DateOnly>(type: "date", nullable: false, comment: "Date when an event started"),
                     started_at = table.Column<DateTimeOffset>(type: "timetz", nullable: false, comment: "Time with end-user timezone when an event started"),
                     finished_on = table.Column<DateOnly>(type: "date", nullable: true, comment: "Date when an event finished"),
@@ -263,7 +239,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 schema: "v2_hrim_analytics",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     occurred_on = table.Column<DateOnly>(type: "date", nullable: false, comment: "Date when an event occurred"),
                     occurred_at = table.Column<DateTimeOffset>(type: "timetz", nullable: false, comment: "Time with end-user timezone when an event occurred"),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, comment: "Date and UTC time of entity instance creation"),
@@ -456,30 +433,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "hrim_users",
-                schema: "v2_hrim_analytics");
-
-            migrationBuilder.DropSequence(
-                name: "db_duration_event_id_seq",
-                schema: "v2_hrim_analytics");
-
-            migrationBuilder.DropSequence(
-                name: "db_event_type_id_seq",
-                schema: "v2_hrim_analytics");
-
-            migrationBuilder.DropSequence(
-                name: "db_occurrence_event_id_seq",
-                schema: "v2_hrim_analytics");
-
-            migrationBuilder.DropSequence(
-                name: "external_user_profile_id_seq",
-                schema: "v2_hrim_analytics");
-
-            migrationBuilder.DropSequence(
-                name: "hrim_tag_id_seq",
-                schema: "v2_hrim_analytics");
-
-            migrationBuilder.DropSequence(
-                name: "hrim_user_id_seq",
                 schema: "v2_hrim_analytics");
         }
     }

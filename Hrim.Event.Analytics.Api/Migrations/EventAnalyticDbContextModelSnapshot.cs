@@ -25,24 +25,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.HasSequence("db_duration_event_id_seq")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("db_event_type_id_seq")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("db_occurrence_event_id_seq")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("external_user_profile_id_seq")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("hrim_tag_id_seq")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("hrim_user_id_seq")
-                .IncrementsBy(10);
-
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile", b =>
                 {
                     b.Property<long>("Id")
@@ -50,7 +32,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "external_user_profile_id_seq");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -129,7 +111,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "hrim_user_id_seq");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -337,7 +319,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "hrim_tag_id_seq");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -436,7 +418,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "db_event_type_id_seq");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -517,7 +499,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "db_duration_event_id_seq");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -597,7 +579,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "db_occurrence_event_id_seq");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
