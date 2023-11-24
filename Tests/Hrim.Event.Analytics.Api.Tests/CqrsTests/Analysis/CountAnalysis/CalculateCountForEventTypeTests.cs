@@ -39,13 +39,13 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Case1_Given_LastRun_When_All_Events_Deleted_Should_Return_Both_Counts_0() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent>());
-        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(0);
         var lastRun = new StatisticsForEventType {
             EntityId     = eventType.Bl.Id,
@@ -53,7 +53,7 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(-2),
             FinishedAt   = DateTime.UtcNow.AddMinutes(-1)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Any<List<AnalysisEvent>>(), Arg.Any<int>());
     }
@@ -64,11 +64,11 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Case2_Given_No_LastRun_When_No_Events_Should_Return_Null() {
         var eventType    = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns((DateTime?)null);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns((DateTime?)null);
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, null), CancellationToken.None);
         _calculationService.Received(0).Calculate(Arg.Any<List<AnalysisEvent>>(), Arg.Any<int>());
     }
@@ -80,15 +80,15 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     public async Task Case3_Given_Changes_After_LastRun_Should_Return_Calculate_It() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         var duration = TestData.Events.CreateDurationEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(1);
         var lastRun = new StatisticsForEventType {
             EntityId     = eventType.Bl.Id,
@@ -96,7 +96,7 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddSeconds(-1),
             FinishedAt   = DateTime.UtcNow.AddMicroseconds(1)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 1), Arg.Is(1));
     }
@@ -108,15 +108,15 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     public async Task Case4_Given_Changes_For_Events_Before_LastRun_Should_Calculate_It() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         var duration  = TestData.Events.CreateDurationEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(1);
         var lastRun = new StatisticsForEventType {
             EntityId     = eventType.Bl.Id,
@@ -124,7 +124,7 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(-2),
             FinishedAt   = DateTime.UtcNow.AddMinutes(-1)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 1), Arg.Is(1));
     }
@@ -136,15 +136,15 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     public async Task Case5_Given_No_Changes_Should_Return_Null() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         var duration  = TestData.Events.CreateDurationEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow.AddMinutes(-1));
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow.AddMinutes(-1));
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(1);
         var lastRun = new StatisticsForEventType {
             EntityId     = eventType.Bl.Id,
@@ -152,7 +152,7 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(1),
             FinishedAt   = DateTime.UtcNow.AddMinutes(2)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(0).Calculate(Arg.Any<List<AnalysisEvent>>(), Arg.Any<int>());
     }
@@ -163,15 +163,15 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Case7_Given_Occurrence_But_No_Duration_Should_Return_Occurrences() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns((DateTime?)null);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent>());
-        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(1);
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, null), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 0), Arg.Is(1));
     }
@@ -183,17 +183,17 @@ public class CalculateCountForEventTypeTests: BaseCqrsTests
     public async Task Case8_Given_Durations_But_No_Occurrences_Should_Return_Occurrences() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         var duration  = TestData.Events.CreateDurationEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns((DateTime?)null);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.CountDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(0);
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, null, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateCountForEventType(eventTypeInfo, null), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 1), Arg.Is(0));
     }
