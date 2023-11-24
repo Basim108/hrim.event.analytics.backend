@@ -23,7 +23,7 @@ internal sealed class SetOwnerActionFilter: IActionFilter, IAsyncActionFilter
     private readonly ILogger<SetOwnerActionFilter> _logger;
     private readonly IApiRequestAccessor           _requestAccessor;
 
-    private Guid _internalUserId;
+    private long _internalUserId;
 
     public SetOwnerActionFilter(IApiRequestAccessor           requestAccessor,
                                 ILogger<SetOwnerActionFilter> logger) {

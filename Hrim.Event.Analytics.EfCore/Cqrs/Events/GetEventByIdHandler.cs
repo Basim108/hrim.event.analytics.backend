@@ -7,6 +7,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Events;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Exceptions;
 using Hrim.Event.Analytics.Abstractions.Services;
+using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,7 @@ public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, 
     }
 
     public Task<CqrsResult<TEvent?>> Handle(GetEventById<TEvent> request, CancellationToken cancellationToken) {
-        if (request.Id == Guid.Empty)
+        if (request.Id == default)
             throw new ArgumentNullException($"{nameof(request)}.{nameof(request.Id)}");
         return HandleAsync(request: request, cancellationToken: cancellationToken);
     }
@@ -41,7 +42,7 @@ public class GetEventByIdHandler<TEvent>: IRequestHandler<GetEventById<TEvent>, 
     private async Task<CqrsResult<TEvent?>> HandleAsync(GetEventById<TEvent> request, CancellationToken cancellationToken) {
         using var entityIdScope = _logger.BeginScope(messageFormat: CoreLogs.HRIM_ENTITY_ID, request.Id);
         try {
-            BaseEvent? db;
+            DbBaseEvent? db;
             switch (new TEvent()) {
                 case DurationEvent:
                     var durationQuery = _context.DurationEvents.AsQueryable();

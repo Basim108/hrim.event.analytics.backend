@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 using Hrim.Event.Analytics.EfCore;
 
 namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
@@ -8,9 +9,9 @@ public class TestData
 {
     public EventAnalyticDbContext DbContext { get; private set; }
 
-    public TestData(EventAnalyticDbContext context) {
+    public TestData(EventAnalyticDbContext context, IMapper mapper) {
         DbContext           = context;
-        Events              = new EventsData(context);
+        Events              = new EventsData(context, mapper);
         Users               = new UsersData(context);
         Features            = new FeaturesData(context);
         AnalysisByEventType = new AnalysisByEventTypeData(context);

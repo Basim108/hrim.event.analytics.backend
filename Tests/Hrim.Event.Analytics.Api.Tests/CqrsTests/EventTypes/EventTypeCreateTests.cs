@@ -79,4 +79,32 @@ public class EventTypeCreateTests: BaseCqrsTests
         cqrsResult.CheckUpdateOrCreationOfSoftDeletedEntity();
         cqrsResult.Result!.Name.Should().Be(expected: _createEventTypeRequest.Name);
     }
+    
+    [Fact]
+    public async Task Given_EventType_With_Parent_Should_Setup_TreeNodePath() {
+        var parent    = TestData.Events.CreateEventType(OperatorUserId, "Parent Test Event Type");
+        _createCommand.EventType.ParentId = parent.Bl.Id;
+        
+        var cqrsResult = await Mediator.Send(request: _createCommand);
+        
+        cqrsResult.Should().NotBeNull();
+        cqrsResult.Result.Should().NotBeNull();
+        var createdEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == cqrsResult.Result!.Id);
+        createdEventType.Should().NotBeNull();
+        createdEventType!.TreeNodePath.ToString().Should().Be($"{parent.Bl.Id}.{cqrsResult.Result!.Id}");
+    }
+    
+    [Fact]
+    public async Task Given_Not_Existing_ParentId_Should_Set_Parent_To_Null() {
+        _createCommand.EventType.ParentId = new Random().NextInt64();
+        
+        var cqrsResult = await Mediator.Send(request: _createCommand);
+        
+        cqrsResult.Should().NotBeNull();
+        cqrsResult.Result.Should().NotBeNull();
+        var createdEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == cqrsResult.Result!.Id);
+        createdEventType.Should().NotBeNull();
+        createdEventType!.ParentId.Should().BeNull();
+        createdEventType.TreeNodePath.ToString().Should().Be(createdEventType.Id.ToString());
+    }
 }

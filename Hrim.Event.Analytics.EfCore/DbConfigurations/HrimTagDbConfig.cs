@@ -14,7 +14,7 @@ public class HrimTagDbConfig: IEntityTypeConfiguration<HrimTag>
         builder.HasIndex(x => x.CreatedById)
                .IncludeProperties(x => x.Tag);
 
-        builder.AddEntityProperties();
+        builder.AddEntityProperties<HrimTag, long>();
 
         builder.Property(p => p.Tag)
                .HasColumnName(nameof(HrimTag.Tag).ToSnakeCase())

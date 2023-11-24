@@ -8,7 +8,7 @@ public class UpdateEventTypeRequestValidator: AbstractValidator<UpdateEventTypeR
 {
     /// <summary> </summary>
     public UpdateEventTypeRequestValidator() {
-        this.AddRulesForEntityUpdateRequests();
+        this.AddRulesForEntityUpdateRequests<UpdateEventTypeRequest, long>();
         this.AddRulesForEventType();
     }
 }

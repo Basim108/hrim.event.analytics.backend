@@ -29,7 +29,7 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
     }
 
     private async Task<IList<ViewEventType>> HandleAsync(EventTypeGetAllMine request, CancellationToken cancellationToken) {
-        var query = _context.UserEventTypes.AsQueryable();
+        var query = _context.EventTypes.AsQueryable();
 
         var operatorUserId = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         if (request.IncludeOthersPublic)

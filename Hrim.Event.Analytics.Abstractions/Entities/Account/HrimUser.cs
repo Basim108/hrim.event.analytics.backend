@@ -4,7 +4,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Account;
 
 /// <summary> Authorized user </summary>
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public class HrimUser: HrimEntity
+public class HrimUser: HrimEntity<long>
 {
     /// <summary>
     ///     All external identity provider profiles linked to this user
@@ -14,6 +14,6 @@ public class HrimUser: HrimEntity
     /// <summary> copy all entity properties to the another entity </summary>
     public void CopyTo(HrimUser another) {
         base.CopyTo(another: another);
-        another.ExternalProfiles = ExternalProfiles.CopyListTo();
+        another.ExternalProfiles = ExternalProfiles.CopyListTo<ExternalUserProfile, long>();
     }
 }

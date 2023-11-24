@@ -17,20 +17,22 @@ namespace Hrim.Event.Analytics.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("hrim_analytics")
-                .HasAnnotation("ProductVersion", "7.0.8")
+                .HasDefaultSchema("v2_hrim_analytics")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "ltree");
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "uuid-ossp");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.ExternalUserProfile", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -61,8 +63,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("full_name");
 
-                    b.Property<Guid>("HrimUserId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("HrimUserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id")
                         .HasComment("A user id in current system to which this profile is linked to");
 
@@ -94,7 +96,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasIndex("HrimUserId");
 
-                    b.ToTable("external_user_profiles", "hrim_analytics", t =>
+                    b.ToTable("external_user_profiles", "v2_hrim_analytics", t =>
                         {
                             t.HasComment("user profiles from a specific idp such as Google, Facebook, etc");
 
@@ -104,11 +106,12 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -132,7 +135,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("hrim_users", "hrim_analytics", t =>
+                    b.ToTable("hrim_users", "v2_hrim_analytics", t =>
                         {
                             t.HasComment("An authorized user");
 
@@ -140,56 +143,10 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.AnalysisByEventType", b =>
-                {
-                    b.Property<Guid>("EventTypeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("event_type_id")
-                        .HasComment("Events of this event type will be analysed");
-
-                    b.Property<string>("AnalysisCode")
-                        .HasColumnType("text")
-                        .HasColumnName("analysis_code");
-
-                    b.Property<long>("ConcurrentToken")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint")
-                        .HasColumnName("concurrent_token")
-                        .HasComment("Update is possible only when this token equals to the token in the storage");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at")
-                        .HasComment("Date and UTC time of entity instance creation");
-
-                    b.Property<bool>("IsOn")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_on")
-                        .HasComment("Enable/disable analysis for a particular event-type");
-
-                    b.Property<string>("Settings")
-                        .HasColumnType("jsonb")
-                        .HasColumnName("settings");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("updated_at")
-                        .HasComment("Date and UTC time of entity instance last update ");
-
-                    b.HasKey("EventTypeId", "AnalysisCode");
-
-                    b.ToTable("analysis_by_event_type", "analysis", t =>
-                        {
-                            t.HasComment("Analysis that is made around events of a particular event-type");
-
-                            t.HasCheckConstraint("CK_analysis_by_event_types_concurrent_token", "concurrent_token > 0");
-                        });
-                });
-
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEvent", b =>
                 {
-                    b.Property<Guid>("EntityId")
-                        .HasColumnType("uuid")
+                    b.Property<long?>("EntityId")
+                        .HasColumnType("bigint")
                         .HasColumnName("entity_id")
                         .HasComment("refers to an occurrence/duration event for which this calculation was made.");
 
@@ -219,7 +176,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasKey("EntityId", "AnalysisCode");
 
-                    b.ToTable("statistics_for_events", "analysis", t =>
+                    b.ToTable("statistics_for_events", "v2_analysis", t =>
                         {
                             t.HasComment("Stores results of calculation analysis for event types");
                         });
@@ -227,8 +184,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEventType", b =>
                 {
-                    b.Property<Guid>("EntityId")
-                        .HasColumnType("uuid")
+                    b.Property<long?>("EntityId")
+                        .HasColumnType("bigint")
                         .HasColumnName("entity_id")
                         .HasComment("refers to an event type for which this calculation was made.");
 
@@ -258,84 +215,9 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasKey("EntityId", "AnalysisCode");
 
-                    b.ToTable("statistics_for_event_types", "analysis", t =>
+                    b.ToTable("statistics_for_event_types", "v2_analysis", t =>
                         {
                             t.HasComment("Stores results of calculation analysis for event types");
-                        });
-                });
-
-            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("color")
-                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
-
-                    b.Property<long>("ConcurrentToken")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint")
-                        .HasColumnName("concurrent_token")
-                        .HasComment("Update is possible only when this token equals to the token in the storage");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("created_at")
-                        .HasComment("Date and UTC time of entity instance creation");
-
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by")
-                        .HasComment("A user who created an instance of this event type");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description")
-                        .HasComment("Description given by user, when user_event_type based on this one will be created.");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<bool>("IsPublic")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_public")
-                        .HasComment(" An owner who created this event_type could share it with other end-users");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name")
-                        .HasComment("Event type name, e.g. 'nice mood', 'headache', etc");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("parent_id")
-                        .HasComment("Reference to a more general event type, which this type is specified in some context\nFor example, if current event type is Hatha Yoga, its parent type might be just general Yoga.");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamptz")
-                        .HasColumnName("updated_at")
-                        .HasComment("Date and UTC time of entity instance last update ");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.HasIndex("CreatedById", "Name")
-                        .IsUnique();
-
-                    b.ToTable("event_types", "hrim_analytics", t =>
-                        {
-                            t.HasComment("User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
-
-                            t.HasCheckConstraint("CK_user_event_types_concurrent_token", "concurrent_token > 0");
                         });
                 });
 
@@ -396,7 +278,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("hrim_features", "hrim_analytics", t =>
+                    b.ToTable("hrim_features", "v2_hrim_analytics", t =>
                         {
                             t.HasComment("Features that might be on/off;\nfor example, analysis based on event-types, tags, events, etc");
 
@@ -432,11 +314,12 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.HrimTag", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -449,8 +332,8 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("created_at")
                         .HasComment("Date and UTC time of entity instance creation");
 
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CreatedById")
+                        .HasColumnType("bigint")
                         .HasColumnName("created_by")
                         .HasComment("A user id who created a tag");
 
@@ -474,7 +357,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById"), new[] { "Tag" });
 
-                    b.ToTable("hrim_tags", "hrim_analytics", t =>
+                    b.ToTable("hrim_tags", "v2_hrim_analytics", t =>
                         {
                             t.HasComment("A tag that could be linked to an instance of any entity");
 
@@ -482,13 +365,16 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Analysis.DbAnalysisConfigByEventType", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                    b.Property<long>("EventTypeId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("event_type_id")
+                        .HasComment("Events of this event type will be analysed");
+
+                    b.Property<string>("AnalysisCode")
+                        .HasColumnType("text")
+                        .HasColumnName("analysis_code");
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -501,13 +387,137 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("created_at")
                         .HasComment("Date and UTC time of entity instance creation");
 
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
+                    b.Property<bool>("IsOn")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_on")
+                        .HasComment("Enable/disable analysis for a particular event-type");
+
+                    b.Property<string>("Settings")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("settings");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at")
+                        .HasComment("Date and UTC time of entity instance last update ");
+
+                    b.HasKey("EventTypeId", "AnalysisCode");
+
+                    b.ToTable("analysis_config_by_event_type", "v2_analysis", t =>
+                        {
+                            t.HasComment("Configuration of an analysis that will be made around events of a particular event-type");
+
+                            t.HasCheckConstraint("CK_analysis_config_by_event_types_concurrent_token", "concurrent_token > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("color")
+                        .HasComment("A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'");
+
+                    b.Property<long>("ConcurrentToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("concurrent_token")
+                        .HasComment("Update is possible only when this token equals to the token in the storage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at")
+                        .HasComment("Date and UTC time of entity instance creation");
+
+                    b.Property<long>("CreatedById")
+                        .HasColumnType("bigint")
                         .HasColumnName("created_by")
                         .HasComment("A user who created an instance of this event type");
 
-                    b.Property<Guid>("EventTypeId")
-                        .HasColumnType("uuid")
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description")
+                        .HasComment("Description given by user, when user_event_type based on this one will be created.");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_public")
+                        .HasComment(" An owner who created this event_type could share it with other end-users");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name")
+                        .HasComment("Event type name, e.g. 'nice mood', 'headache', etc");
+
+                    b.Property<long?>("ParentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("parent_id")
+                        .HasComment("Reference to a more general event type, which this type is specified in some context\nFor example, if current event type is Hatha Yoga, its parent type might be just general Yoga.");
+
+                    b.Property<string>("TreeNodePath")
+                        .HasColumnType("ltree")
+                        .HasColumnName("tree_node_path");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("updated_at")
+                        .HasComment("Date and UTC time of entity instance last update ");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("CreatedById", "Name")
+                        .IsUnique();
+
+                    b.ToTable("event_types", "v2_hrim_analytics", t =>
+                        {
+                            t.HasComment("User defined event types.\nhttps://hrimsoft.atlassian.net/wiki/spaces/HRIMCALEND/pages/65566/System+Event+Types");
+
+                            t.HasCheckConstraint("CK_db_event_types_concurrent_token", "concurrent_token > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ConcurrentToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("concurrent_token")
+                        .HasComment("Update is possible only when this token equals to the token in the storage");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("created_at")
+                        .HasComment("Date and UTC time of entity instance creation");
+
+                    b.Property<long>("CreatedById")
+                        .HasColumnType("bigint")
+                        .HasColumnName("created_by")
+                        .HasComment("A user who created an instance of this event type");
+
+                    b.Property<long>("EventTypeId")
+                        .HasColumnType("bigint")
                         .HasColumnName("event_type_id")
                         .HasComment("Event type on which current event is based.");
 
@@ -553,7 +563,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "StartedOn"), new[] { "EventTypeId", "StartedAt", "FinishedOn", "FinishedAt", "IsDeleted" });
 
-                    b.ToTable("duration_events", "hrim_analytics", t =>
+                    b.ToTable("duration_events", "v2_hrim_analytics", t =>
                         {
                             t.HasComment("When it is important to register an event that has start time and end time this system_event_type can be used.\nThis kind of events may occur several times a day and can cross each other.");
 
@@ -563,11 +573,12 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbOccurrenceEvent", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("uuid_generate_v4()");
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long>("ConcurrentToken")
                         .IsConcurrencyToken()
@@ -580,13 +591,13 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasColumnName("created_at")
                         .HasComment("Date and UTC time of entity instance creation");
 
-                    b.Property<Guid>("CreatedById")
-                        .HasColumnType("uuid")
+                    b.Property<long>("CreatedById")
+                        .HasColumnType("bigint")
                         .HasColumnName("created_by")
                         .HasComment("A user who created an instance of this event type");
 
-                    b.Property<Guid>("EventTypeId")
-                        .HasColumnType("uuid")
+                    b.Property<long>("EventTypeId")
+                        .HasColumnType("bigint")
                         .HasColumnName("event_type_id")
                         .HasComment("Event type on which current event is based.");
 
@@ -622,7 +633,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
                     NpgsqlIndexBuilderExtensions.IncludeProperties(b.HasIndex("CreatedById", "OccurredAt"), new[] { "EventTypeId", "IsDeleted" });
 
-                    b.ToTable("occurrence_events", "hrim_analytics", t =>
+                    b.ToTable("occurrence_events", "v2_hrim_analytics", t =>
                         {
                             t.HasComment("When the main importance is the fact that an event occurred.\nThis kind of events may occur several times a day.");
 
@@ -639,17 +650,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("HrimUser");
-                });
-
-            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.AnalysisByEventType", b =>
-                {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", "EventType")
-                        .WithMany("AnalysisSettings")
-                        .HasForeignKey("EventTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EventType");
                 });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEvent", b =>
@@ -669,28 +669,11 @@ namespace Hrim.Event.Analytics.Api.Migrations
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.Analysis.StatisticsForEventType", b =>
                 {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", null)
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", null)
                         .WithMany("AnalysisResults")
                         .HasForeignKey("EntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
-                {
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.HrimTag", b =>
@@ -704,6 +687,34 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("CreatedBy");
                 });
 
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Analysis.DbAnalysisConfigByEventType", b =>
+                {
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", "EventType")
+                        .WithMany("AnalysisSettings")
+                        .HasForeignKey("EventTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EventType");
+                });
+
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", b =>
+                {
+                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.Events.DbDurationEvent", b =>
                 {
                     b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.Account.HrimUser", "CreatedBy")
@@ -712,7 +723,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", "EventType")
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", "EventType")
                         .WithMany()
                         .HasForeignKey("EventTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -731,7 +742,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", "EventType")
+                    b.HasOne("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", "EventType")
                         .WithMany()
                         .HasForeignKey("EventTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -747,7 +758,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                     b.Navigation("ExternalProfiles");
                 });
 
-            modelBuilder.Entity("Hrim.Event.Analytics.Abstractions.Entities.EventTypes.UserEventType", b =>
+            modelBuilder.Entity("Hrim.Event.Analytics.EfCore.DbEntities.DbEventType", b =>
                 {
                     b.Navigation("AnalysisResults");
 

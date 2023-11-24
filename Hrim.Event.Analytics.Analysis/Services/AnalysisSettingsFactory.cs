@@ -6,11 +6,11 @@ namespace Hrim.Event.Analytics.Analysis.Services;
 
 public class AnalysisSettingsFactory: IAnalysisSettingsFactory
 {
-    private static readonly List<AnalysisByEventType> DefaultSettings;
+    private static readonly List<AnalysisConfigByEventType> DefaultSettings;
 
     static AnalysisSettingsFactory() {
         DefaultSettings = new() {
-            new AnalysisByEventType {
+            new AnalysisConfigByEventType {
                 AnalysisCode = FeatureCodes.COUNT_ANALYSIS,
                 IsOn         = true
             },
@@ -25,16 +25,16 @@ public class AnalysisSettingsFactory: IAnalysisSettingsFactory
     }
 
     /// <inheritdoc />
-    public List<AnalysisByEventType> GetDefaultSettings() => DefaultSettings;
+    public List<AnalysisConfigByEventType> GetDefaultSettings() => DefaultSettings;
 
     /// <inheritdoc />
-    public List<AnalysisByEventType>? GetMissedSettings(List<AnalysisByEventType>? settings) {
+    public List<AnalysisConfigByEventType>? GetMissedSettings(List<AnalysisConfigByEventType>? settings) {
         if (settings == null || settings.Count == 0)
             return DefaultSettings;
         if (settings.Count >= DefaultSettings.Count)
             return null;
 
-        var missedSettings = new List<AnalysisByEventType>(DefaultSettings.Count);
+        var missedSettings = new List<AnalysisConfigByEventType>(DefaultSettings.Count);
         foreach (var defSetting in DefaultSettings) {
             if (settings.Any(x => x.AnalysisCode == defSetting.AnalysisCode))
                 continue;

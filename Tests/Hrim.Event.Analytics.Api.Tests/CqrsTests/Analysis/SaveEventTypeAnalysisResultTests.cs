@@ -13,7 +13,7 @@ public class SaveEventTypeAnalysisResultTests: BaseCqrsTests
     /// </summary>
     [Fact]
     public async Task Given_Null_LoadedDbEntity_Should_Create_A_New_One() {
-        var eventType = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type");
+        var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type").Bl;
         await Mediator.Send(new SaveEventTypeAnalysisResult(LoadedDbEntity: null,
                                                             EventTypeId: eventType.Id,
                                                             AnalysisCode: FeatureCodes.GAP_ANALYSIS,
@@ -31,7 +31,7 @@ public class SaveEventTypeAnalysisResultTests: BaseCqrsTests
     /// </summary>
     [Fact]
     public async Task Given_LoadedDbEntity_Should_Not_Create_A_New_One() {
-        var eventType = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Event Type");
+        var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type").Bl;
         var lastRun = new StatisticsForEventType() {
             EntityId = eventType.Id,
             AnalysisCode = FeatureCodes.GAP_ANALYSIS,

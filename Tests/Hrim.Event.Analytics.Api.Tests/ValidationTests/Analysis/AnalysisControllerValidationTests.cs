@@ -15,18 +15,18 @@ namespace Hrim.Event.Analytics.Api.Tests.ValidationTests.Analysis;
 public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebAppFactory<Program>>
 {
     private readonly HttpClient? _client;
-    
+    private const    string      DUMMY_EVENT_TYPE_ID = "2";
     public AnalysisControllerValidationTests(EventAnalyticsWebAppFactory<Program> factory) {
         _client = factory.GetClient(baseUrl: "v1/analysis/event-type/");
     }
     
     [Fact]
     public async Task Update_Given_Unknown_Analysis_Code_Returns_BadRequest() {
-        var list = new List<AnalysisByEventType> {
+        var list = new List<AnalysisConfigByEventType> {
             new () { AnalysisCode = "SomeCode" }
         };
 
-        var response = await _client!.PostAsync(requestUri: Guid.NewGuid().ToString(), TestUtils.PrepareJson(list));
+        var response = await _client!.PostAsync(requestUri: DUMMY_EVENT_TYPE_ID, TestUtils.PrepareJson(list));
 
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -42,14 +42,14 @@ public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebA
     
     [Fact]
     public async Task Update_Given_Count_Analysis_And_NotEmpty_Settings_Returns_BadRequest() {
-        var list = new List<AnalysisByEventType> {
+        var list = new List<AnalysisConfigByEventType> {
             new () {
                 AnalysisCode = FeatureCodes.COUNT_ANALYSIS,
                 Settings = new Dictionary<string, string>() { {"prop", "value"} }
             }
         };
 
-        var response = await _client!.PostAsync(requestUri: Guid.NewGuid().ToString(), TestUtils.PrepareJson(list));
+        var response = await _client!.PostAsync(requestUri: DUMMY_EVENT_TYPE_ID, TestUtils.PrepareJson(list));
 
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -65,14 +65,14 @@ public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebA
     
     [Fact]
     public async Task Update_Given_Gap_Analysis_And_Unknown_Settings_Returns_BadRequest() {
-        var list = new List<AnalysisByEventType> {
+        var list = new List<AnalysisConfigByEventType> {
             new () {
                 AnalysisCode = FeatureCodes.GAP_ANALYSIS,
                 Settings = new Dictionary<string, string>() { {"prop", "value"} }
             }
         };
 
-        var response = await _client!.PostAsync(requestUri: Guid.NewGuid().ToString(), TestUtils.PrepareJson(list));
+        var response = await _client!.PostAsync(requestUri: DUMMY_EVENT_TYPE_ID, TestUtils.PrepareJson(list));
 
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -88,7 +88,7 @@ public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebA
 
     [Fact]
     public async Task Update_Given_Gap_Analysis_And_Additional_Unknown_Settings_Returns_BadRequest() {
-        var list = new List<AnalysisByEventType> {
+        var list = new List<AnalysisConfigByEventType> {
             new () {
                 AnalysisCode = FeatureCodes.GAP_ANALYSIS,
                 Settings     = new Dictionary<string, string>() {
@@ -98,7 +98,7 @@ public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebA
             }
         };
 
-        var response = await _client!.PostAsync(requestUri: Guid.NewGuid().ToString(), TestUtils.PrepareJson(list));
+        var response = await _client!.PostAsync(requestUri: DUMMY_EVENT_TYPE_ID, TestUtils.PrepareJson(list));
 
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -115,7 +115,7 @@ public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebA
     
     [Fact]
     public async Task Update_Given_Gap_Analysis_And_MinimalGapLength_More_Than_128_Returns_BadRequest() {
-        var list = new List<AnalysisByEventType> {
+        var list = new List<AnalysisConfigByEventType> {
             new () {
                 AnalysisCode = FeatureCodes.GAP_ANALYSIS,
                 Settings = new Dictionary<string, string>() {
@@ -124,7 +124,7 @@ public class AnalysisControllerValidationTests: IClassFixture<EventAnalyticsWebA
             }
         };
 
-        var response = await _client!.PostAsync(requestUri: Guid.NewGuid().ToString(), TestUtils.PrepareJson(list));
+        var response = await _client!.PostAsync(requestUri: DUMMY_EVENT_TYPE_ID, TestUtils.PrepareJson(list));
 
         response.StatusCode.Should().Be(expected: HttpStatusCode.BadRequest);
         var responseContent = await response.Content.ReadAsStringAsync();

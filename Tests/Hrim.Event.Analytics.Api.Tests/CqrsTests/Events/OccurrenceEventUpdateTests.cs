@@ -11,11 +11,11 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Events;
 [ExcludeFromCodeCoverage]
 public class OccurrenceEventUpdateTests: BaseCqrsTests
 {
-    private readonly UserEventType                _eventType;
+    private readonly EventType                _eventType;
     private readonly OccurrenceEventUpdateRequest _updateRequest;
 
     public OccurrenceEventUpdateTests() {
-        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}");
+        _eventType = TestData.Events.CreateEventType(userId: OperatorUserId, $"Nice practice-{Guid.NewGuid()}").Bl;
         _updateRequest = new OccurrenceEventUpdateRequest {
             OccurredAt  = DateTimeOffset.Now,
             EventTypeId = _eventType.Id

@@ -8,10 +8,10 @@ public static class EntityChecks
     /// <summary> Assert entity properties after successful entity creation </summary>
     public static void CheckEntitySuccessfulCreation<TEntity>(this TEntity? entity,
                                                               DateTime?     beforeSend = null,
-                                                              Guid?         operatorId = null)
-        where TEntity : HrimEntity {
+                                                              long?         operatorId = null)
+        where TEntity : HrimEntity<long> {
         entity.Should().NotBeNull();
-        entity!.Id.Should().NotBeEmpty();
+        entity!.Id.Should().NotBe(0);
         if (operatorId.HasValue && entity is IHasOwner ownerResult)
             ownerResult.CreatedById.Should().Be(expected: operatorId.Value);
         if (beforeSend.HasValue)
@@ -24,9 +24,9 @@ public static class EntityChecks
     /// <summary> Assert entity properties after successful entity creation </summary>
     public static void CheckEntitySuccessfulUpdate<TEntity>(this TEntity? entity,
                                                             DateTime      beforeSend,
-                                                            Guid?         operatorId,
+                                                            long?         operatorId,
                                                             TEntity       forUpdate)
-        where TEntity : HrimEntity {
+        where TEntity : HrimEntity<long> {
         entity.Should().NotBeNull();
         entity!.Id.Should().Be(expected: forUpdate.Id);
         if (operatorId.HasValue && entity is IHasOwner ownerResult)

@@ -43,12 +43,12 @@ public class DurationEventCreateHandler: IRequestHandler<DurationEventCreateComm
         var mappedEventInfo = _mapper.Map<DbDurationEvent>(source: request.EventInfo);
         var operatorUserId  = await _requestAccessor.GetInternalUserIdAsync(cancellation: cancellationToken);
         var existed = await _context.DurationEvents
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId
-                                                           && x.StartedOn   == mappedEventInfo.StartedOn
-                                                           && x.StartedAt   == mappedEventInfo.StartedAt
-                                                           && x.EventTypeId == mappedEventInfo.EventTypeId,
-                                                         cancellationToken: cancellationToken);
+                                                  .AsNoTracking()
+                                                  .FirstOrDefaultAsync(x => x.CreatedById == operatorUserId
+                                                                                              && x.StartedOn   == mappedEventInfo.StartedOn
+                                                                                              && x.StartedAt   == mappedEventInfo.StartedAt
+                                                                                              && x.EventTypeId == mappedEventInfo.EventTypeId,
+                                                                         cancellationToken: cancellationToken);
         if (existed != null) {
             if (existed.IsDeleted == true) {
                 _logger.LogInformation(message: EfCoreLogs.CANNOT_CREATE_IS_DELETED, nameof(DurationEvent));

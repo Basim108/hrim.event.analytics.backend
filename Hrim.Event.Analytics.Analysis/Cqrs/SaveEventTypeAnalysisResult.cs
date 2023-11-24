@@ -9,7 +9,7 @@ namespace Hrim.Event.Analytics.Analysis.Cqrs;
 /// Is called from recurring analysis jobs. 
 /// </summary>
 public record SaveEventTypeAnalysisResult(StatisticsForEventType? LoadedDbEntity,
-                                          Guid                    EventTypeId,
+                                          long                    EventTypeId,
                                           string                  AnalysisCode,
                                           string?                 ResultJson,
                                           DateTime                StartedAt,
@@ -23,7 +23,7 @@ public class SaveEventTypeAnalysisResultHandler: IRequestHandler<SaveEventTypeAn
     public SaveEventTypeAnalysisResultHandler(EventAnalyticDbContext context) { _context = context; }
 
     public Task Handle(SaveEventTypeAnalysisResult request, CancellationToken cancellationToken) {
-        if (request.EventTypeId == Guid.Empty)
+        if (request.EventTypeId == default)
             throw new ArgumentNullException(nameof(request), nameof(request.EventTypeId));
         if (string.IsNullOrWhiteSpace(request.AnalysisCode))
             throw new ArgumentNullException(nameof(request), nameof(request.AnalysisCode));

@@ -12,7 +12,7 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 /// <param name="EventType">Event type on which this event is based on</param>
 /// <param name="ConcurrentToken">Update is possible only when this token equals to the token in the storage</param>
 /// <param name="Props">Additional properties for a particular event</param>
-public record ViewDurationEvent(Guid                         Id,
+public record ViewDurationEvent(long                         Id,
                                 DateTimeOffset               StartedAt,
                                 DateTimeOffset?              FinishedAt,
                                 ViewEventType                EventType,

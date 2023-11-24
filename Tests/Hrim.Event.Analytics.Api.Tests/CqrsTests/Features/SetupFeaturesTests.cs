@@ -12,7 +12,7 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Features;
 [ExcludeFromCodeCoverage]
 public class SetupFeaturesTests
 {
-    private readonly TestData      _testData = new(DbUtils.GetDbContext());
+    private readonly TestData      _testData = new(DbUtils.GetDbContext(), MapperFactory.GetMapper());
     private readonly SetupFeatures _command  = new();
 
     [Fact]

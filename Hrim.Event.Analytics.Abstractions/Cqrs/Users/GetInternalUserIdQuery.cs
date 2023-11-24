@@ -8,4 +8,4 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.Users;
 /// <param name="Context">
 ///     <see cref="OperationRequest" />
 /// </param>
-public record GetInternalUserIdQuery(OperationContext Context): OperationRequest(Context: Context), IRequest<Guid>;
+public record GetInternalUserIdQuery(OperationContext Context): OperationRequest(Context: Context), IRequest<long>;

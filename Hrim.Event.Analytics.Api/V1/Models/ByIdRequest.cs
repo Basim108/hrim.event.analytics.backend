@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hrim.Event.Analytics.Api.V1.Models;
 
-public class ByIdRequest
+public class ByIdRequest<TKey> where TKey: struct
 {
-    [FromRoute(Name = "id")] public Guid Id { get; set; }
+    [FromRoute(Name = "id")] public TKey Id { get; set; }
 }

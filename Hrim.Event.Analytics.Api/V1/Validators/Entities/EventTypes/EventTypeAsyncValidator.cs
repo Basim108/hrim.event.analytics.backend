@@ -4,13 +4,14 @@ using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Abstractions.Services;
 using MediatR;
+using EventType = Hrim.Event.Analytics.Abstractions.Entities.EventTypes.EventType;
 
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.EventTypes;
 
 /// <summary>
 ///     Checks event lookups
 /// </summary>
-public class EventTypeAsyncValidator: AbstractValidator<UserEventType>
+public class EventTypeAsyncValidator: AbstractValidator<EventType>
 {
     /// <inheritdoc />
     public EventTypeAsyncValidator(IMediator mediator, IApiRequestAccessor requestAccessor) {

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
+using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Analysis.DependencyInjection;
@@ -26,10 +27,10 @@ public abstract class BaseCqrsTests: IDisposable
 
     protected BaseCqrsTests() {
         var appConfig = new ConfigurationBuilder()
-                       // .AddInMemoryCollection(new Dictionary<string, string?> {
-                       //      { "DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "False"}
-                       //  })
-                       .AddJsonFile(path: "appsettings.Tests.json", optional:false, reloadOnChange: false)
+                        // .AddInMemoryCollection(new Dictionary<string, string?> {
+                        //      { "DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "False"}
+                        //  })
+                       .AddJsonFile(path: "appsettings.Tests.json", optional: false, reloadOnChange: false)
                        .Build();
         var services = new ServiceCollection();
         services.AddLogging();
@@ -42,7 +43,7 @@ public abstract class BaseCqrsTests: IDisposable
         services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));
         services.AddDbContext<EventAnalyticDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
-        var operatorId = Guid.NewGuid();
+        var operatorId = new Random().NextInt64();
         services.CleanUpCurrentRegistrations(typeof(IApiRequestAccessor));
         services.AddScoped(_ => {
             var claims = new List<Claim> {
@@ -60,8 +61,9 @@ public abstract class BaseCqrsTests: IDisposable
         ServiceProvider = _serviceScope.ServiceProvider;
 
         Mediator = ServiceProvider.GetRequiredService<IMediator>();
+        Mapper   = ServiceProvider.GetRequiredService<IMapper>();
         var context = ServiceProvider.GetRequiredService<EventAnalyticDbContext>();
-        TestData = new TestData(context: context);
+        TestData = new TestData(context, Mapper);
         var apiRequestAccessor = ServiceProvider.GetRequiredService<IApiRequestAccessor>();
         OperatorContext = apiRequestAccessor.GetOperationContext();
         OperatorUserId  = operatorId;
@@ -69,11 +71,12 @@ public abstract class BaseCqrsTests: IDisposable
     }
 
     protected IMediator        Mediator        { get; }
+    protected IMapper          Mapper          { get; }
     protected IServiceProvider ServiceProvider { get; }
     protected TestData         TestData        { get; }
     protected OperationContext OperatorContext { get; set; }
 
-    protected Guid OperatorUserId { get; }
+    protected long OperatorUserId { get; }
 
     public void Dispose() {
         Dispose(disposing: true);

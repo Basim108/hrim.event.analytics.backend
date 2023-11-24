@@ -4,7 +4,7 @@ using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 
 namespace Hrim.Event.Analytics.Api.V1.Validators.Entities.Analysis;
 
-public class AnalysisByEventTypeListValidator: AbstractValidator<List<AnalysisByEventType>>
+public class AnalysisByEventTypeListValidator: AbstractValidator<List<AnalysisConfigByEventType>>
 {
     public AnalysisByEventTypeListValidator() {
         RuleForEach(analysis => analysis)

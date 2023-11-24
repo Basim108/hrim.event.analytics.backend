@@ -28,8 +28,8 @@ public class GetEventTypesForAnalysisTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_Gap_Analysis_When_Feature_On_Should_Return_Only_For_Gaps() {
-        var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
-        var eventType2 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
+        var eventType1 = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
+        var eventType2 = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
         TestData.AnalysisByEventType.EnsureExistence(eventType1.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType1.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType2.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
@@ -47,8 +47,8 @@ public class GetEventTypesForAnalysisTests: BaseCqrsTests
     public async Task Given_Gap_Analysis_When_Feature_Off_Should_Return_Empty_List() {
         _gapFeature.IsOn   = false;
         _countFeature.IsOn = false;
-        var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
-        var eventType2 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
+        var eventType1 = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
+        var eventType2 = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
         TestData.AnalysisByEventType.EnsureExistence(eventType1.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType1.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType2.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
@@ -61,8 +61,8 @@ public class GetEventTypesForAnalysisTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_Gap_Analysis_When_Analysis_Off_Should_Skip_This_EventTypes() {
-        var eventType1 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
-        var eventType2 = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
+        var eventType1 = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
+        var eventType2 = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
         TestData.AnalysisByEventType.EnsureExistence(eventType1.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType1.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(eventType2.Id, FeatureCodes.GAP_ANALYSIS,   false, null);
@@ -77,7 +77,7 @@ public class GetEventTypesForAnalysisTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_Gap_Analysis_Should_Return_Its_Settings() {
-        var eventType = TestData.Events.CreateEventType(Guid.NewGuid(), "Test Type");
+        var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Type").Bl;
         var settings  = new Dictionary<string, string>() {
             { AnalysisSettingNames.Gap.MINIMAL_GAP_LENGTH, "01:00:00"}
         };
@@ -94,10 +94,10 @@ public class GetEventTypesForAnalysisTests: BaseCqrsTests
     
     [Fact]
     public async Task Given_EventType_When_They_Have_Children_That_Does_Not_Have_Settings_Should_Return_With_Children() {
-        var anotherEventType1 = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        var anotherEventType2 = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
-        var childType = TestData.Events.CreateEventType(OperatorUserId, "Test Child Type", parentId: eventType.Id);
+        var anotherEventType1 = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
+        var anotherEventType2 = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
+        var childType = TestData.Events.CreateEventType(OperatorUserId, "Test Child Type", parentId: eventType.Id).Bl;
         TestData.AnalysisByEventType.EnsureExistence(anotherEventType1.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
         TestData.AnalysisByEventType.EnsureExistence(anotherEventType1.Id, FeatureCodes.GAP_ANALYSIS,   true, null);
         TestData.AnalysisByEventType.EnsureExistence(anotherEventType2.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
@@ -110,8 +110,6 @@ public class GetEventTypesForAnalysisTests: BaseCqrsTests
         resultList.Should().NotBeEmpty();
         resultList.Count.Should().Be(3);
         resultList.Any(x => x.EventTypeId == eventType.Id).Should().BeTrue();
-        resultList.First(x => x.EventTypeId == eventType.Id).ChildrenIds.Should().NotBeEmpty();
-        resultList.First(x => x.EventTypeId == eventType.Id).ChildrenIds!.Count().Should().Be(1);
-        resultList.First(x => x.EventTypeId == eventType.Id).ChildrenIds!.First().Should().Be(childType.Id);
+        resultList.First(x => x.EventTypeId == eventType.Id).TreeNodePath.Should().NotBeNull();
     }
 }

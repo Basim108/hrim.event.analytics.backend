@@ -14,7 +14,7 @@ public class HrimFeatureDbConfig: IEntityTypeConfiguration<HrimFeature>
                         t => t.HasComment(comment: @"Features that might be on/off;
 for example, analysis based on event-types, tags, events, etc"));
 
-        builder.AddEntityProperties();
+        builder.AddEntityProperties<HrimFeature, Guid>();
 
         builder.Property(p => p.FeatureType)
                .HasColumnName(nameof(HrimFeature.FeatureType).ToSnakeCase())

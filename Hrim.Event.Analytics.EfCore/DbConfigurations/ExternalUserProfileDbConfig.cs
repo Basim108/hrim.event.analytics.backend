@@ -13,7 +13,7 @@ public class ExternalUserProfileDbConfig: IEntityTypeConfiguration<ExternalUserP
         builder.ToTable(name: "external_user_profiles",
                         t => t.HasComment(comment: "user profiles from a specific idp such as Google, Facebook, etc"));
 
-        builder.AddEntityProperties();
+        builder.AddEntityProperties<ExternalUserProfile, long>();
 
         builder.Property(p => p.HrimUserId)
                .HasColumnName(name: "user_id")

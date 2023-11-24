@@ -18,18 +18,21 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [ApiController]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route(template: "v1/event-type")]
-public class EventTypeController: EventAnalyticsApiController<UserEventType>
+public class EventTypeController: EventAnalyticsApiController<EventType>
 {
-    private readonly IValidator<UserEventType> _validator;
-    private readonly IMediator                 _mediator;
+    private readonly IValidator<EventType>              _validator;
+    private readonly IValidator<CreateEventTypeRequest> _createValidator;
+    private readonly IMediator                          _mediator;
 
     /// <summary> </summary>
-    public EventTypeController(IApiRequestAccessor       requestAccessor,
-                               IValidator<UserEventType> validator,
-                               IMediator                 mediator)
+    public EventTypeController(IApiRequestAccessor                requestAccessor,
+                               IValidator<EventType>              validator,
+                               IValidator<CreateEventTypeRequest> createValidator,
+                               IMediator                          mediator)
         : base(requestAccessor) {
-        _validator = validator;
-        _mediator  = mediator;
+        _validator       = validator;
+        _createValidator = createValidator;
+        _mediator        = mediator;
     }
 
     /// <summary> Get all user event types </summary>
@@ -40,8 +43,8 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
 
     /// <summary> Get user event type by id </summary>
     [HttpGet(template: "{id}")]
-    public async Task<ActionResult<UserEventType>> GetByIdAsync([FromRoute] ByIdRequest request,
-                                                                CancellationToken       cancellationToken) {
+    public async Task<ActionResult<EventType>> GetByIdAsync([FromRoute] ByIdRequest<long> request,
+                                                            CancellationToken             cancellationToken) {
         var result = await _mediator.Send(new EventTypeGetById(Id: request.Id, IsNotTrackable: true, Context: OperationContext),
                                           cancellationToken: cancellationToken);
         return ProcessCqrsResult(cqrsResult: result);
@@ -50,9 +53,9 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     /// <summary> Create a new event type </summary>
     [HttpPost]
     [SetOwnerTypeFilter]
-    public async Task<ActionResult<UserEventType>> CreateAsync(CreateEventTypeRequest request,
-                                                               CancellationToken      cancellationToken) {
-        var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
+    public async Task<ActionResult<EventType>> CreateAsync(CreateEventTypeRequest request,
+                                                           CancellationToken      cancellationToken) {
+        var validationResult = await _createValidator.ValidateAsync(request, cancellationToken);
         ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)
             return ValidationProblem(modelStateDictionary: ModelState);
@@ -64,8 +67,8 @@ public class EventTypeController: EventAnalyticsApiController<UserEventType>
     /// <summary> Update an event type </summary>
     [HttpPut]
     [SetOwnerTypeFilter]
-    public async Task<ActionResult<UserEventType>> UpdateAsync(UpdateEventTypeRequest request,
-                                                               CancellationToken      cancellationToken) {
+    public async Task<ActionResult<EventType>> UpdateAsync(UpdateEventTypeRequest request,
+                                                           CancellationToken      cancellationToken) {
         var validationResult = await _validator.ValidateAsync(instance: request, cancellation: cancellationToken);
         ValidateRequest(validationResult, cancellationToken);
         if (!ModelState.IsValid)

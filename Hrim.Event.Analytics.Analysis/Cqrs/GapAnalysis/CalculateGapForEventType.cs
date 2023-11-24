@@ -2,10 +2,9 @@ using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Extensions;
 using Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis.Models;
 using Hrim.Event.Analytics.Analysis.Models;
-using Hrim.Event.Analytics.EfCore;
+using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Hrim.Event.Analytics.Analysis.Cqrs.GapAnalysis;
@@ -23,22 +22,22 @@ public class CalculateGapForEventTypeHandler: IRequestHandler<CalculateGapForEve
 {
     private readonly ILogger<CalculateGapForEventTypeHandler> _logger;
     private readonly IGapCalculationService                   _calcService;
-    private readonly EventAnalyticDbContext                   _context;
+    private readonly IGapEventHierarchyAccessor               _hierarchyAccessor;
 
     public CalculateGapForEventTypeHandler(ILogger<CalculateGapForEventTypeHandler> logger,
                                            IGapCalculationService                   calcService,
-                                           EventAnalyticDbContext                   context) {
-        _logger      = logger;
-        _calcService = calcService;
-        _context     = context;
+                                           IGapEventHierarchyAccessor               hierarchyAccessor) {
+        _logger            = logger;
+        _calcService       = calcService;
+        _hierarchyAccessor = hierarchyAccessor;
     }
 
     public Task<GapAnalysisResult?> Handle(CalculateGapForEventType request, CancellationToken cancellationToken) {
         if (request.CalculationInfo == null)
             throw new ArgumentNullException(nameof(request), nameof(request.CalculationInfo));
-        if(request.CalculationInfo.EventTypeId == Guid.Empty)
+        if (request.CalculationInfo.EventTypeId == default)
             throw new ArgumentNullException(nameof(request), nameof(request.CalculationInfo.EventTypeId));
-            
+
         // CASE 1: there is no events (all deleted after last run) => remove pre analysis result from db  => then result.EventCount = 0
         // CASE 2: there is no events and no last run  => do nothing even analysis_result should be null
         // CASE 3: there is no changes before last run and there are changes after last run => recalculate everything
@@ -51,51 +50,37 @@ public class CalculateGapForEventTypeHandler: IRequestHandler<CalculateGapForEve
     }
 
     private async Task<GapAnalysisResult?> CalculateAsync(CalculateGapForEventType request, CancellationToken cancellationToken) {
-        var lastUpdatedDuration = await _context.DurationEvents
-                                                .Where(x => x.EventTypeId == request.CalculationInfo.EventTypeId)
-                                                .OrderByDescending(x => x.UpdatedAt)
-                                                .Select(x => x.UpdatedAt)
-                                                .FirstOrDefaultAsync(cancellationToken);
-        var lastUpdatedOccurrence = await _context.OccurrenceEvents
-                                                  .Where(x => x.EventTypeId == request.CalculationInfo.EventTypeId)
-                                                  .OrderByDescending(x => x.UpdatedAt)
-                                                  .Select(x => x.UpdatedAt)
-                                                  .FirstOrDefaultAsync(cancellationToken);
-        var isFirstRun          = request.LastRun == null;
-        var isDurationChanged   = lastUpdatedDuration.HasValue   && isFirstRun || 
-                                  lastUpdatedDuration.HasValue   && lastUpdatedDuration   > request.LastRun!.StartedAt;
-        var isOccurrenceChanged = lastUpdatedOccurrence.HasValue && isFirstRun || 
-                                  lastUpdatedOccurrence.HasValue && lastUpdatedOccurrence > request.LastRun!.StartedAt;
-        var isCalcSettingsChanged         = isFirstRun || request.CalculationInfo.UpdatedAt > request.LastRun?.StartedAt;
+        var lastUpdatedDuration = await _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(request.CalculationInfo.TreeNodePath,
+                                                                                                         cancellationToken);
+        var lastUpdatedOccurrence = await _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(request.CalculationInfo.TreeNodePath,
+                                                                                                             cancellationToken);
+        var isFirstRun = request.LastRun == null;
+        var isDurationChanged = lastUpdatedDuration.HasValue && isFirstRun || lastUpdatedDuration.HasValue && lastUpdatedDuration > request.LastRun!.StartedAt;
+        var isOccurrenceChanged = lastUpdatedOccurrence.HasValue && isFirstRun || lastUpdatedOccurrence.HasValue && lastUpdatedOccurrence > request.LastRun!.StartedAt;
+        var isCalcSettingsChanged = isFirstRun || request.CalculationInfo.UpdatedAt > request.LastRun?.StartedAt;
         var recalculateDueToSettingChange = (lastUpdatedDuration.HasValue || lastUpdatedOccurrence.HasValue) && isCalcSettingsChanged;
         if (_logger.IsEnabled(LogLevel.Debug))
-            _logger.LogDebug(AnalysisLogs.GAP_CALCULATION_PARAMS, 
-                             isFirstRun, isDurationChanged, isOccurrenceChanged, isCalcSettingsChanged);
+            _logger.LogDebug(AnalysisLogs.GAP_CALCULATION_PARAMS,
+                             isFirstRun,
+                             isDurationChanged,
+                             isOccurrenceChanged,
+                             isCalcSettingsChanged);
 
         if (!isDurationChanged && !isOccurrenceChanged && !recalculateDueToSettingChange)
             return null; // CASE 2, 5
-        
-        var occurrences = await _context.OccurrenceEvents
-                                        .Where(x => x.EventTypeId == request.CalculationInfo.EventTypeId && 
-                                                    x.IsDeleted   != true)
-                                        .Select(x => new AnalysisEvent(x.OccurredOn, x.OccurredAt,
-                                                                       null, null))
-                                        .ToListAsync(cancellationToken);
-        // add last occurrence in order to calculate the gap between the last event and now
-        var now = DateTimeOffset.UtcNow.TruncateToSeconds();
-        occurrences.Add(new AnalysisEvent(now.ToDateOnly(), now, null, null));
-        
-        var durations = await _context.DurationEvents
-                                      .Where(x => x.EventTypeId == request.CalculationInfo.EventTypeId && 
-                                                  x.IsDeleted   != true)
-                                      .Select(x => new AnalysisEvent(x.StartedOn,  x.StartedAt,
-                                                                     x.FinishedOn, x.FinishedAt))
-                                      .ToListAsync(cancellationToken);
+
+        var occurrences = await _hierarchyAccessor.GetDescendantOccurrencesAsync(request.CalculationInfo.TreeNodePath, cancellationToken);
+        var durations   = await _hierarchyAccessor.GetDescendantDurationsAsync(request.CalculationInfo.TreeNodePath, cancellationToken);
+        if (durations.Count > 0 || occurrences.Count > 0) {
+            // add last occurrence in order to calculate the gap between the last event and now
+            var now = DateTimeOffset.UtcNow.TruncateToSeconds();
+            occurrences.Add(new AnalysisEvent(now.ToDateOnly(), now, null, null));
+        }
         var joinedEvents = durations.Concat(occurrences)
                                     .OrderBy(x => x.StartDate)
                                     .ThenBy(x => x.StartTime)
                                     .ToList();
-        
+
         // CASE 1, 3, 4, 6, 7
         var gapSettings = new GapSettings(request.CalculationInfo.Settings!);
         return _calcService.Calculate(joinedEvents, gapSettings);

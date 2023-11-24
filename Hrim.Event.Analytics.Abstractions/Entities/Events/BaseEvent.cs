@@ -7,7 +7,7 @@ namespace Hrim.Event.Analytics.Abstractions.Entities.Events;
 /// <summary>
 ///     Properties shared with all types of events
 /// </summary>
-public abstract class BaseEvent: HrimEntity, IHasOwner
+public abstract class BaseEvent: HrimEntity<long>, IHasOwner
 {
     /// <summary>
     ///     A user who created an instance of this event type
@@ -17,17 +17,17 @@ public abstract class BaseEvent: HrimEntity, IHasOwner
     /// <summary>
     ///     Event type id on which current event is based.
     /// </summary>
-    public Guid EventTypeId { get; set; }
+    public long EventTypeId { get; set; }
 
     /// <summary>
     ///     Event type on which current event is based.
     /// </summary>
-    public virtual UserEventType? EventType { get; set; }
+    public virtual EventType? EventType { get; set; }
 
     /// <summary>
     ///     A user id who created an instance of the event type
     /// </summary>
-    public Guid CreatedById { get; set; }
+    public long CreatedById { get; set; }
     
     /// <summary> Analysis results </summary>
     public List<StatisticsForEvent>? AnalysisResults { get; set; }

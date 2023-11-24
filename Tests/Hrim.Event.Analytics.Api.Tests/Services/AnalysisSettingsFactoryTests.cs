@@ -40,7 +40,7 @@ public class AnalysisSettingsFactoryTests
     
     [Fact]
     public void GetMissedSettings_Given_Empty_Returns_Default_Settings() {
-        var result = _factory.GetMissedSettings(new List<AnalysisByEventType>());
+        var result = _factory.GetMissedSettings(new List<AnalysisConfigByEventType>());
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(_factory.GetDefaultSettings());
     }
@@ -53,8 +53,8 @@ public class AnalysisSettingsFactoryTests
     
     [Fact]
     public void GetMissedSettings_Given_Gap_Settings_Returns_Count_Settings() {
-        var settings = new AnalysisByEventType() { AnalysisCode = FeatureCodes.GAP_ANALYSIS };
-        var result   = _factory.GetMissedSettings(new List<AnalysisByEventType>{ settings });
+        var settings = new AnalysisConfigByEventType() { AnalysisCode = FeatureCodes.GAP_ANALYSIS };
+        var result   = _factory.GetMissedSettings(new List<AnalysisConfigByEventType>{ settings });
         result.Should().NotBeNull();
         result!.Count.Should().Be(1);
         result[0].AnalysisCode.Should().Be(FeatureCodes.COUNT_ANALYSIS);
@@ -62,8 +62,8 @@ public class AnalysisSettingsFactoryTests
     
     [Fact]
     public void GetMissedSettings_Given_Count_Settings_Returns_Gap_Settings() {
-        var settings = new AnalysisByEventType() { AnalysisCode = FeatureCodes.COUNT_ANALYSIS };
-        var result   = _factory.GetMissedSettings(new List<AnalysisByEventType>{ settings });
+        var settings = new AnalysisConfigByEventType() { AnalysisCode = FeatureCodes.COUNT_ANALYSIS };
+        var result   = _factory.GetMissedSettings(new List<AnalysisConfigByEventType>{ settings });
         result.Should().NotBeNull();
         result!.Count.Should().Be(1);
         result[0].AnalysisCode.Should().Be(FeatureCodes.GAP_ANALYSIS);

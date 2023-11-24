@@ -17,8 +17,8 @@ public class DurationEventControllerValidationTests: BaseEventControllerValidati
 {
     /// <summary> Correct duration event create request </summary>
     private readonly DurationEventCreateRequest _durationEventCreateRequest = new() {
-        CreatedById = Guid.NewGuid(),
-        EventTypeId = Guid.NewGuid(),
+        CreatedById = new Random().NextInt64(),
+        EventTypeId = new Random().NextInt64(),
         StartedAt = new DateTimeOffset(year: 2020,
                                        month: 09,
                                        day: 1,
@@ -37,9 +37,9 @@ public class DurationEventControllerValidationTests: BaseEventControllerValidati
 
     /// <summary> Correct duration event create request </summary>
     private readonly DurationEventUpdateRequest _durationEventUpdateRequest = new() {
-        Id          = Guid.NewGuid(),
-        CreatedById = Guid.NewGuid(),
-        EventTypeId = Guid.NewGuid(),
+        Id          = new Random().NextInt64(),
+        CreatedById = new Random().NextInt64(),
+        EventTypeId = new Random().NextInt64(),
         StartedAt = new DateTimeOffset(year: 2020,
                                        month: 09,
                                        day: 1,
@@ -71,7 +71,7 @@ public class DurationEventControllerValidationTests: BaseEventControllerValidati
     /// <summary> Correct update event request  </summary>
     protected override DurationEventUpdateRequest GetUpdateRequest() {
         return new DurationEventUpdateRequest {
-            Id              = Guid.NewGuid(),
+            Id              = new Random().NextInt64(),
             ConcurrentToken = 1,
             StartedAt       = DateTimeOffset.Now,
             FinishedAt      = DateTimeOffset.Now.AddHours(hours: 1)

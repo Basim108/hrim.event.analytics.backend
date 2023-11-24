@@ -3,10 +3,10 @@ using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
 using Hrim.Event.Analytics.Api.V1.Models;
+using EventType = Hrim.Event.Analytics.Abstractions.Entities.EventTypes.EventType;
 
 namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.EventTypes;
 
@@ -15,7 +15,7 @@ public class EventTypeCqrsTests: BaseCqrsTests
 {
     /// <summary> Correct update event type request  </summary>
     private readonly UpdateEventTypeRequest _updateEventTypeRequest = new() {
-        Id              = Guid.NewGuid(),
+        Id              = new Random().NextInt64(),
         ConcurrentToken = 1,
         Name            = "Headache",
         Color           = "#ff0000",
@@ -26,7 +26,7 @@ public class EventTypeCqrsTests: BaseCqrsTests
     [Fact]
     public async Task Update_EventType() {
         var createdEntities = TestData.Events.CreateManyEventTypes(count: 1, userId: OperatorUserId);
-        var forUpdate       = new UserEventType();
+        var forUpdate       = new EventType();
         createdEntities.First().Value.CopyTo(another: forUpdate);
         forUpdate.Name = "Updated";
         var beforeSend    = DateTime.UtcNow;
@@ -44,13 +44,13 @@ public class EventTypeCqrsTests: BaseCqrsTests
 
     [Fact]
     public async Task Update_NotFound_EventType() {
-        var cqrsResult = await Mediator.Send(new EventTypeUpdateCommand(new UserEventType {
-                                                                            Id    = Guid.NewGuid(),
-                                                                            Color = _updateEventTypeRequest.Color,
-                                                                            Name  = _updateEventTypeRequest.Name
-                                                                        },
-                                                                        SaveChanges: true,
-                                                                        Context: OperatorContext));
+        var cqrsResult = await Mediator.Send(new EventTypeUpdateCommand(new EventType {
+                                                                                    Id    = new Random().NextInt64(),
+                                                                                    Color = _updateEventTypeRequest.Color,
+                                                                                    Name  = _updateEventTypeRequest.Name
+                                                                                },
+                                                                                SaveChanges: true,
+                                                                                Context: OperatorContext));
         cqrsResult.Should().NotBeNull();
         cqrsResult.StatusCode.Should().Be(expected: CqrsResultCode.NotFound);
     }
@@ -58,7 +58,7 @@ public class EventTypeCqrsTests: BaseCqrsTests
     [Fact]
     public async Task Update_With_Wrong_ConcurrentToken() {
         var createdEntities = TestData.Events.CreateManyEventTypes(count: 1, userId: OperatorUserId);
-        var forUpdate       = new UserEventType();
+        var forUpdate       = new EventType();
         createdEntities.First().Value.CopyTo(another: forUpdate);
         forUpdate.ConcurrentToken = 3;
         var updateCommand = new EventTypeUpdateCommand(EventType: forUpdate, SaveChanges: true, Context: OperatorContext);
@@ -71,7 +71,7 @@ public class EventTypeCqrsTests: BaseCqrsTests
     [Fact]
     public async Task Update_Already_Deleted_Entity() {
         var createdEntities = TestData.Events.CreateManyEventTypes(count: 1, userId: OperatorUserId, isDeleted: true);
-        var forUpdate       = new UserEventType();
+        var forUpdate       = new EventType();
         createdEntities.First().Value.CopyTo(another: forUpdate);
         var updateCommand = new EventTypeUpdateCommand(EventType: forUpdate, SaveChanges: true, Context: OperatorContext);
 
@@ -87,10 +87,10 @@ public class EventTypeCqrsTests: BaseCqrsTests
 
     [Fact]
     public async Task Update_Given_Not_My_EventType_Forbid() {
-        var anotherUserId = Guid.NewGuid();
+        var anotherUserId = new Random().NextInt64();
         TestData.Users.EnsureUserExistence(id: anotherUserId);
         var createdEntities = TestData.Events.CreateManyEventTypes(count: 1, userId: anotherUserId);
-        var forUpdate       = new UserEventType();
+        var forUpdate       = new EventType();
         createdEntities.First().Value.CopyTo(another: forUpdate);
         var updateCommand = new EventTypeUpdateCommand(EventType: forUpdate, SaveChanges: true, Context: OperatorContext);
 
@@ -99,18 +99,18 @@ public class EventTypeCqrsTests: BaseCqrsTests
         cqrsResult.Should().NotBeNull();
         cqrsResult.StatusCode.Should().Be(expected: CqrsResultCode.Forbidden);
     }
-    
+
     [Fact]
     public async Task Update_Given_EventType_With_AnalysisResults_Should_Not_Save_Them_To_DB() {
         var createdEntities = TestData.Events.CreateManyEventTypes(count: 1, userId: OperatorUserId);
-        var forUpdate       = new UserEventType();
+        var forUpdate       = new EventType();
         createdEntities.First().Value.CopyTo(another: forUpdate);
         forUpdate.Name = "Updated";
         var beforeSend    = DateTime.UtcNow;
         var updateCommand = new EventTypeUpdateCommand(EventType: forUpdate, SaveChanges: true, Context: OperatorContext);
 
         updateCommand.EventType.AnalysisResults = new List<StatisticsForEventType> {
-            new () {
+            new() {
                 EntityId     = updateCommand.EventType.Id,
                 AnalysisCode = FeatureCodes.GAP_ANALYSIS,
                 ResultJson   = "",
@@ -118,11 +118,41 @@ public class EventTypeCqrsTests: BaseCqrsTests
                 FinishedAt   = DateTime.UtcNow.AddMinutes(1)
             }
         };
-        
+
         var cqrsResult = await Mediator.Send(request: updateCommand);
 
         cqrsResult.CheckSuccessfullyUpdatedEntity(operatorId: OperatorUserId, forUpdate: forUpdate, beforeSend: beforeSend);
 
         TestData.DbContext.StatisticsForEventTypes.ToList().Should().BeEmpty();
+    }
+    
+    [Fact]
+    public async Task Given_EventType_With_Parent_Should_Update_TreeNodePath() {
+        var parent    = TestData.Events.CreateEventType(OperatorUserId, "Parent Test Event Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId);
+        eventType.Bl.Parent   = parent.Bl;
+        eventType.Bl.ParentId = parent.Bl.Id;
+
+        var updateCommand = new EventTypeUpdateCommand(eventType.Bl, SaveChanges: true, Context: OperatorContext);
+        await Mediator.Send(request: updateCommand);
+
+        var updatedEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == eventType.Bl.Id);
+        updatedEventType.Should().NotBeNull();
+        updatedEventType!.TreeNodePath.ToString().Should().Be($"{parent.Bl.Id}.{eventType.Bl.Id}");
+    }
+    
+    [Fact]
+    public async Task Given_Not_Existing_ParentId_Should_Not_Change_Parent() {
+        var parent    = TestData.Events.CreateEventType(OperatorUserId, "Parent Test Event Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, parentId: parent.Db.Id, updateTreeNode: true);
+        eventType.Bl.ParentId = new Random().NextInt64();
+
+        var updateCommand = new EventTypeUpdateCommand(eventType.Bl, SaveChanges: true, Context: OperatorContext);
+        await Mediator.Send(request: updateCommand);
+
+        var updatedEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == eventType.Bl.Id);
+        updatedEventType.Should().NotBeNull();
+        updatedEventType!.ParentId.Should().Be(parent.Db.Id);
+        updatedEventType.TreeNodePath.ToString().Should().Be($"{parent.Db.Id}.{updatedEventType.Id}");
     }
 }

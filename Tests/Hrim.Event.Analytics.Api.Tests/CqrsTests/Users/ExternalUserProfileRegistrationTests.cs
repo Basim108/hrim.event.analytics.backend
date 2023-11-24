@@ -12,17 +12,13 @@ namespace Hrim.Event.Analytics.Api.Tests.CqrsTests.Users;
 
 public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 {
-    private readonly UserProfileModel _profile;
+    private readonly UserProfileModel _profile = new() {
+        FullName  = UsersData.FULL_NAME,
+        FirstName = UsersData.FIRST_NAME,
+        LastName  = UsersData.LAST_NAME
+    };
 
     private DateTime _beforeSend = DateTime.UtcNow;
-
-    public ExternalUserProfileRegistrationTests() {
-        _profile = new UserProfileModel {
-            FullName  = UsersData.FULL_NAME,
-            FirstName = UsersData.FIRST_NAME,
-            LastName  = UsersData.LAST_NAME
-        };
-    }
 
     [Fact]
     public async Task First_Login_Should_Register() {
@@ -39,7 +35,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 
         resultProfile.CheckEntitySuccessfulCreation(beforeSend: _beforeSend);
         resultProfile.LastLogin.Should().BeAfter(expected: _beforeSend);
-        resultProfile.HrimUserId.Should().NotBeEmpty();
+        resultProfile.HrimUserId.Should().NotBe(0);
     }
 
     [Fact]
@@ -61,7 +57,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_Different_Idp_But_Same_Email_Should_Link_Profile() {
-        var userId = Guid.NewGuid();
+        var userId = new Random().NextInt64();
         var email  = $"{userId}@mailinator.com";
         var user = TestData.Users.EnsureUserExistence(id: userId,
                                                       isDeleted: false,
@@ -92,7 +88,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_Different_Email_For_Same_ExternalId_Should_Update_Email() {
-        var userId     = Guid.NewGuid();
+        var userId     = new Random().NextInt64();
         var email      = $"{userId}@mailinator.com";
         var externalId = Guid.NewGuid().ToString();
         var user = TestData.Users.EnsureUserExistence(id: userId,
@@ -123,7 +119,7 @@ public class ExternalUserProfileRegistrationTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_No_Email_Should_Find_User_By_ExternalId() {
-        var userId     = Guid.NewGuid();
+        var userId     = new Random().NextInt64();
         var externalId = Guid.NewGuid().ToString();
         var user = TestData.Users.EnsureUserExistence(id: userId,
                                                       isDeleted: false,

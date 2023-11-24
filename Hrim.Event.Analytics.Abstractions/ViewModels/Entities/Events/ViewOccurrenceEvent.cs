@@ -11,8 +11,8 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Events;
 /// <param name="EventType">Event type on which this event is based on</param>
 /// <param name="ConcurrentToken">Update is possible only when this token equals to the token in the storage</param>
 /// <param name="Props">Additional properties for a particular event</param>
-public record ViewOccurrenceEvent(Guid                         Id,
-                                  DateTimeOffset               OccurredAt,
-                                  ViewEventType                EventType,
-                                  long                         ConcurrentToken,
+public record ViewOccurrenceEvent(long           Id,
+                                  DateTimeOffset OccurredAt,
+                                  ViewEventType  EventType,
+                                  long           ConcurrentToken,
                                   IDictionary<string, string>? Props = null);

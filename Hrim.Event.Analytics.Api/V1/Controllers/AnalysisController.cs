@@ -3,7 +3,6 @@ using Hrim.Event.Analytics.Abstractions.Cqrs.Features;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Features;
-using Hrimsoft.Core.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +14,7 @@ namespace Hrim.Event.Analytics.Api.V1.Controllers;
 [ApiController]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route(template: "v1/[controller]")]
-public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEventType>>
+public class AnalysisController: EventAnalyticsApiController<List<AnalysisConfigByEventType>>
 {
     private readonly IAnalysisSettingsFactory _analysisSettings;
     private readonly IMediator                _mediator;
@@ -36,8 +35,8 @@ public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEven
 
     /// <summary> Get analysis info of a particular event type </summary>
     [HttpGet("event-type/{eventTypeId}")]
-    public async Task<ActionResult<List<AnalysisByEventType>>> GetForEventType(Guid eventTypeId, CancellationToken cancellationToken) {
-        if (eventTypeId == Guid.Empty)
+    public async Task<ActionResult<List<AnalysisConfigByEventType>>> GetForEventType(long eventTypeId, CancellationToken cancellationToken) {
+        if (eventTypeId == default)
             return _analysisSettings.GetDefaultSettings();
         var result = await _mediator.Send(new GetAnalysisByEventTypeId(eventTypeId, OperationContext),
                                           cancellationToken);
@@ -50,9 +49,9 @@ public class AnalysisController: EventAnalyticsApiController<List<AnalysisByEven
     /// </summary>
     /// <returns>Returns updated analysis info</returns>
     [HttpPost("event-type/{eventTypeId}")]
-    public async Task<ActionResult<List<AnalysisByEventType>>> UpdateSettingsForEventType(Guid                      eventTypeId,
-                                                                                          List<AnalysisByEventType> analysis,
-                                                                                          CancellationToken         cancellationToken) {
+    public async Task<ActionResult<List<AnalysisConfigByEventType>>> UpdateSettingsForEventType(long                            eventTypeId,
+                                                                                                List<AnalysisConfigByEventType> analysis,
+                                                                                                CancellationToken               cancellationToken) {
         var result = await _mediator.Send(new UpdateAnalysisForEventType(eventTypeId, analysis, OperationContext),
                                           cancellationToken);
         return ProcessCqrsResult(cqrsResult: result);

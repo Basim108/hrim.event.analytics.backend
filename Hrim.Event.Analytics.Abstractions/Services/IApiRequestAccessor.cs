@@ -13,5 +13,5 @@ public interface IApiRequestAccessor
     OperationContext GetOperationContext();
 
     /// <summary> Get cached per request internal user id by operation context </summary>
-    Task<Guid> GetInternalUserIdAsync(CancellationToken cancellation);
+    Task<long> GetInternalUserIdAsync(CancellationToken cancellation);
 }

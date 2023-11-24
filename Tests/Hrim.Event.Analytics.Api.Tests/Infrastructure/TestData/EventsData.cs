@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.EfCore;
+using Hrim.Event.Analytics.EfCore.DbEntities;
 using Hrim.Event.Analytics.EfCore.DbEntities.Events;
 using Hrimsoft.Core.Extensions;
 
@@ -10,11 +12,20 @@ namespace Hrim.Event.Analytics.Api.Tests.Infrastructure;
 public class EventsData
 {
     private readonly EventAnalyticDbContext _context;
+    private readonly IMapper                _mapper;
 
-    public EventsData(EventAnalyticDbContext context) { _context = context; }
+    public EventsData(EventAnalyticDbContext context, IMapper mapper) {
+        _context = context;
+        _mapper  = mapper;
+    }
 
-    public UserEventType CreateEventType(Guid userId, string name ="Test Event Type", Guid? parentId=null, bool? isDeleted = false) {
-        var entity = new UserEventType {
+    public (DbEventType Db, EventType Bl) CreateEventType(long   userId,
+                                                          string name     = "Test Event Type",
+                                                          long?  parentId = null,
+                                                          bool   updateTreeNode= false,
+                                                          bool?  isDeleted = false) {
+
+        var entity = new DbEventType {
             Name            = name,
             Color           = "#ff00cc",
             ParentId        = parentId,
@@ -24,29 +35,41 @@ public class EventsData
             UpdatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
+        if (updateTreeNode && parentId.HasValue) {
+            entity.Parent = _context.EventTypes.First(x => x.Id == parentId);
+        }
         if (isDeleted == true)
             entity.IsDeleted = true;
-        _context.UserEventTypes.Add(entity: entity);
+        _context.EventTypes.Add(entity: entity);
+        entity.GeneratePath();
         _context.SaveChanges();
-        return entity;
+        return (entity, _mapper.Map<EventType>(entity));
     }
 
-    public DbDurationEvent CreateDurationEvent(Guid            userId,
-                                               Guid?           eventTypeId = null,
+    public DbDurationEvent CreateDurationEvent(long            userId,
+                                               long?           eventTypeId = null,
                                                bool            isDeleted   = false,
                                                DateTimeOffset? startedAt   = null,
                                                DateTimeOffset? finishedAt  = null) {
-        eventTypeId ??= CreateEventType(userId: userId, $"event type name: {Guid.NewGuid()}").Id;
+        eventTypeId ??= CreateEventType(userId, $"event type name: {Guid.NewGuid()}").Bl.Id;
         var entity = new DbDurationEvent {
             CreatedById = userId,
             EventTypeId = eventTypeId.Value,
             StartedOn   = new DateOnly(year: 2020, month: 09, day: 1),
-            StartedAt = new DateTimeOffset(year: 2020, month: 09, day: 1,
-                                           hour: 15, minute: 0, second: 0,
+            StartedAt = new DateTimeOffset(year: 2020,
+                                           month: 09,
+                                           day: 1,
+                                           hour: 15,
+                                           minute: 0,
+                                           second: 0,
                                            TimeSpan.FromHours(value: 4)),
             FinishedOn = new DateOnly(year: 2020, month: 09, day: 1),
-            FinishedAt = new DateTimeOffset(year: 2020, month: 09, day: 1,
-                                            hour: 16, minute: 0, second: 0,
+            FinishedAt = new DateTimeOffset(year: 2020,
+                                            month: 09,
+                                            day: 1,
+                                            hour: 16,
+                                            minute: 0,
+                                            second: 0,
                                             TimeSpan.FromHours(value: 4)),
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             UpdatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
@@ -72,19 +95,27 @@ public class EventsData
     }
 
     public List<DbDurationEvent> CreateManyDurationEvents(int      count,
-                                                          Guid     userId,
+                                                          long     userId,
                                                           DateOnly start,
                                                           DateOnly end,
-                                                          Guid?    eventTypeId = null) {
+                                                          long?    eventTypeId = null) {
         if (end < start)
             throw new ArgumentException($"{nameof(end)}({end}) must be greater or equal to {nameof(start)}({start})",
                                         nameof(end));
-        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Id;
-        var startedAt = new DateTimeOffset(year: start.Year, month: start.Month, day: start.Day,
-                                           hour: 0, minute: 0, second: 0,
+        eventTypeId ??= CreateEventType(userId, $"event-type-name: {Guid.NewGuid()}").Bl.Id;
+        var startedAt = new DateTimeOffset(year: start.Year,
+                                           month: start.Month,
+                                           day: start.Day,
+                                           hour: 0,
+                                           minute: 0,
+                                           second: 0,
                                            offset: TimeSpan.Zero);
-        var finishedAt = new DateTimeOffset(year: end.Year, month: end.Month, day: end.Day,
-                                            hour: 23, minute: 59, second: 59,
+        var finishedAt = new DateTimeOffset(year: end.Year,
+                                            month: end.Month,
+                                            day: end.Day,
+                                            hour: 23,
+                                            minute: 59,
+                                            second: 59,
                                             offset: TimeSpan.Zero);
         var timeStep   = (finishedAt - startedAt).TotalHours / count;
         var resultList = new List<DbDurationEvent>(capacity: count);
@@ -103,26 +134,34 @@ public class EventsData
     }
 
     public List<DbOccurrenceEvent> CreateManyOccurrenceEvents(int      count,
-                                                              Guid     userId,
+                                                              long     userId,
                                                               DateOnly start,
                                                               DateOnly end,
-                                                              Guid?    eventTypeId = null) {
+                                                              long?    eventTypeId = null) {
         if (end < start)
             throw new ArgumentException($"{nameof(end)}({end}) must be greater or equal to {nameof(start)}({start})",
                                         nameof(end));
-        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Id;
-        var startedAt = new DateTimeOffset(year: start.Year, month: start.Month, day: start.Day,
-                                           hour: 0, minute: 0, second: 0,
+        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Bl.Id;
+        var startedAt = new DateTimeOffset(year: start.Year,
+                                           month: start.Month,
+                                           day: start.Day,
+                                           hour: 0,
+                                           minute: 0,
+                                           second: 0,
                                            offset: TimeSpan.Zero);
-        var finishedAt = new DateTimeOffset(year: end.Year, month: end.Month, day: end.Day,
-                                            hour: 23, minute: 59, second: 59,
+        var finishedAt = new DateTimeOffset(year: end.Year,
+                                            month: end.Month,
+                                            day: end.Day,
+                                            hour: 23,
+                                            minute: 59,
+                                            second: 59,
                                             offset: TimeSpan.Zero);
         var timeStep   = (finishedAt - startedAt).TotalHours / count;
         var resultList = new List<DbOccurrenceEvent>(capacity: count);
         for (var i = 0; i < count; i++) {
             var currentStart = startedAt.AddHours(timeStep * i);
-            var @event = CreateOccurrenceEvent(userId: userId,
-                                               eventTypeId: eventTypeId.Value,
+            var @event = CreateOccurrenceEvent(userId,
+                                               eventTypeId.Value,
                                                isDeleted: false,
                                                occurredAt: currentStart);
             resultList.Add(item: @event);
@@ -131,17 +170,21 @@ public class EventsData
         return resultList;
     }
 
-    public DbOccurrenceEvent CreateOccurrenceEvent(Guid            userId,
-                                                   Guid?           eventTypeId = null,
+    public DbOccurrenceEvent CreateOccurrenceEvent(long            userId,
+                                                   long?           eventTypeId = null,
                                                    bool            isDeleted   = false,
                                                    DateTimeOffset? occurredAt  = null) {
-        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Id;
+        eventTypeId ??= CreateEventType(userId: userId, $"event-type-name: {Guid.NewGuid()}").Bl.Id;
         var entity = new DbOccurrenceEvent {
             CreatedById = userId,
             EventTypeId = eventTypeId.Value,
             OccurredOn  = new DateOnly(year: 2020, month: 04, day: 12),
-            OccurredAt = new DateTimeOffset(year: 2020, month: 04, day: 12,
-                                            hour: 23, minute: 0, second: 0,
+            OccurredAt = new DateTimeOffset(year: 2020,
+                                            month: 04,
+                                            day: 12,
+                                            hour: 23,
+                                            minute: 0,
+                                            second: 0,
                                             offset: TimeSpan.Zero),
             CreatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             UpdatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
@@ -164,10 +207,10 @@ public class EventsData
     /// <param name="count">the number of entities that has to be created</param>
     /// <param name="userId">an owner</param>
     /// <param name="isDeleted">should they be deleted</param>
-    public Dictionary<Guid, UserEventType> CreateManyEventTypes(int count, Guid userId, bool isDeleted = false) {
-        var result = new Dictionary<Guid, UserEventType>(capacity: count);
+    public Dictionary<long, EventType> CreateManyEventTypes(int count, long userId, bool isDeleted = false) {
+        var result = new Dictionary<long, EventType>(capacity: count);
         for (var i = 0; i < count; i++) {
-            var entity = new UserEventType {
+            var db = new DbEventType {
                 Name            = $"event type {i}",
                 Color           = "#f0c",
                 IsPublic        = true,
@@ -177,9 +220,10 @@ public class EventsData
                 ConcurrentToken = 1
             };
             if (isDeleted)
-                entity.IsDeleted = true;
-            _context.UserEventTypes.Add(entity: entity);
-            result.Add(key: entity.Id, value: entity);
+                db.IsDeleted = true;
+            _context.EventTypes.Add(entity: db);
+            var bl = _mapper.Map<EventType>(db);
+            result.Add(key: db.Id, value: bl);
         }
         _context.SaveChanges();
         return result;

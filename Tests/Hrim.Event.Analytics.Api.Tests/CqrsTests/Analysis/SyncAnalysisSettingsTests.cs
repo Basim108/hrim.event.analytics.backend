@@ -24,11 +24,11 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_EventType_With_Count_Settings_Should_Create_Missing_Settings() {
-        var eventType     = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType     = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         var countSettings = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.COUNT_ANALYSIS, true, null);
 
         var command = new SyncAnalysisSettings(eventType.Id,
-                                               new List<AnalysisByEventType>() {
+                                               new List<AnalysisConfigByEventType>() {
                                                    countSettings
                                                },
                                                _features,
@@ -50,11 +50,11 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_EventType_With_Gap_Settings_Should_Create_Missing_Settings() {
-        var eventType     = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType     = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         var countSettings = TestData.AnalysisByEventType.EnsureExistence(eventType.Id, FeatureCodes.GAP_ANALYSIS, true, null);
 
         var command = new SyncAnalysisSettings(eventType.Id,
-                                               new List<AnalysisByEventType>() {
+                                               new List<AnalysisConfigByEventType>() {
                                                    countSettings
                                                },
                                                _features,
@@ -75,7 +75,7 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_EventType_With_No_Settings_Should_Create_Settings_Of_Only_Available_Features() {
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
         _gapFeature.IsOn = false;
         TestData.DbContext.SaveChanges();
 
@@ -95,7 +95,7 @@ public class SyncAnalysisSettingsTests: BaseCqrsTests
 
     [Fact]
     public async Task Given_EventType_With_No_Settings_Should_Create_All_Settings() {
-        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, "Test Type").Bl;
 
         var command    = new SyncAnalysisSettings(eventType.Id, null, _features, IsSaveChanges: true);
         var resultList = await Mediator.Send(command);

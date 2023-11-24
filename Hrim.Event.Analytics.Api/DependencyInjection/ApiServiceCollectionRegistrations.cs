@@ -43,9 +43,9 @@ public static class ApiServiceCollectionRegistrations
         services.AddScoped<IApiRequestAccessor, ApiRequestAccessor>();
         services.AddTransient<IValidator<DurationEvent>, EventAsyncValidator>();
         services.AddTransient<IValidator<OccurrenceEvent>, EventAsyncValidator>();
-        services.AddTransient<IValidator<UserEventType>, EventTypeAsyncValidator>();
-        services.AddTransient<IValidator<AnalysisByEventType>, AnalysisByEventTypeValidator>();
-        services.AddTransient<IValidator<List<AnalysisByEventType>>, AnalysisByEventTypeListValidator>();
+        services.AddTransient<IValidator<EventType>, EventTypeAsyncValidator>();
+        services.AddTransient<IValidator<AnalysisConfigByEventType>, AnalysisByEventTypeValidator>();
+        services.AddTransient<IValidator<List<AnalysisConfigByEventType>>, AnalysisByEventTypeListValidator>();
         
         services.AddTransient<IRequestHandler<GetAvailableAnalysisQuery, List<AvailableAnalysis>>, GetAvailableAnalysisQueryHandler>();
 

@@ -14,6 +14,6 @@ namespace Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 ///     Null when entity is not found (404) or IsDeleted flag of an existed in the storage instance set to true (422).
 ///     Otherwise returns an updated instance with a new ConcurrentToken value (200).
 /// </returns>
-/// <remarks>In case you need to set IsDeleted flag to false, use <see cref="RestoreEntityCommand{TEntity}" /> CQRS command</remarks>
-public record EventTypeUpdateCommand(UserEventType EventType, bool SaveChanges, OperationContext Context)
-    : OperationRequest(Context: Context), IRequest<CqrsResult<UserEventType?>>;
+/// <remarks>In case you need to set IsDeleted flag to false, use <see cref="RestoreLongEntityCommand{TEntity}" /> CQRS command</remarks>
+public record EventTypeUpdateCommand(EventType EventType, bool SaveChanges, OperationContext Context)
+    : OperationRequest(Context: Context), IRequest<CqrsResult<EventType?>>;

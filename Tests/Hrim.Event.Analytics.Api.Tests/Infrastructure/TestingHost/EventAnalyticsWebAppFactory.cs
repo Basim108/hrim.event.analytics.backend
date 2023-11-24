@@ -3,7 +3,6 @@ using System.Security.Claims;
 using Hrim.Event.Analytics.Abstractions.Cqrs;
 using Hrim.Event.Analytics.Abstractions.Services;
 using Hrim.Event.Analytics.EfCore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -30,8 +29,7 @@ public class EventAnalyticsWebAppFactory<TProgram>: WebApplicationFactory<TProgr
         builder.ConfigureServices(services => {
             services.CleanUpCurrentRegistrations(typeof(DbContextOptions<EventAnalyticDbContext>));
             services.AddDbContext<EventAnalyticDbContext>(options => options.UseInMemoryDatabase(databaseName: "InMemoryDbForTesting"));
-
-            var operatorId = Guid.NewGuid();
+            var operatorId = new Random().NextInt64();
             services.CleanUpCurrentRegistrations(typeof(IApiRequestAccessor));
             services.AddScoped(_ => {
                 var apiRequestAccessor = Substitute.For<IApiRequestAccessor>();
@@ -58,7 +56,7 @@ public class EventAnalyticsWebAppFactory<TProgram>: WebApplicationFactory<TProgr
 
     public Task InitializeAsync() { return Task.CompletedTask; }
 
-    public void Dispose() {
+    public new void Dispose() {
         try {
             base.Dispose();
         }
@@ -68,7 +66,7 @@ public class EventAnalyticsWebAppFactory<TProgram>: WebApplicationFactory<TProgr
         }
     }
 
-    public async Task DisposeAsync() {
+    public new async Task DisposeAsync() {
         try {
             await base.DisposeAsync();
         }
