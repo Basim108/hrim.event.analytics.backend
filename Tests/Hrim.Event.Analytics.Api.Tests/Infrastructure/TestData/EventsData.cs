@@ -20,9 +20,11 @@ public class EventsData
     }
 
     public (DbEventType Db, EventType Bl) CreateEventType(long   userId,
-                                     string name      = "Test Event Type",
-                                     long?  parentId  = null,
-                                     bool?  isDeleted = false) {
+                                                          string name     = "Test Event Type",
+                                                          long?  parentId = null,
+                                                          bool   updateTreeNode= false,
+                                                          bool?  isDeleted = false) {
+
         var entity = new DbEventType {
             Name            = name,
             Color           = "#ff00cc",
@@ -33,6 +35,9 @@ public class EventsData
             UpdatedAt       = DateTime.UtcNow.TruncateToMicroseconds(),
             ConcurrentToken = 1
         };
+        if (updateTreeNode && parentId.HasValue) {
+            entity.Parent = _context.EventTypes.First(x => x.Id == parentId);
+        }
         if (isDeleted == true)
             entity.IsDeleted = true;
         _context.EventTypes.Add(entity: entity);

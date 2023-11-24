@@ -80,10 +80,24 @@ public class EventTypeCreateHandler: IRequestHandler<EventTypeCreateCommand, Cqr
             UpdatedAt       = now,
             ConcurrentToken = 1
         };
+        if (request.EventType.ParentId.HasValue) {
+            entityToCreate.ParentId = request.EventType.ParentId;
+            entityToCreate.Parent = await _context.EventTypes
+                                                  .FirstOrDefaultAsync(x => x.Id == request.EventType.ParentId,
+                                                                       cancellationToken);
+            if (entityToCreate.Parent == null) {
+                entityToCreate.ParentId = null;
+                _logger.LogWarning("Trying to create an event type with EventTypeParentId={EventTypeParentId} that is not existed in the storage",
+                                   request.EventType.ParentId);
+            }
+        }
         _context.EventTypes.Add(entity: entityToCreate);
-        entityToCreate.GeneratePath();
-        if (request.SaveChanges)
+        if (request.SaveChanges) {
             await _context.SaveChangesAsync(cancellationToken: cancellationToken);
+            entityToCreate.GeneratePath();
+            await _context.SaveChangesAsync(cancellationToken: cancellationToken);
+        }
+
         if (request.EventType.AnalysisSettings is not null && request.EventType.AnalysisSettings.Count > 0) {
             var analysisCreateResult = await _mediator.Send(new UpdateAnalysisForEventType(entityToCreate.Id,
                                                                                                  request.EventType.AnalysisSettings,

@@ -73,7 +73,7 @@ namespace Hrim.Event.Analytics.Api.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    tree_node_path = table.Column<string>(type: "ltree", nullable: false),
+                    tree_node_path = table.Column<string>(type: "ltree", nullable: true),
                     parent_id = table.Column<long>(type: "bigint", nullable: true, comment: "Reference to a more general event type, which this type is specified in some context\nFor example, if current event type is Hatha Yoga, its parent type might be just general Yoga."),
                     name = table.Column<string>(type: "text", nullable: false, comment: "Event type name, e.g. 'nice mood', 'headache', etc"),
                     description = table.Column<string>(type: "text", nullable: true, comment: "Description given by user, when user_event_type based on this one will be created."),

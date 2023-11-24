@@ -27,7 +27,7 @@ public class GapEventHierarchyAccessor: IGapEventHierarchyAccessor
     public Task<DateTime?> GetLastUpdatedEventTimeAsync<TEvent>(LTree eventTypePath, CancellationToken cancellationToken)
         where TEvent : DbBaseEvent => _context.Set<TEvent>()
                                               .Include(x => x.EventType)
-                                              .Where(x => x.EventType!.TreeNodePath.IsDescendantOf(eventTypePath))
+                                              .Where(x => x.EventType!.TreeNodePath!.Value.IsDescendantOf(eventTypePath))
                                               .OrderByDescending(x => x.UpdatedAt)
                                               .Select(x => x.UpdatedAt)
                                               .FirstOrDefaultAsync(cancellationToken);
@@ -35,7 +35,7 @@ public class GapEventHierarchyAccessor: IGapEventHierarchyAccessor
     public Task<List<AnalysisEvent>> GetDescendantOccurrencesAsync(LTree eventTypePath, CancellationToken cancellationToken)
         => _context.OccurrenceEvents
                    .Include(x => x.EventType)
-                   .Where(x => x.EventType!.TreeNodePath.IsDescendantOf(eventTypePath) && x.IsDeleted != true)
+                   .Where(x => x.EventType!.TreeNodePath!.Value.IsDescendantOf(eventTypePath) && x.IsDeleted != true)
                    .Select(x => new AnalysisEvent(x.OccurredOn,
                                                   x.OccurredAt,
                                                   null,
@@ -45,7 +45,7 @@ public class GapEventHierarchyAccessor: IGapEventHierarchyAccessor
     public Task<List<AnalysisEvent>> GetDescendantDurationsAsync(LTree eventTypePath, CancellationToken cancellationToken)
         => _context.DurationEvents
                    .Include(x => x.EventType)
-                   .Where(x => x.EventType!.TreeNodePath.IsDescendantOf(eventTypePath) && x.IsDeleted != true)
+                   .Where(x => x.EventType!.TreeNodePath!.Value.IsDescendantOf(eventTypePath) && x.IsDeleted != true)
                    .Select(x => new AnalysisEvent(x.StartedOn,
                                                   x.StartedAt,
                                                   x.FinishedOn,

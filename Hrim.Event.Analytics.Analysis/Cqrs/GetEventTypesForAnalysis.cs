@@ -36,11 +36,11 @@ public class GetEventTypesForAnalysisHandler: IRequestHandler<GetEventTypesForAn
         return feature.IsOn
                    ? await _context.AnalysisByEventType
                                    .Include(x => x.EventType)
-                                   .Where(x => x.AnalysisCode == request.AnalysisCode && x.IsOn)
+                                   .Where(x => x.AnalysisCode == request.AnalysisCode && x.IsOn && x.EventType.TreeNodePath != null)
                                    .Select(x => new EventTypeAnalysisSettings(x.EventTypeId, 
                                                                               x.Settings, 
                                                                               x.UpdatedAt, 
-                                                                              x.EventType.TreeNodePath))
+                                                                              x.EventType.TreeNodePath!.Value))
                                    .ToListAsync(cancellationToken)
                    : new List<EventTypeAnalysisSettings>();
     }

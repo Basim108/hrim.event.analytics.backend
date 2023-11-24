@@ -8,7 +8,7 @@ namespace Hrim.Event.Analytics.EfCore.DbEntities;
 
 public class DbEventType: HrimEntity<long>, IHasOwner
 {
-    public LTree TreeNodePath { get; set; }
+    public LTree? TreeNodePath { get; set; }
 
     /// <summary>
     /// Reference to a more general event type, which this type is specified in some context

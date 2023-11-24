@@ -76,6 +76,21 @@ public class EventTypeUpdateHandler: IRequestHandler<EventTypeUpdateCommand, Cqr
             return new CqrsResult<EventType?>(Result: null, StatusCode: CqrsResultCode.Forbidden);
         }
         var isChanged = false;
+        if (dbExistedEventType.ParentId != request.EventType.ParentId) {
+            var parent = await _context.EventTypes
+                                       .FirstOrDefaultAsync(x => x.Id == request.EventType.ParentId,
+                                                            cancellationToken);
+            if (parent == null) {
+                _logger.LogWarning("Trying to update an event type with EventTypeParentId={EventTypeParentId} that is not existed in the storage.",
+                                   request.EventType.ParentId);
+            }
+            else {
+                dbExistedEventType.Parent   = parent;
+                dbExistedEventType.ParentId = parent.Id;
+                dbExistedEventType.GeneratePath();
+                isChanged = true;
+            }
+        }
         if (dbExistedEventType.Color != request.EventType.Color) {
             dbExistedEventType.Color = request.EventType.Color;
             isChanged                = true;

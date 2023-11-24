@@ -46,7 +46,15 @@ public class EventType: HrimEntity<long>, IHasOwner
     /// <summary> Analysis results </summary>
     public List<StatisticsForEventType>? AnalysisResults { get; set; }
 
+    /// <summary>
+    /// Reference to a more general event type, which this type is specified in some context
+    /// For example, if current event type is Hatha Yoga, its parent type might be just general Yoga. 
+    /// </summary>
+    public EventType? Parent { get; set; }
 
+    /// <summary> Identifier of parent event type </summary>
+    public long? ParentId { get; set; }
+    
     /// <summary> copy all entity properties to the another entity </summary>
     public void CopyTo(EventType another) {
         base.CopyTo(another: another);

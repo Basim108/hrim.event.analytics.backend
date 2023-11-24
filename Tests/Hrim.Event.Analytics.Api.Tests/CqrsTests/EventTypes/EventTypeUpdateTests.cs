@@ -3,7 +3,6 @@ using FluentAssertions;
 using Hrim.Event.Analytics.Abstractions;
 using Hrim.Event.Analytics.Abstractions.Cqrs.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
-using Hrim.Event.Analytics.Abstractions.Entities.EventTypes;
 using Hrim.Event.Analytics.Abstractions.Enums;
 using Hrim.Event.Analytics.Api.Tests.Infrastructure.AssertHelpers;
 using Hrim.Event.Analytics.Api.V1.Models;
@@ -125,5 +124,35 @@ public class EventTypeCqrsTests: BaseCqrsTests
         cqrsResult.CheckSuccessfullyUpdatedEntity(operatorId: OperatorUserId, forUpdate: forUpdate, beforeSend: beforeSend);
 
         TestData.DbContext.StatisticsForEventTypes.ToList().Should().BeEmpty();
+    }
+    
+    [Fact]
+    public async Task Given_EventType_With_Parent_Should_Update_TreeNodePath() {
+        var parent    = TestData.Events.CreateEventType(OperatorUserId, "Parent Test Event Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId);
+        eventType.Bl.Parent   = parent.Bl;
+        eventType.Bl.ParentId = parent.Bl.Id;
+
+        var updateCommand = new EventTypeUpdateCommand(eventType.Bl, SaveChanges: true, Context: OperatorContext);
+        await Mediator.Send(request: updateCommand);
+
+        var updatedEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == eventType.Bl.Id);
+        updatedEventType.Should().NotBeNull();
+        updatedEventType!.TreeNodePath.ToString().Should().Be($"{parent.Bl.Id}.{eventType.Bl.Id}");
+    }
+    
+    [Fact]
+    public async Task Given_Not_Existing_ParentId_Should_Not_Change_Parent() {
+        var parent    = TestData.Events.CreateEventType(OperatorUserId, "Parent Test Event Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, parentId: parent.Db.Id, updateTreeNode: true);
+        eventType.Bl.ParentId = new Random().NextInt64();
+
+        var updateCommand = new EventTypeUpdateCommand(eventType.Bl, SaveChanges: true, Context: OperatorContext);
+        await Mediator.Send(request: updateCommand);
+
+        var updatedEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == eventType.Bl.Id);
+        updatedEventType.Should().NotBeNull();
+        updatedEventType!.ParentId.Should().Be(parent.Db.Id);
+        updatedEventType.TreeNodePath.ToString().Should().Be($"{parent.Db.Id}.{updatedEventType.Id}");
     }
 }

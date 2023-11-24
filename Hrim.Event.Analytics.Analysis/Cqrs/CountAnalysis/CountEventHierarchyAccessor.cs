@@ -27,7 +27,7 @@ public class CountEventHierarchyAccessor: ICountEventHierarchyAccessor
     public Task<DateTime?> GetLastUpdatedEventTimeAsync<TEvent>(LTree eventTypePath, CancellationToken cancellationToken)
         where TEvent : DbBaseEvent => _context.Set<TEvent>()
                                               .Include(x => x.EventType)
-                                              .Where(x => x.EventType!.TreeNodePath.IsDescendantOf(eventTypePath))
+                                              .Where(x => x.EventType!.TreeNodePath!.Value.IsDescendantOf(eventTypePath))
                                               .OrderByDescending(x => x.UpdatedAt)
                                               .Select(x => x.UpdatedAt)
                                               .FirstOrDefaultAsync(cancellationToken);
@@ -35,14 +35,14 @@ public class CountEventHierarchyAccessor: ICountEventHierarchyAccessor
     public Task<int> CountDescendantOccurrencesAsync(LTree eventTypePath, CancellationToken cancellationToken)
         => _context.OccurrenceEvents
                    .Include(x => x.EventType)
-                   .Where(x => x.EventType!.TreeNodePath.IsDescendantOf(eventTypePath)
+                   .Where(x => x.EventType!.TreeNodePath!.Value.IsDescendantOf(eventTypePath)
                             && x.IsDeleted != true)
                    .CountAsync(cancellationToken);
 
     public Task<List<AnalysisEvent>> GetDescendantDurationsAsync(LTree eventTypePath, CancellationToken cancellationToken)
         => _context.DurationEvents
                    .Include(x => x.EventType)
-                   .Where(x => x.EventType!.TreeNodePath.IsDescendantOf(eventTypePath)
+                   .Where(x => x.EventType!.TreeNodePath!.Value.IsDescendantOf(eventTypePath)
                             && x.IsDeleted != true)
                    .OrderBy(x => x.StartedOn)
                    .ThenBy(x => x.StartedAt)

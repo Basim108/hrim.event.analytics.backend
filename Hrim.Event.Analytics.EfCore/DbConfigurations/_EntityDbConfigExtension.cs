@@ -24,8 +24,6 @@ public static class _EntityDbConfigExtension
         else {
             builder.Property(p => p.Id)
                    .HasColumnName(nameof(HrimEntity<TKey>.Id).ToSnakeCase())
-                    // .UseHiLo($"{typeof(TEntity).Name.ToSnakeCase()}_id_seq")
-                    // .HasIdentityOptions(startValue: 1, incrementBy: 1)
                    .UseIdentityAlwaysColumn();
         }
         builder.Property(p => p.CreatedAt)

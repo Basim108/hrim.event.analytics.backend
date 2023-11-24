@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hrim.Event.Analytics.Api.Migrations
 {
     [DbContext(typeof(EventAnalyticDbContext))]
-    [Migration("20231123135512_v2_initial_changed_pk_types_and_add_ltree_event_types")]
+    [Migration("20231124183612_v2_initial_changed_pk_types_and_add_ltree_event_types")]
     partial class v2_initial_changed_pk_types_and_add_ltree_event_types
     {
         /// <inheritdoc />
@@ -471,7 +471,6 @@ namespace Hrim.Event.Analytics.Api.Migrations
                         .HasComment("Reference to a more general event type, which this type is specified in some context\nFor example, if current event type is Hatha Yoga, its parent type might be just general Yoga.");
 
                     b.Property<string>("TreeNodePath")
-                        .IsRequired()
                         .HasColumnType("ltree")
                         .HasColumnName("tree_node_path");
 

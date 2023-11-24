@@ -45,13 +45,13 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Case1_Given_LastRun_When_All_Events_Deleted_Should_Return_EventCount_0() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1").Db;
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent>());
-        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent>());
         var lastRun = new StatisticsForEventType {
             EntityId     = eventType.Id,
@@ -59,7 +59,7 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(-2),
             FinishedAt   = DateTime.UtcNow.AddMinutes(-1)
         };
-        var calcInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.MinValue, eventType.TreeNodePath);
+        var calcInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.MinValue, eventType.TreeNodePath!.Value);
         await _handler.Handle(new CalculateGapForEventType(calcInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 0), Arg.Any<GapSettings>());
     }
@@ -70,15 +70,15 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Case2_Given_No_LastRun_When_No_Events_Should_Return_Null() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1").Db;
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns((DateTime?)null);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns((DateTime?)null);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent>());
-        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent>());
-        var calcInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.MinValue, eventType.TreeNodePath);
+        var calcInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.MinValue, eventType.TreeNodePath!.Value);
         await _handler.Handle(new CalculateGapForEventType(calcInfo, null), CancellationToken.None);
         _calculationService.Received(0).Calculate(Arg.Any<List<AnalysisEvent>>(), Arg.Any<GapSettings>());
     }
@@ -91,15 +91,15 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         var duration  = TestData.Events.CreateDurationEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
         var occurrence  = TestData.Events.CreateOccurrenceEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (occurrence.OccurredOn, occurrence.OccurredAt, null, null)
                            });
@@ -109,7 +109,7 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddSeconds(-1),
             FinishedAt   = DateTime.UtcNow.AddMicroseconds(1)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, _settings, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, _settings, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateGapForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 3), Arg.Any<GapSettings>());
     }
@@ -122,15 +122,15 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
         var duration  = TestData.Events.CreateDurationEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
         var occurrence  = TestData.Events.CreateOccurrenceEvent(eventType.Bl.CreatedById, eventType.Bl.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow);
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (occurrence.OccurredOn, occurrence.OccurredAt, null, null)
                            });
@@ -140,7 +140,7 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(-2),
             FinishedAt   = DateTime.UtcNow.AddMinutes(-1)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, _settings, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, _settings, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateGapForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 3), Arg.Any<GapSettings>());
     }
@@ -151,13 +151,13 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
     [Fact]
     public async Task Case5_Given_No_Changes_Should_Return_Null() {
         var eventType = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1");
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow.AddMinutes(-1));
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow.AddMinutes(-1));
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> ());
-        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.Db.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> ());
         var lastRun = new StatisticsForEventType {
             EntityId     = eventType.Bl.Id,
@@ -165,7 +165,7 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(1),
             FinishedAt   = DateTime.UtcNow.AddMinutes(2)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, _settings, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Bl.Id, _settings, eventType.Bl.UpdatedAt!.Value, eventType.Db.TreeNodePath!.Value);
         await _handler.Handle(new CalculateGapForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(0).Calculate(Arg.Any<List<AnalysisEvent>>(), Arg.Any<GapSettings>());
     }
@@ -178,15 +178,15 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
         var eventType  = TestData.Events.CreateEventType(new Random().NextInt64(), "Test Event Type #1").Db;
         var duration   = TestData.Events.CreateDurationEvent(eventType.CreatedById, eventType.Id);
         var occurrence = TestData.Events.CreateOccurrenceEvent(eventType.CreatedById, eventType.Id);
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow.AddMinutes(-1));
-        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(DateTime.UtcNow.AddMinutes(-1));
-        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (duration.StartedOn, duration.StartedAt, duration.FinishedOn, duration.FinishedAt)
                            });
-        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+        _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
                           .Returns(new List<AnalysisEvent> {
                                new (occurrence.OccurredOn, occurrence.OccurredAt, null, null)
                            });
@@ -196,7 +196,7 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
             StartedAt    = DateTime.UtcNow.AddMinutes(1),
             FinishedAt   = DateTime.UtcNow.AddMinutes(2)
         };
-        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.UtcNow.AddSeconds(61), eventType.TreeNodePath);
+        var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.UtcNow.AddSeconds(61), eventType.TreeNodePath!.Value);
         await _handler.Handle(new CalculateGapForEventType(eventTypeInfo, lastRun), CancellationToken.None);
         _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 3), Arg.Any<GapSettings>());
     }
@@ -210,20 +210,20 @@ public class CalculateGapForEventTypeTests: BaseCqrsTests
     //     var event2         = TestData.Events.CreateOccurrenceEvent(eventType.CreatedById, eventType.Id, occurredAt: event1.OccurredAt.AddHours(2));
     //     var event3         = TestData.Events.CreateOccurrenceEvent(eventType.CreatedById, eventType.Id, occurredAt: event2.OccurredAt.AddDays(3));
     //     var event4         = TestData.Events.CreateOccurrenceEvent(eventType.CreatedById, eventType.Id, occurredAt: event3.OccurredAt.AddDays(7));
-    //     _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+    //     _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbDurationEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
     //                       .Returns(DateTime.UtcNow.AddMinutes(-1));
-    //     _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+    //     _hierarchyAccessor.GetLastUpdatedEventTimeAsync<DbOccurrenceEvent>(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
     //                       .Returns(DateTime.UtcNow.AddMinutes(-1));
-    //     _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+    //     _hierarchyAccessor.GetDescendantDurationsAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
     //                       .Returns(new List<AnalysisEvent>());
-    //     _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath), Arg.Any<CancellationToken>())
+    //     _hierarchyAccessor.GetDescendantOccurrencesAsync(Arg.Is(eventType.TreeNodePath!.Value), Arg.Any<CancellationToken>())
     //                       .Returns(new List<AnalysisEvent> {
     //                            new (event1.OccurredOn, event1.OccurredAt, null, null),
     //                            new (event2.OccurredOn, event2.OccurredAt, null, null),
     //                            new (event3.OccurredOn, event3.OccurredAt, null, null),
     //                            new (event4.OccurredOn, event4.OccurredAt, null, null)
     //                        });
-    //     var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.MinValue, eventType.TreeNodePath);
+    //     var eventTypeInfo = new EventTypeAnalysisSettings(eventType.Id, _settings, DateTime.MinValue, eventType.TreeNodePath!.Value);
     //     await _handler.Handle(new CalculateGapForEventType(eventTypeInfo, null), CancellationToken.None);
     //     _calculationService.Received(1).Calculate(Arg.Is<List<AnalysisEvent>>(x => x.Count == 3), Arg.Any<GapSettings>());
     //     result.Should().NotBeNull();
