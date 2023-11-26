@@ -43,6 +43,7 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
 
         var result = await query.AsNoTracking()
                                 .Select(x => new ViewEventType(x.Id,
+                                                               x.ParentId,
                                                                x.Name,
                                                                x.Description,
                                                                x.Color,

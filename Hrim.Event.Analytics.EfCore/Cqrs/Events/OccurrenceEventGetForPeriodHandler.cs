@@ -32,6 +32,7 @@ public class OccurrenceEventGetForPeriodHandler: IRequestHandler<OccurrenceEvent
         var result = dbEntities.Select(x => new ViewOccurrenceEvent(Id: x.Id,
                                                                     x.OccurredOn.CombineWithTime(time: x.OccurredAt),
                                                                     new ViewEventType(Id: x.EventType!.Id,
+                                                                                      ParentId: x.EventType!.ParentId,
                                                                                       Name: x.EventType.Name,
                                                                                       Description: x.EventType.Description,
                                                                                       Color: x.EventType.Color,

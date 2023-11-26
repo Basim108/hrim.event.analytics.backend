@@ -15,6 +15,7 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 /// <param name="Id">Entity id</param>
 /// <param name="AnalysisResults">All analysis calculation results calculated on events of this event type</param>
 public record ViewEventType(long    Id,
+                            long?   ParentId,
                             string  Name,
                             string? Description,
                             string  Color,

@@ -34,6 +34,7 @@ public class DurationEventGetForPeriodHandler: IRequestHandler<DurationEventGetF
                                                                   x.StartedOn.CombineWithTime(time: x.StartedAt),
                                                                   x.FinishedOn?.CombineWithTime(time: x.FinishedAt!.Value),
                                                                   new ViewEventType(Id: x.EventType!.Id,
+                                                                                    ParentId: x.EventType!.ParentId,
                                                                                     Name: x.EventType.Name,
                                                                                     Description: x.EventType.Description,
                                                                                     Color: x.EventType.Color,
