@@ -3,11 +3,13 @@ using Hrim.Event.Analytics.Abstractions.Entities.Account;
 using Hrim.Event.Analytics.Abstractions.Entities.Analysis;
 using Hrim.Event.Analytics.EfCore.DbEntities.Analysis;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Hrim.Event.Analytics.EfCore.DbEntities;
 
 public class DbEventType: HrimEntity<long>, IHasOwner
 {
+    [JsonIgnore]
     public LTree? TreeNodePath { get; set; }
 
     /// <summary>
