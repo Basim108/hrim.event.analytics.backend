@@ -155,4 +155,19 @@ public class EventTypeCqrsTests: BaseCqrsTests
         updatedEventType!.ParentId.Should().Be(parent.Db.Id);
         updatedEventType.TreeNodePath.ToString().Should().Be($"{parent.Db.Id}.{updatedEventType.Id}");
     }
+    
+    [Fact]
+    public async Task Given_Null_ParentId_Should_Set_Parent_To_Null() {
+        var parent    = TestData.Events.CreateEventType(OperatorUserId, "Parent Test Event Type");
+        var eventType = TestData.Events.CreateEventType(OperatorUserId, parentId: parent.Db.Id, updateTreeNode: true);
+        eventType.Bl.ParentId = null;
+
+        var updateCommand = new EventTypeUpdateCommand(eventType.Bl, SaveChanges: true, Context: OperatorContext);
+        await Mediator.Send(request: updateCommand);
+
+        var updatedEventType = TestData.DbContext.EventTypes.FirstOrDefault(x => x.Id == eventType.Bl.Id);
+        updatedEventType.Should().NotBeNull();
+        updatedEventType!.ParentId.Should().BeNull();
+        updatedEventType.TreeNodePath.ToString().Should().Be(updatedEventType.Id.ToString());
+    }
 }
