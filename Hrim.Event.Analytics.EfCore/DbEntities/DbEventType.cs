@@ -23,12 +23,12 @@ public class DbEventType: HrimEntity<long>, IHasOwner
     /// Reference to a list of mre specific event types
     /// For example, if current event type is smoking, then its children subtypes might be "smoking cigarettes", "vaping"  
     /// </summary>
-    public List<DbEventType>? Children { get; set; }
+    public List<DbEventType>? Children { get; set; } = null;
 
     /// <summary>
     ///     Event type name, e.g. 'nice mood', 'headache', etc
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
 
     /// <summary>
     ///     Description given by user, when user_event_type based on this one will be created.
@@ -38,7 +38,7 @@ public class DbEventType: HrimEntity<long>, IHasOwner
     /// <summary>
     ///     A color that events will be drawing with in a calendar. e.g. 'red', '#ff0000'
     /// </summary>
-    public string Color { get; set; }
+    public string Color { get; set; } = "";
 
     /// <summary>
     ///     A user who created an instance of this event type

@@ -13,6 +13,8 @@ namespace Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 /// <param name="IsDeleted">Soft deletion flag</param>
 /// <param name="IsMine">Is this event type was created by an operator, or it has been created by another user</param>
 /// <param name="Id">Entity id</param>
+/// <param name="ParentId"> Reference to a more general event type, which this type is specified in some context
+/// For example, if current event type is Hatha Yoga, its parent type might be just general Yoga.</param>
 /// <param name="AnalysisResults">All analysis calculation results calculated on events of this event type</param>
 public record ViewEventType(long    Id,
                             long?   ParentId,

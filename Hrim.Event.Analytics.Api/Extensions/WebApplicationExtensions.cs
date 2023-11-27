@@ -10,7 +10,7 @@ namespace Hrim.Event.Analytics.Api.Extensions;
 public static class WebApplicationExtensions
 {
     /// <summary> Setups CORS </summary>
-    public static void UseEventAnalyticsCors(this WebApplication app, IConfiguration appConfig) {
+    public static void UseEventAnalyticsCors(this WebApplication? app, IConfiguration appConfig) {
         var allowedOrigins = appConfig[key: "ALLOWED_ORIGINS"];
         if (string.IsNullOrEmpty(value: allowedOrigins))
             throw new ConfigurationException(sectionName: null, key: "ALLOWED_ORIGINS");

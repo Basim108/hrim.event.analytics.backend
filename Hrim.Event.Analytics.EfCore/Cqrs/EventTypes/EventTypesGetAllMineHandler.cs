@@ -5,7 +5,6 @@ using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.Analysis;
 using Hrim.Event.Analytics.Abstractions.ViewModels.Entities.EventTypes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Hrim.Event.Analytics.EfCore.Cqrs.EventTypes;
 
@@ -50,9 +49,9 @@ public class EventTypesGetAllMineHandler: IRequestHandler<EventTypeGetAllMine, I
                                                                x.IsPublic,
                                                                x.IsDeleted   == true,
                                                                x.CreatedById == operatorUserId,
-                                                               x.AnalysisResults.Select(a => new ViewAnalysisResult(a.AnalysisCode,
-                                                                                                                    a.ResultJson,
-                                                                                                                    a.FinishedAt))))
+                                                               x.AnalysisResults!.Select(a => new ViewAnalysisResult(a.AnalysisCode,
+                                                                                                                     a.ResultJson,
+                                                                                                                     a.FinishedAt))))
             .ToListAsync(cancellationToken: cancellationToken);
         return result;
     }

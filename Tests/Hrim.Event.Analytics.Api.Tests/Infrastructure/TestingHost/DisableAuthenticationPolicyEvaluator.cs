@@ -24,7 +24,7 @@ public class DisableAuthenticationPolicyEvaluator: IPolicyEvaluator
     public async Task<PolicyAuthorizationResult> AuthorizeAsync(AuthorizationPolicy policy,
                                                                 AuthenticateResult  authenticationResult,
                                                                 HttpContext         context,
-                                                                object              resource) {
+                                                                object?             resource) {
         // Always pass authorization
         return await Task.FromResult(PolicyAuthorizationResult.Success());
     }

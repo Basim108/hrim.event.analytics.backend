@@ -15,9 +15,11 @@ namespace Hrim.Event.Analytics.Api.Controllers;
 [Authorize]
 public class HomeController: ControllerBase
 {
+    /// <summary> </summary>
     [HttpGet("")]
     public IActionResult Index() { return Redirect("/jobs"); }
 
+    /// <summary> </summary>
     [HttpGet("logout")]
     public async Task Logout()
     {

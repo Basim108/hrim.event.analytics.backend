@@ -48,7 +48,9 @@ public static class _EntityDbConfigExtension
                .HasComment(comment: "Update is possible only when this token equals to the token in the storage")
                .IsConcurrencyToken()
                .IsRequired();
-        var checkConstraintName = $"CK_{typeof(TEntity).Name.ToSnakeCase()}s_{concurrentTokenColumn}";
-        builder.HasCheckConstraint(name: checkConstraintName, $"{concurrentTokenColumn} > 0");
+        builder.ToTable(t => {
+            var checkConstraintName = $"CK_{typeof(TEntity).Name.ToSnakeCase()}s_{concurrentTokenColumn}";
+            t.HasCheckConstraint(name: checkConstraintName, $"{concurrentTokenColumn} > 0");
+        });
     }
 }

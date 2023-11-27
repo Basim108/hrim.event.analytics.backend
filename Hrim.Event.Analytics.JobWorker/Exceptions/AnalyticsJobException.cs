@@ -18,7 +18,7 @@ public class AnalyticsJobException: Exception
         CqrsCommand = info.GetString(nameof(CqrsCommand)) ?? "";
     }
 
-    public string CqrsCommand { get; }
+    public string CqrsCommand { get; } = "";
     
     public override void GetObjectData(SerializationInfo info, StreamingContext context) {
         if (info == null)
